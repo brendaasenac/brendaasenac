@@ -1,0 +1,904 @@
+import { useState, useEffect } from "react";
+
+// ─── DATA ────────────────────────────────────────────────────────────────────
+
+const RESUMOS = [
+  {
+    id: "has",
+    label: "HAS",
+    color: "from-violet-500 to-purple-600",
+    accent: "#a855f7",
+    cards: [
+      {
+        title: "Diagnóstico & Classificação",
+        color: "bg-violet-100 border-violet-300",
+        titleColor: "text-violet-800",
+        icon: "🩺",
+        content: [
+          { type: "badge-list", label: "Valores diagnósticos", items: ["≥140×90 mmHg em consultório", "MAPA 24h ≥130×80 mmHg", "MAPA vigília ≥135×85 mmHg", "MAPA sono ≥120×70 mmHg", "MRPA ≥135×85 mmHg"] },
+          { type: "table", headers: ["Estágio", "PAS", "PAD"], rows: [["Normal", "<130", "<85"], ["Elevada", "130–139", "85–89"], ["HAS 1", "140–159", "90–99"], ["HAS 2", "160–179", "100–109"], ["HAS 3", "≥180", "≥110"]] },
+        ]
+      },
+      {
+        title: "Técnica da MRPA",
+        color: "bg-blue-100 border-blue-300",
+        titleColor: "text-blue-800",
+        icon: "📋",
+        content: [
+          { type: "numbered", items: ["Aferir 3× pela manhã (antes do café e medicação)", "Aferir 3× ao final da tarde (antes do jantar)", "Realizar por 5 dias consecutivos", "Descartar 1º dia → média dos demais"] },
+          { type: "alert", text: "MRPA é superior à aferição isolada em consultório — use para ajuste de medicações!" }
+        ]
+      },
+      {
+        title: "Tratamento Farmacológico",
+        color: "bg-cyan-100 border-cyan-300",
+        titleColor: "text-cyan-800",
+        icon: "💊",
+        content: [
+          { type: "badge-list", label: "1ª Linha (monoterapia ou combinação)", items: ["IECA (ex: enalapril, ramipril)", "BRA (ex: losartana, valsartana)", "BCC dihidropiridínico (anlodipino)", "Diurético tiazídico (hidroclorotiazida, clortalidona)"] },
+          { type: "badge-list", label: "Combinação preferencial inicial (2025)", items: ["IECA/BRA + BCC", "IECA/BRA + Tiazídico", "BCC + Tiazídico"] },
+          { type: "alert", text: "⚠️ HAS Resistente: ≥3 drogas (incluindo diurético tiazídico) sem controle → adicionar espironolactona 25mg/dia como 4ª droga" },
+        ]
+      },
+      {
+        title: "Situações Especiais",
+        color: "bg-rose-100 border-rose-300",
+        titleColor: "text-rose-800",
+        icon: "⚡",
+        content: [
+          { type: "table", headers: ["Condição", "Droga Preferencial"], rows: [["DM + Proteinúria", "IECA ou BRA"], ["DRC + Proteinúria", "IECA ou BRA"], ["Pós-IAM / IC", "IECA + BB + Espiro"], ["Gravidez", "Metildopa, Hidralazina, Nifedipino"], ["HAS Resistente", "+ Espironolactona"]] },
+          { type: "alert", text: "🚨 Emergência Hipertensiva: lesão órgão-alvo aguda → reduzir PAM 25% em 1h (nitroprussiato EV). Urgência: sem LOA → VO, redução em 24-48h." }
+        ]
+      },
+    ]
+  },
+  {
+    id: "dm",
+    label: "Diabetes",
+    color: "from-amber-500 to-orange-600",
+    accent: "#f59e0b",
+    cards: [
+      {
+        title: "Diagnóstico",
+        color: "bg-amber-100 border-amber-300",
+        titleColor: "text-amber-800",
+        icon: "🔬",
+        content: [
+          { type: "table", headers: ["Critério", "Normal", "Pré-DM", "DM"], rows: [["Jejum", "<100", "100–125", "≥126"], ["TOTG 2h", "<140", "140–199", "≥200"], ["HbA1c", "<5,7%", "5,7–6,4%", "≥6,5%"], ["Glicemia Aleatória", "—", "—", "≥200 + sintomas"]] },
+          { type: "alert", text: "DM1: jovem, IMC baixo, início abrupto com poliúria/polidipsia/perda peso + cetonúria → insulinoterapia basal-bolus imediata." }
+        ]
+      },
+      {
+        title: "Tratamento DM2 – Algoritmo",
+        color: "bg-orange-100 border-orange-300",
+        titleColor: "text-orange-800",
+        icon: "💊",
+        content: [
+          { type: "numbered", items: ["1ª linha: METFORMINA + MEV", "DCV estabelecida / alto risco: adicionar iSGLT2 (empagliflozina) ou aGLP-1", "IC ou DRC: iSGLT2 preferencial", "Obeso: aGLP-1 (semaglutida, liraglutida)", "HbA1c ≥9% sintomático: iniciar insulina"] },
+          { type: "badge-list", label: "Metas HbA1c", items: ["<7% (maioria)", "<6,5% (jovens/recém-diag.)", "<8% (idosos frágeis, hipoglicemia frequente)"] },
+        ]
+      },
+      {
+        title: "Complicações Crônicas",
+        color: "bg-yellow-100 border-yellow-300",
+        titleColor: "text-yellow-800",
+        icon: "🎯",
+        content: [
+          { type: "badge-list", label: "Rastreio (DM1: 5 anos após diagnóstico; DM2: ao diagnóstico, anualmente)", items: ["Nefropatia: relação albumina/creatinina + TFG", "Retinopatia: fundo de olho", "Neuropatia: monofilamento 10g (≥4 pontos)", "Pé diabético: pulsos pediosos + tibiais posteriores"] },
+          { type: "alert", text: "Pé diabético: xerodermia, calosidades e perda sensibilidade (≥2 pontos alterados no monofilamento) = diagnóstico." }
+        ]
+      },
+      {
+        title: "Insulinoterapia",
+        color: "bg-rose-100 border-rose-300",
+        titleColor: "text-rose-800",
+        icon: "💉",
+        content: [
+          { type: "table", headers: ["Tipo", "Início", "Pico", "Duração"], rows: [["Glargina/Degludeca (basal)", "1–2h", "Plano", "20–24h"], ["NPH", "2–4h", "6–10h", "12–18h"], ["Asparte/Lispro (bolus)", "15min", "1–2h", "3–5h"], ["Regular", "30min", "2–4h", "6–8h"]] },
+          { type: "alert", text: "DM2 descompensado (HbA1c>9%): iniciar NPH noturna 0,1–0,2 UI/kg ao deitar." }
+        ]
+      },
+    ]
+  },
+  {
+    id: "ic",
+    label: "Insuf. Cardíaca",
+    color: "from-red-500 to-pink-600",
+    accent: "#ef4444",
+    cards: [
+      {
+        title: "Classificação",
+        color: "bg-red-100 border-red-300",
+        titleColor: "text-red-800",
+        icon: "❤️",
+        content: [
+          { type: "table", headers: ["Tipo", "FE", "Características"], rows: [["ICFEr", "<40%", "Sistólica; tratamento completo"], ["ICFEi", "40–49%", "Faixa intermediária"], ["ICFEp", "≥50%", "Diastólica; controlar comorbidades"]] },
+          { type: "table", headers: ["NYHA", "Descrição"], rows: [["I", "Assintomático"], ["II", "Sintomas em esforços moderados"], ["III", "Sintomas em esforços leves"], ["IV", "Sintomas em repouso"]] }
+        ]
+      },
+      {
+        title: "Tratamento ICFEr (reduz mortalidade)",
+        color: "bg-pink-100 border-pink-300",
+        titleColor: "text-pink-800",
+        icon: "💊",
+        content: [
+          { type: "badge-list", label: "4 Pilares (alto nível de evidência)", items: ["IECA ou BRA (ou ARNI – sacubitril/valsartana)", "Betabloqueador (carvedilol, bisoprolol, metoprolol)", "Antagonista aldosterona / espironolactona", "iSGLT2 (dapagliflozina, empagliflozina)"] },
+          { type: "badge-list", label: "Outros (sintomáticos)", items: ["Diurético de alça (furosemida) – congestão", "Digoxina – reduz hospitalização (não mortalidade)", "Ivabradina – FC >70bpm + ritmo sinusal + FE<35%", "Hidralazina + nitrato – intolerância IECA/BRA"] },
+          { type: "alert", text: "⚠️ BCC (anlodipino) NÃO reduz mortalidade pós-IAM. Diltiazem CONTRAINDICADO em ICFEr." }
+        ]
+      },
+      {
+        title: "Critérios de Framingham",
+        color: "bg-orange-100 border-orange-300",
+        titleColor: "text-orange-800",
+        icon: "📊",
+        content: [
+          { type: "badge-list", label: "Maiores", items: ["Dispneia paroxística noturna", "Distensão jugular", "Crepitações", "Cardiomegalia", "EAP, B3, PVC >16 cmH2O"] },
+          { type: "badge-list", label: "Menores", items: ["Edema bilateral MMII", "Tosse noturna", "Dispneia a esforços", "Hepatomegalia", "Derrame pleural"] },
+          { type: "alert", text: "Diagnóstico: 2 maiores OU 1 maior + 2 menores." }
+        ]
+      },
+      {
+        title: "IC na Gravidez",
+        color: "bg-violet-100 border-violet-300",
+        titleColor: "text-violet-800",
+        icon: "🤰",
+        content: [
+          { type: "badge-list", label: "Drogas seguras na gestação", items: ["Hidralazina", "Nitrato", "Digoxina", "Furosemida (cautela)"] },
+          { type: "alert", text: "⚠️ CONTRAINDICADOS na gestação: IECA, BRA, espironolactona, sacubitril." }
+        ]
+      },
+    ]
+  },
+  {
+    id: "dac",
+    label: "DAC / SCA",
+    color: "from-rose-600 to-red-700",
+    accent: "#e11d48",
+    cards: [
+      {
+        title: "Angina Estável – Tratamento",
+        color: "bg-red-100 border-red-300",
+        titleColor: "text-red-800",
+        icon: "💓",
+        content: [
+          { type: "badge-list", label: "Anti-isquêmicos 1ª linha", items: ["Betabloqueador (1ª escolha)", "BCC (anlodipino, diltiazem) – alternativa ou associação", "Nitrato de longa ação", "Ivabradina (FC>70 + ritmo sinusal)", "Trimetazidina (metabolismo ácidos graxos)"] },
+          { type: "alert", text: "Ranolazina, trimetazidina: mecanismo metabólico (↑eficiência mitocondrial) – NÃO usam como monoterapia." }
+        ]
+      },
+      {
+        title: "SCA – Classificação & Conduta",
+        color: "bg-rose-100 border-rose-300",
+        titleColor: "text-rose-800",
+        icon: "🚨",
+        content: [
+          { type: "table", headers: ["Tipo", "ECG", "Troponina", "Conduta"], rows: [["IAMCSST", "Supra ST", "↑", "Angioplastia primária <120min ou trombolítico"], ["IAMSST", "Sem supra", "↑", "Angioplastia conforme risco"], ["AI", "Sem supra", "Normal", "Tratamento clínico"]] },
+          { type: "badge-list", label: "Terapia universal SCA", items: ["AAS (antiagregação dupla + clopidogrel/ticagrelor)", "Anticoagulação (heparina)", "Estatina alta potência", "BB (se sem contraindicação)", "IECA (se FE<40% ou DM)"] },
+          { type: "alert", text: "BRE NOVO: considerar equivalente a IAMCSST → cateterismo urgente." }
+        ]
+      },
+      {
+        title: "Dislipidemia",
+        color: "bg-amber-100 border-amber-300",
+        titleColor: "text-amber-800",
+        icon: "📉",
+        content: [
+          { type: "table", headers: ["Risco", "Meta LDL"], rows: [["Baixo", "<130 mg/dL"], ["Intermediário", "<100 mg/dL"], ["Alto", "<70 mg/dL"], ["Muito alto", "<50 mg/dL ou redução ≥50%"]] },
+          { type: "badge-list", label: "Estatinas por potência", items: ["Alta: Rosuvastatina 20-40mg, Atorvastatina 40-80mg", "Média: Sinvastatina 20-40mg, Fluvastatina", "Baixa: Sinvastatina 10mg"] },
+          { type: "alert", text: "Fibratos: reduzem TG, NÃO reduzem mortalidade cardiovascular. Ezetimiba: inibe absorção intestinal de colesterol." }
+        ]
+      },
+    ]
+  },
+  {
+    id: "tireoid",
+    label: "Tireoide",
+    color: "from-teal-500 to-emerald-600",
+    accent: "#14b8a6",
+    cards: [
+      {
+        title: "Hipotireoidismo",
+        color: "bg-teal-100 border-teal-300",
+        titleColor: "text-teal-800",
+        icon: "🐌",
+        content: [
+          { type: "badge-list", label: "Sintomas clássicos", items: ["Fadiga, sonolência, lentificação psicomotora", "Constipação intestinal", "Pele seca e fria, queda de cabelo", "Bradicardia, reflexo tendíneo lento", "Hipotermia, ganho de peso, mixedema"] },
+          { type: "table", headers: ["Tipo", "TSH", "T4 livre"], rows: [["Hipotireoidismo manifesto", "↑↑", "↓"], ["Hipotireoidismo subclínico", "↑", "Normal"], ["Central", "Normal/↓", "↓"]] },
+          { type: "alert", text: "Causa mais comum: Tireoidite de Hashimoto (anticorpos anti-TPO e anti-Tg). Tratamento: Levotiroxina — dose baixa com titulação gradual em idosos e cardiopatas." }
+        ]
+      },
+      {
+        title: "Hipertireoidismo",
+        color: "bg-emerald-100 border-emerald-300",
+        titleColor: "text-emerald-800",
+        icon: "⚡",
+        content: [
+          { type: "badge-list", label: "Sintomas", items: ["Perda de peso com apetite preservado", "Taquicardia, palpitações, tremor fino", "Intolerância ao calor, diarreia", "Agitação, ansiedade, insônia"] },
+          { type: "badge-list", label: "Doença de Graves (mais comum)", items: ["Anticorpo TRAb (anti-receptor TSH)", "Bócio difuso, exoftalmia, mixedema pré-tibial", "Tratamento: metimazol (1ª linha) + betabloqueador não seletivo (propranolol)"] },
+          { type: "alert", text: "Tireoidite de Hashimoto pode causar HIPER transitório no início (hashitoxicose). TRAb distingue Graves de outras causas." }
+        ]
+      },
+      {
+        title: "Nódulos & Câncer",
+        color: "bg-cyan-100 border-cyan-300",
+        titleColor: "text-cyan-800",
+        icon: "🔍",
+        content: [
+          { type: "badge-list", label: "Avaliação do nódulo tireoidiano", items: ["TSH + USG tireoide (1º passo)", "PAAF: nódulos ≥1cm suspeitos (sólido hipoecogênico, microcalcificações)", "Cintilografia: nódulo com TSH baixo (quente vs frio)"] },
+          { type: "alert", text: "Doença de Plummer = adenoma tóxico (nódulo quente autônomo) → cintilografia é exame chave." }
+        ]
+      },
+    ]
+  },
+  {
+    id: "nefrologia",
+    label: "Nefrologia",
+    color: "from-blue-500 to-indigo-600",
+    accent: "#3b82f6",
+    cards: [
+      {
+        title: "DRC – Classificação",
+        color: "bg-blue-100 border-blue-300",
+        titleColor: "text-blue-800",
+        icon: "🫘",
+        content: [
+          { type: "alert", text: "DRC = TFG <60 mL/min/1,73m² OU marcadores de dano renal (albuminúria, hematúria, alteração estrutural) por ≥3 meses." },
+          { type: "table", headers: ["Estágio", "TFG"], rows: [["G1", "≥90 (com dano)"], ["G2", "60–89"], ["G3a", "45–59"], ["G3b", "30–44"], ["G4", "15–29"], ["G5", "<15 (diálise)"]] },
+          { type: "badge-list", label: "Anemia na DRC", items: ["Principal causa: deficiência de eritropoietina", "Tratamento: agentes estimulantes da eritropoiese (darbepoetina, eritropoietina)", "Corrigir ferro antes (ferritina >100, sat transferrina >20%)"] }
+        ]
+      },
+      {
+        title: "IRA – Mecanismos",
+        color: "bg-indigo-100 border-indigo-300",
+        titleColor: "text-indigo-800",
+        icon: "⚠️",
+        content: [
+          { type: "table", headers: ["Tipo", "Causa", "FENa"], rows: [["Pré-renal", "Hipovolemia, hipoperfusão", "<1%"], ["Intrínseca (NTA)", "Isquemia, nefrotóxico", ">2%"], ["Pós-renal", "Obstrução urinária", "Variável"]] },
+          { type: "alert", text: "AINE em paciente com DRC/ICC/idoso → IRA pré-renal (bloqueia prostaglandinas vasodilatadoras). NTA isquêmica é a mais comum na UTI." }
+        ]
+      },
+      {
+        title: "Síndrome Nefrótica vs Nefrítica",
+        color: "bg-purple-100 border-purple-300",
+        titleColor: "text-purple-800",
+        icon: "🧪",
+        content: [
+          { type: "table", headers: ["Síndrome", "Proteinúria", "Hematúria", "Edema", "Outras"], rows: [["Nefrótica", ">3,5g/dia", "Ausente", "+++", "Hipoalbuminemia, hiperlipidemia"], ["Nefrítica", "<3,5g/dia", "Dismórfica", "+", "HAS, oligúria, uremia"]] },
+          { type: "alert", text: "Lúpus com proteinúria ≥3,7g/dia e hematúria → biópsia renal obrigatória para definir classe histológica e tratamento." }
+        ]
+      },
+    ]
+  },
+  {
+    id: "pneumo",
+    label: "Pneumologia",
+    color: "from-sky-500 to-blue-600",
+    accent: "#0ea5e9",
+    cards: [
+      {
+        title: "Asma – Classificação & Manejo",
+        color: "bg-sky-100 border-sky-300",
+        titleColor: "text-sky-800",
+        icon: "🌬️",
+        content: [
+          { type: "table", headers: ["Controle", "Critérios", "Conduta"], rows: [["Controlada", "Sem sintomas, sem limitação", "Manter"], ["Parcialmente controlada", "1-2 critérios presentes", "Step up"], ["Não controlada", "≥3 critérios", "Step up urgente"]] },
+          { type: "badge-list", label: "Escalonamento terapêutico", items: ["Step 1-2: SABA (salbutamol) SOS + CI baixa dose", "Step 3: CI dose média OU CI + LABA (formoterol)", "Step 4: CI alta dose + LABA", "Step 5: + anti-IgE (omalizumabe) ou corticoide oral"] },
+          { type: "alert", text: "Peak flow ≥80% do melhor = asma controlada. Persistência de tosse noturna 2-3×/semana com boa adesão = step up (adicionar LABA)." }
+        ]
+      },
+      {
+        title: "DPOC – Exacerbação",
+        color: "bg-blue-100 border-blue-300",
+        titleColor: "text-blue-800",
+        icon: "💨",
+        content: [
+          { type: "badge-list", label: "Causas de exacerbação", items: ["Viral (50%): influenza, rhinovirus", "Bacteriana (30%): H. influenzae, S. pneumoniae", "Ambiental, TEP (10%)"] },
+          { type: "badge-list", label: "Tratamento exacerbação grave (UPA)", items: ["Broncodilatador + corticoide sistêmico", "Antibiótico se escarro purulento", "VNI se hipoxemia/hipercapnia", "Encaminhar à UPA se sinais de gravidade"] },
+          { type: "alert", text: "⚠️ Alfa-1 antitripsina: suspeitar em DPOC jovem (<45 anos), não tabagista, hiperinsuflação em bases." }
+        ]
+      },
+      {
+        title: "Pneumonia – CURB-65",
+        color: "bg-cyan-100 border-cyan-300",
+        titleColor: "text-cyan-800",
+        icon: "🏥",
+        content: [
+          { type: "table", headers: ["CURB-65", "Pontos", "Conduta"], rows: [["Confusão mental", "1", ""], ["Ureia >7mmol/L (>43mg/dL)", "1", ""], ["FR ≥30", "1", ""], ["PAS<90 ou PAD<60", "1", ""], ["Idade ≥65 anos", "1", "0-1: ambulatorial | 2: internar | ≥3: UTI"]] },
+          { type: "alert", text: "PAC ambulatorial: Amoxicilina + clavulanato (1ª linha). Atípicos suspeitos: Azitromicina. Grave: cefalosporina 3ª geração + macrolídeo." }
+        ]
+      },
+    ]
+  },
+  {
+    id: "gastro",
+    label: "Gastro & Infecto",
+    color: "from-green-500 to-emerald-600",
+    accent: "#22c55e",
+    cards: [
+      {
+        title: "DRGE & Dispepsia",
+        color: "bg-green-100 border-green-300",
+        titleColor: "text-green-800",
+        icon: "🔥",
+        content: [
+          { type: "badge-list", label: "DRGE – Manejo", items: ["Sintomas típicos sem alarme: IBP 8 semanas + MEV", "Sem resposta ao IBP: endoscopia digestiva alta (EDA)", "EDA indicada: sintomas >6 meses, >45 anos, sinais de alarme (disfagia, emagrecimento, hematêmese)"] },
+          { type: "alert", text: "H. pylori: testar (teste respiratório ou biópsia) se dispepsia. Tratar se positivo: IBP + claritromicina + amoxicilina por 14 dias." },
+          { type: "badge-list", label: "Sinais de alarme (EDA obrigatória)", items: ["Perda de peso, disfagia, odinofagia", "Hematêmese / melena", "Anemia ferropriva inexplicada", "Massa abdominal palpável"] }
+        ]
+      },
+      {
+        title: "Hepatologia",
+        color: "bg-emerald-100 border-emerald-300",
+        titleColor: "text-emerald-800",
+        icon: "🫁",
+        content: [
+          { type: "badge-list", label: "Colestase: investigação", items: ["1º exame: USG abdominal (dilatação biliar)", "Dilatada (extra-hepática): CPRE ou cirurgia", "Sem dilatação (intra-hepática): biópsia hepática"] },
+          { type: "table", headers: ["Doença", "AST/ALT", "FA/GGT", "Padrão"], rows: [["Hepatite alcoólica", "AST/ALT>2", "GGT↑↑", "Hepatocelular"], ["Colestase", "Normal/↑", "FA/GGT↑↑", "Colestático"], ["Cirrose", "↑", "↑", "Misto"]] },
+          { type: "alert", text: "Fadiga + icterícia + etilismo + AST/ALT>2 = hepatite alcoólica. Conduta: USG + abstinência. Bilirrubina ≥3× + coagulopatia = hepatite grave." }
+        ]
+      },
+      {
+        title: "Dengue & Arboviroses",
+        color: "bg-teal-100 border-teal-300",
+        titleColor: "text-teal-800",
+        icon: "🦟",
+        content: [
+          { type: "badge-list", label: "Sinais de alarme na Dengue (3-4º dia)", items: ["Dor abdominal intensa e contínua", "Vômitos persistentes", "Acúmulo de líquidos (ascite, derrame pleural)", "Sangramento mucoso", "Letargia, hipotensão postural"] },
+          { type: "table", headers: ["Arbovírus", "Clínica Típica"], rows: [["Dengue", "Febre alta, cefaleia, mialgia, plaquetopenia"], ["Zika", "Exantema, conjuntivite, febre baixa"], ["Chikungunya", "Artralgia intensa/poliartralgia, febre alta"]] },
+          { type: "alert", text: "Rash maculopapular + artralgia intensa + febre = Chikungunya. Conjuntivite + rash suave = Zika." }
+        ]
+      },
+    ]
+  },
+  {
+    id: "hematologia",
+    label: "Hematologia",
+    color: "from-pink-500 to-rose-600",
+    accent: "#ec4899",
+    cards: [
+      {
+        title: "Anemias – Classificação",
+        color: "bg-pink-100 border-pink-300",
+        titleColor: "text-pink-800",
+        icon: "🩸",
+        content: [
+          { type: "table", headers: ["VCM", "Tipo", "Causas principais"], rows: [["<80 (microcítica)", "Ferropriva, talassemia, anemia crônica", "Ferropriva: ferritina↓, sangramento oculto"], [">100 (macrocítica)", "B12, folato, hipotireoidismo", "B12: neuropatia + anemia megaloblástica"], ["80-100 (normocítica)", "DRC, hemólise, aplasia", "DRC: eritropoietina↓"]] },
+          { type: "alert", text: "Homem >50 anos com anemia ferropriva sem causa evidente → investigar sangramento oculto GI (colonoscopia + EDA)." }
+        ]
+      },
+      {
+        title: "B12 & Ácido Fólico",
+        color: "bg-rose-100 border-rose-300",
+        titleColor: "text-rose-800",
+        icon: "💊",
+        content: [
+          { type: "badge-list", label: "B12 – Deficiência", items: ["Causas: gastrectomia bariátrica, anemia perniciosa (anti-FI), vegetarianismo estrito", "Hemograma: macrocitose (VCM>100), neutrófilos hipersegmentados, macroovalócitos", "DHL muito elevada (>600) + anemia = megaloblástica"] },
+          { type: "alert", text: "Anemia falciforme em crise vasooclusiva com dor severa + sem resposta a analgésicos: morfina EV em dose adequada (NUNCA tramadol como 1ª linha)." }
+        ]
+      },
+    ]
+  },
+];
+
+// ─── QUESTÕES ────────────────────────────────────────────────────────────────
+
+const QUESTOES = [
+  // ──── BLOCO: HAS ────
+  {
+    id: 1, tema: "HAS", enunciado: "Homem, 49 anos, negro, encaminhado ao ADAB por dificuldade de controle da pressão arterial, apesar do uso correto das medicações. Em uso de Losartana 100mg/dia, Anlodipino 10mg/dia, Hidroclorotiazida 25mg/dia. Ao exame PA = 160x100 mmHg; FC = 58 bpm; exames de laboratório sem anormalidades (incluindo função renal, eletrólitos e sumário de urina). Qual seria nesse momento a melhor opção terapêutica?",
+    alternativas: ["Aumentar hidroclorotiazida para 25mg 2 vezes ao dia.", "Associar atenolol 100mg 1 vez ao dia.", "Associar espironolactona 25mg/dia.", "Aumentar anlodipino para 10mg 2 vezes ao dia.", "Associar clonidina 0,100mg 1 vez ao dia."],
+    correta: 2,
+    gabarito: "A questão descreve uma Hipertensão Arterial Resistente (3 drogas em doses plenas, incluindo tiazídico, sem controle). A conduta correta é adicionar espironolactona 25mg/dia como 4ª droga de escolha (reduz aldosterona e melhora o controle). Atenolol já não é preferencial como anti-hipertensivo. Aumentar HCTZ causa hipocalemia. Anlodipino já está em dose máxima. Clonidina tem alta incidência de efeitos colaterais.",
+  },
+  {
+    id: 2, tema: "HAS", enunciado: "Paciente sexo masculino, 51 anos, retorna a Unidade Básica de Saúde (UBS) assintomático, com exames. Exame físico: PA = 138 x 88 mmHg; IMC = 26 kg/m2; Glicemia de jejum = 90 mg/dL; triglicérides = 182 mg/dL e colesterol total = 195 mg/dL. A conduta mais adequada nesse caso é:",
+    alternativas: ["Iniciar hidroclorotiazida 25mg/dia", "Iniciar losartana 25mg/dia e sinvastatina 20mg/dia", "Iniciar anlodipino 5mg/dia e ciprofibrato 100mg/dia", "Terapia não farmacológica – Mudança no Estilo de Vida (MEV)", "Iniciar enalapril 5mg/dia"],
+    correta: 3,
+    gabarito: "PA de 138x88 mmHg corresponde a pré-hipertensão (PA elevada). O paciente é assintomático, sem LDL elevado, sem DM, sem DCV estabelecida. A conduta inicial mais adequada é a mudança no estilo de vida (MEV) – dieta, exercício, redução de sal, perda de peso. Iniciar anti-hipertensivo só se PA≥140×90 mmHg ou pré-HAS com alto risco cardiovascular.",
+  },
+  {
+    id: 3, tema: "HAS", enunciado: "Paciente, masculino, 59 anos, em uso de hidroclorotiazida, enalapril e anlodipino em doses plenas, com pressão arterial (PA) de consultório = 164 x 92 mmHg. MAPA 24 horas = 134 x 82; PA vigília = 134 x 76 mmHg; PA sono = 134 x 84 mmHg. Apresenta dosagem de potássio sérica = 4,2 meq/L(VN 3,5 até 5,0). Assinale a alternativa correta quanto às condutas diagnóstica e terapêutica:",
+    alternativas: ["Manter o esquema terapêutico e investigar hipertensão secundária.", "Iniciar espironolactona e investigar apneia obstrutiva do sono.", "Suspender hidroclorotiazida e iniciar dose noturna de simpaticolítico de ação central.", "Iniciar dose noturna de betabloqueador, visando à melhora do comportamento pressórico no sono."],
+    correta: 1,
+    gabarito: "A MAPA mostra PA controlada (134x82 média 24h) enquanto a PA de consultório está elevada (164x92). Isso configura Hipertensão do Avental Branco. A conduta é iniciar espironolactona (4ª droga para HAS resistente, caso fosse verdadeiramente resistente) mas principalmente investigar a SAHOS, que é a causa secundária mais prevalente da HAS resistente. O padrão de MAPA com sono ≥PA vigília (non-dipper reverso) pode sugerir SAHOS.",
+  },
+  {
+    id: 4, tema: "HAS", enunciado: "Mulher de 55 anos procura atendimento ambulatorial com queixa de cefaleia recorrente há cerca de 3 semanas, descrita como pressão difusa em região occipital, de intensidade moderada, sem náuseas ou vômitos. É hipertensa conhecida, em uso irregular de hidroclorotiazida. PA: 182×108 mmHg. Exame neurológico normal. Fundoscopia sem papiledema. Qual a hipótese diagnóstica mais provável e conduta inicial?",
+    alternativas: ["Cefaleia secundária à hipertensão arterial; solicitar tomografia de crânio urgente.", "Emergência hipertensiva; internar em UTI e reduzir agressivamente a pressão arterial.", "Cefaleia associada a hipertensão arterial não complicada; reajustar tratamento anti-hipertensivo e acompanhar resposta clínica.", "Enxaqueca sem aura; solicitar ressonância magnética de crânio."],
+    correta: 2,
+    gabarito: "PA elevada com cefaleia, mas SEM lesão de órgão-alvo (neurológico normal, sem papiledema) = Urgência Hipertensiva, não emergência. A conduta é reajustar a medicação anti-hipertensiva e acompanhar clinicamente. Tomografia não está indicada sem déficit focal. Emergência hipertensiva exigiria LOA aguda (AVC, encefalopatia, dissecção).",
+  },
+  {
+    id: 5, tema: "HAS", enunciado: "Homem de 52 anos, sem comorbidades conhecidas, comparece à consulta ambulatorial para check-up. PA média de 158×96 mmHg em medidas realizadas em duas consultas diferentes, com intervalo de uma semana. IMC 27 kg/m². Exames laboratoriais: função renal normal, potássio sérico normal, glicemia e perfil lipídico sem alterações. Não há sinais de lesão de órgão-alvo. De acordo com o consenso mais recente para tratamento da hipertensão arterial, a melhor conduta terapêutica inicial é:",
+    alternativas: ["Iniciar monoterapia com IECA ou BRA e titular a dose após 3 meses, se necessário.", "Iniciar monoterapia com betabloqueador, por ser paciente relativamente jovem.", "Iniciar monoterapia com diurético de alça, associado a restrição de sódio.", "Iniciar terapia farmacológica com associação de dois fármacos anti-hipertensivos de primeira linha."],
+    correta: 3,
+    gabarito: "PA ≥160×100 mmHg (HAS estágio 2) indica início imediato com dois fármacos anti-hipertensivos de primeira linha em combinação, conforme a Diretriz Brasileira de HAS 2025. Monoterapia isolada é insuficiente para controle em HAS estágio 2. Diurético de alça não é 1ª linha. Betabloqueador não é preferencial como 1ª linha sem indicação específica.",
+  },
+  // ──── BLOCO: DIABETES ────
+  {
+    id: 6, tema: "Diabetes", enunciado: "Paciente 60 anos apresenta TFG estimada de 52 mL/min/1,73m² e relação albumina/creatinina urinária de 50 mg/g, persistentes em exames repetidos após 4 meses. Com base nesses dados, qual é o diagnóstico mais adequado?",
+    alternativas: ["Injúria renal aguda", "Síndrome nefrítica", "Doença renal crônica", "Síndrome nefrótica"],
+    correta: 2,
+    gabarito: "Doença renal crônica (DRC) é definida por TFG <60 mL/min/1,73m² OU marcadores de dano renal (como albuminúria) por ≥3 meses. O paciente tem TFG de 52 (G3a) com albuminúria persistente por 4 meses, confirmando DRC. IRA seria aguda. Síndromes nefrótica/nefrítica exigem proteinúria >3,5g/dia ou hematúria glomerular.",
+  },
+  {
+    id: 7, tema: "Diabetes", enunciado: "Homem de 54 anos, recém-diagnosticado com diabetes mellitus tipo 2, retorna à consulta após 3 meses de seguimento. Apresentava HbA1c de 7,2% e glicemia de jejum de 148 mg/dL no diagnóstico. Optou-se por mudança intensiva do estilo de vida. HbA1c atual: 7,6%; IMC 30 kg/m². Sem DCV conhecida. A conduta terapêutica mais adequada neste momento é:",
+    alternativas: ["Iniciar terapia combinada com dois hipoglicemiantes orais, devido à falha do tratamento inicial.", "Iniciar insulinoterapia basal devido à elevação progressiva da HbA1c.", "Iniciar metformina, associada à intensificação estruturada das mudanças do estilo de vida, com reavaliação em 3 meses.", "Substituir a estratégia não farmacológica por sulfonilureia, visando maior rapidez no controle glicêmico."],
+    correta: 2,
+    gabarito: "HbA1c de 7,6% após 3 meses de MEV indica necessidade de escalonamento. A metformina é a droga de 1ª linha para DM2, segura, eficaz e de baixo custo. MEV deve ser intensificada (não abandonada). Sulfonilureia não é preferencial como 1ª linha. Insulina só é indicada se HbA1c ≥9% ou sintomas de descontrole grave.",
+  },
+  {
+    id: 8, tema: "Diabetes", enunciado: "Homem de 52 anos procura atendimento ambulatorial por fadiga e poliúria há cerca de 3 meses. Nega perda ponderal importante. Histórico familiar de diabetes tipo 2 (mãe). IMC = 31 kg/m², PA = 138×86 mmHg. Glicemia de jejum: 168 mg/dL; HbA1c: 8,1%; Creatinina: normal. O paciente encontra-se assintomático do ponto de vista metabólico. Com base nesse quadro, a melhor conduta diagnóstica e terapêutica inicial é:",
+    alternativas: ["O diagnóstico de diabetes mellitus tipo 2 está confirmado; iniciar metformina associada a mudanças no estilo de vida.", "Iniciar insulinoterapia basal imediatamente, devido ao valor elevado da HbA1c.", "Repetir a glicemia de jejum para confirmação diagnóstica e iniciar apenas mudanças no estilo de vida.", "Iniciar sulfonilureia como monoterapia, por promover controle glicêmico mais rápido."],
+    correta: 0,
+    gabarito: "Glicemia de jejum ≥126 mg/dL em uma dosagem + HbA1c ≥6,5% confirmam o diagnóstico de DM2 (dois critérios positivos dispensam repetição). A conduta inicial é metformina + MEV. Insulina não é necessária sem sintomas graves ou HbA1c ≥9-10%. Sulfonilureia não é preferencial como monoterapia inicial.",
+  },
+  {
+    id: 9, tema: "Diabetes", enunciado: "Homem de 19 anos apresenta poliúria, polidipsia, polifagia e perda ponderal de 7 kg nos últimos 2 meses. Glicemia de jejum: 286 mg/dL; HbA1c: 10,8%; Cetonúria: positiva (+). Gasometria arterial: sem acidose metabólica. IMC: 19 kg/m². Sem história familiar de diabetes tipo 2. A conduta diagnóstica e terapêutica mais adequada é:",
+    alternativas: ["Repetir a glicemia de jejum para confirmação diagnóstica e iniciar metformina como monoterapia.", "Solicitar pesquisa de autoanticorpos pancreáticos antes de iniciar qualquer tratamento.", "Iniciar hipoglicemiante oral associado a mudanças no estilo de vida e acompanhar resposta clínica.", "Confirmar o diagnóstico clínico de diabetes tipo 1 e iniciar insulinoterapia basal-bolus associada a orientações sobre automonitorização glicêmica."],
+    correta: 3,
+    gabarito: "Jovem magro com início abrupto, poliúria/polidipsia/emagrecimento e cetonúria = DM1 até prova em contrário. A insulinoterapia basal-bolus deve ser iniciada imediatamente. Autoanticorpos confirmam o diagnóstico, mas não retardam o tratamento. Metformina e sulfonilureia não são adequadas para DM1.",
+  },
+  {
+    id: 10, tema: "Diabetes", enunciado: "Maria José Oliveira, feminino, 65 anos, negra, obesa, em acompanhamento no ambulatório de clínica com diagnóstico de DM há 20 anos. HbA1c 8,8%; glicemia de jejum 289 mg/dL; sumário de urina com glicose ++ e ausência de proteínas. Em uso irregular de metformina XR 2g/dia, gliclazida MR 60mg/dia e acarbose. Qual a melhor conduta terapêutica medicamentosa?",
+    alternativas: ["Estimular a aderência ao tratamento e suspender a acarbose pois ainda não há necessidade de insulinizar.", "Manter metformina XR 2g/dia e acrescentar inibidor de SGLT2 e insulina bed time.", "Suspender a acarbose e a metformina e introduzir terapia plena com insulina.", "Manter medicação em uso e orientar dieta e atividade física.", "Manter todas as medicações e acrescentar inibidor de DPPIV."],
+    correta: 1,
+    gabarito: "Paciente descompensada (HbA1c 8,8%, glicemia 289) com DM há 20 anos, em uso irregular e em dose máxima de 2 antidiabéticos. A conduta é intensificar: manter metformina, adicionar iSGLT2 (benefício cardiovascular e renal) e insulina bed time (basal noturna) para controle glicêmico mais eficaz. Suspender apenas acarbose (contribuição marginal).",
+  },
+  // ──── BLOCO: INSUFICIÊNCIA CARDÍACA ────
+  {
+    id: 11, tema: "Insuf. Cardíaca", enunciado: "O paciente da questão acima vinha em uso de espironolactona para insuficiência cardíaca e realizou exames que mostraram K+ = 6,5 (VN 3,5 a 5,5) e função renal normal. Foi suspensa a espironolactona. O médico assistente notou ainda arritmia complexa ao ECG. Qual das opções abaixo seria a melhor para o tratamento imediato da hipercalemia que estabiliza a membrana celular?",
+    alternativas: ["Hemodiálise", "Fenoterol inalado", "Gluconato de cálcio", "Poliestireno sulfonato de cálcio", "Furosemida"],
+    correta: 2,
+    gabarito: "Hipercalemia grave (K+6,5) com arritmia complexa ao ECG = emergência. O gluconato de cálcio EV é a medida IMEDIATA para estabilizar a membrana cardíaca (antagonista de membrana). Não reduz o potássio, mas protege o coração. A seguir: insulina + glicose, bicarbonato, kayexalate (resina) e se necessário diálise.",
+  },
+  {
+    id: 12, tema: "Insuf. Cardíaca", enunciado: "Paciente, feminino, 60 anos, diabética, apresenta quadro de diarreia intensa há 2 dias. Ao exame: desidratada, levemente hipotensa, com glicemia aleatória de 200 mg/dL, sódio 160 mEq/L (VN 135-145) e potássio normal. Qual a opção de reidratação para esta paciente?",
+    alternativas: ["Solução salina hipertônica venosa", "Solução glicosada venosa", "Terapia de reidratação oral", "Solução salina isotônica venosa", "Solução salina hipotônica venosa"],
+    correta: 3,
+    gabarito: "Paciente com hipernatremia (Na=160), desidratada com glicemia elevada. A solução salina isotônica (SF 0,9%) é a escolha inicial para expansão volêmica segura, evitando queda rápida do sódio (risco de edema cerebral). A salina hipotônica é usada após estabilização. Terapia oral é contraindicada em desidratação moderada-grave com vômitos/diarreia intensa.",
+  },
+  {
+    id: 13, tema: "Insuf. Cardíaca", enunciado: "Com relação ao tratamento da insuficiência cardíaca crônica, é CORRETO afirmar que:",
+    alternativas: ["Todas as alternativas estão corretas.", "A espironolactona reduz a mortalidade na insuficiência cardíaca de pacientes com insuficiência cardíaca em classe funcional III ou IV da NYHA, com fração de ejeção reduzida.", "A digoxina reduz o risco de hospitalização, sem redução da mortalidade de pacientes com insuficiência cardíaca crônica.", "A ivabradina associada à terapêutica-padrão da insuficiência cardíaca em paciente com frequência cardíaca >70 bpm e ritmo sinusal reduz o risco do evento combinado de morte cardiovascular ou hospitalização por insuficiência cardíaca.", "Os diuréticos na insuficiência cardíaca reduzem a retenção hídrica e melhoram a qualidade de vida do paciente."],
+    correta: 0,
+    gabarito: "Todas as afirmativas estão corretas: A) Espironolactona reduz mortalidade em CF III-IV com FEr; B) Digoxina reduz hospitalização mas não mortalidade (estudo DIG); C) Ivabradina (SHIFT trial): reduz desfecho combinado morte CV + hospitalização IC em FC>70 ritmo sinusal; D) Diuréticos melhoram sintomas e qualidade de vida, sem redução de mortalidade.",
+  },
+  {
+    id: 14, tema: "Insuf. Cardíaca", enunciado: "Paciente, homem, 50 anos, acompanhado no ADAB por dislipidemia, assintomático, em tratamento medicamentoso há seis meses. A dosagem atual da creatinofosfokinase = 363 U/L (Valores de referência = 55 a 170 U/L). A conduta em relação ao hipolipemiante em uso (sinvastatina 20mg/dia) é:",
+    alternativas: ["Trocar para ciprofibrato 100mg/dia", "Manter o uso", "Diminuir a dose", "Suspender", "Trocar para atorvastatina 10mg/dia"],
+    correta: 1,
+    gabarito: "CPK elevada (363 U/L) em uso de estatina pode indicar miotoxicidade. No entanto, a elevação é considerada clinicamente significativa apenas quando >4× o limite superior da normalidade (LSN ~680 U/L neste caso). Com CPK 363, assintomático, a conduta é MANTER a estatina e monitorar. Só suspender se CPK >10× LSN ou com sintomas de miopatia.",
+  },
+  {
+    id: 15, tema: "Insuf. Cardíaca", enunciado: "Qual das opções a seguir traz o grupo de medicamentos mais seguros para o tratamento da insuficiência cardíaca na gravidez?",
+    alternativas: ["Digoxina, nitrato, enalapril, furosemida", "Digoxina, carvedilol, espironolactona, sacubitril-valsartana", "Losartana, hidralazina, carvedilol, furosemida", "Carvedilol, hidralazina, losartana, nitrato", "Hidralazina, nitrato, digoxina, furosemida"],
+    correta: 4,
+    gabarito: "Na gestação, os fármacos contraindicados incluem IECA (enalapril), BRA (losartana), espironolactona e sacubitril-valsartana por teratogenicidade. Os seguros são: hidralazina (vasodilatador), nitrato, digoxina (controle de frequência) e furosemida (com cautela). Carvedilol pode ser usado mas com vigilância fetal.",
+  },
+  // ──── BLOCO: DAC / SCA ────
+  {
+    id: 16, tema: "DAC / SCA", enunciado: "Qual medicamento utilizado para o tratamento de pacientes com doença arterial coronária crônica NÃO reduz o risco de infarto do miocárdio ou mortalidade?",
+    alternativas: ["Inibidor da enzima conversora da angiotensina (IECA).", "Ácido acetilsalicílico (AAS)", "Estatina.", "Nitrato oral de longa duração.", "Betabloqueador em pacientes com fração de ejeção menor do que 40%."],
+    correta: 3,
+    gabarito: "O nitrato de longa ação é um fármaco ANTI-ISQUÊMICO (melhora sintomas e qualidade de vida) mas NÃO reduz mortalidade ou infarto em DAC crônica. Em contraste: AAS reduz eventos trombóticos; estatinas reduzem LDL e estabilizam placa; IECA reduz mortalidade especialmente em disfunção ventricular; BB reduz mortalidade pós-IAM.",
+  },
+  {
+    id: 17, tema: "DAC / SCA", enunciado: "Paciente portador de doença arterial coronariana (DAC) crônica estável, com sintomas de dor anginosa aos grandes esforços. Apresenta ecocardiograma com fração de ejeção do ventrículo esquerdo (FEVE) igual a 35%. Qual, dentre as drogas abaixo, NÃO deve ser utilizada neste tipo de paciente?",
+    alternativas: ["Diltiazem.", "Nitratos de ação rápida.", "Atorvastatina.", "Maleato de enalapril.", "Bisoprolol."],
+    correta: 0,
+    gabarito: "Diltiazem (BCC não-dihidropiridínico) é CONTRAINDICADO em pacientes com FE reduzida (<40%) pois possui efeito inotrópico negativo, podendo piorar a IC. Os BCC dihidropiridínicos (anlodipino) podem ser usados. IECA, estatina, BB e nitratos de resgate são indicados neste perfil.",
+  },
+  {
+    id: 18, tema: "DAC / SCA", enunciado: "Em relação à doença arterial coronariana (DAC) estável, os objetivos fundamentais do tratamento incluem: (1) prevenir o infarto do miocárdio e reduzir a mortalidade; e (2) reduzir os sintomas e a ocorrência da isquemia miocárdica, propiciando melhor qualidade de vida. Assinale a alternativa correta acerca do exposto:",
+    alternativas: ["A ivabradina é especialmente benéfica para pacientes com disfunção ventricular esquerda e frequência cardíaca > 120 bpm.", "A trimetazidina é uma substância com efeitos metabólicos e anti-isquêmicos com vários efeitos na hemodinâmica cardiovascular.", "Bloqueadores beta-adrenérgicos – isoladamente ou em associação com outros agentes antianginosos – constituem-se medicamentos de segunda linha para o tratamento da angina estável.", "Antagonistas dos canais de cálcio constituem-se um grupo heterogêneo de medicamentos cujos efeitos farmacológicos incluem relaxamento da musculatura lisa.", "Quanto à terapêutica medicamentosa, antiagregantes plaquetários, hipolipemiantes (em especial as estatinas), bloqueadores beta-adrenérgicos pós-infarto agudam o miocárdio (AM) e inibidores da enzima conversora de angiotensina I (IECA) reduzem a incidência de infarto e aumentam a sobrevida."],
+    correta: 4,
+    gabarito: "A letra E está correta: AAS + estatinas + BB pós-IAM + IECA constituem o pilar de prevenção secundária na DAC, reduzindo mortalidade e eventos cardiovasculares. A ivabradina é indicada com FC >70 (não >120). Trimetazidina tem efeito puramente metabólico, sem ação hemodinâmica. BB são primeira linha na angina, não segunda.",
+  },
+  {
+    id: 19, tema: "DAC / SCA", enunciado: "Paciente sexo feminino, 75 anos, diabética, com epigastralgia há 40 minutos, eletrocardiograma com bloqueio de ramo esquerdo, não documentado previamente, dosagem de troponina indisponível até o momento. Marque a alternativa correta.",
+    alternativas: ["Bloqueio de ramo esquerdo novo, isoladamente, caracteriza infarto agudo do miocárdio. Realizar cateterismo cardíaco.", "Bloqueio de ramo esquerdo novo, isoladamente, não caracteriza infarto agudo do miocárdio. Realizar dosagem de troponina.", "Apenas a dosagem positiva de troponina pode caracterizar uma síndrome coronariana aguda.", "Paciente com diagnóstico improvável de síndrome coronariana aguda a despeito da alteração eletrocardiográfica."],
+    correta: 1,
+    gabarito: "BRE NOVO NÃO caracteriza isoladamente IAM (mudança importante em relação às diretrizes antigas). Deve-se realizar dosagem de troponina para confirmar lesão miocárdica antes de indicar cateterismo de urgência. Caso a troponina seja positiva associada ao BRE novo, aí se considera o equivalente a IAMCSST.",
+  },
+  {
+    id: 20, tema: "DAC / SCA", enunciado: "Sobre o tratamento da Síndrome Coronariana Aguda (SCA), é correto afirmar:",
+    alternativas: ["Inibidores mineralocorticoides são indicados para pacientes com SCA de qualquer tipo ou gravidade.", "A dupla antiagregação plaquetária deve, como regra, ser prescrita para todos os pacientes com infarto agudo do miocárdio.", "A terapia com estatina de alta potência deve ser prescrita para todos os pacientes com SCA, exceto se o LDL colesterol estiver abaixo de 55mg/dL.", "A angioplastia primária é um pilar do tratamento agudo de SCA independente se com ou sem supradesnível do segmento ST."],
+    correta: 1,
+    gabarito: "A dupla antiagregação (AAS + inibidor P2Y12 como ticagrelor ou clopidogrel) é indicada para TODOS os pacientes com IAM. Estatina de alta potência é indicada para TODOS com SCA, independente do LDL. Angioplastia primária é indicação formal em IAMCSST; no IAMSST a indicação depende do risco. Inibidores mineralocorticoides são indicados em FE≤40% com IC ou DM pós-IAM.",
+  },
+  // ──── BLOCO: TIREOIDE ────
+  {
+    id: 21, tema: "Tireoide", enunciado: "Mulher de 74 anos comparece à consulta ambulatorial por fadiga progressiva, lentificação psicomotora e constipação intestinal há cerca de 8 meses. Pele seca e fria. Reflexos tendinosos com fase de relaxamento lenta. TSH: 18 μUI/mL (VR: 0,4–4,5); T4 livre: 0,6 ng/dL (VR: 0,8–1,9). A conduta diagnóstica e terapêutica mais adequada é:",
+    alternativas: ["Confirmar o diagnóstico de hipotireoidismo primário e iniciar levotiroxina em baixa dose, com titulação gradual.", "Iniciar levotiroxina em dose plena calculada por peso corporal, visando normalização do TSH.", "Diagnosticar hipotireoidismo subclínico e apenas acompanhar com nova dosagem hormonal em 6 meses.", "Tratar apenas se surgirem sintomas clássicos mais exuberantes, devido à idade avançada."],
+    correta: 0,
+    gabarito: "TSH elevado (18) + T4 livre baixo = hipotireoidismo primário manifesto. Em idosos e cardiopatas, a levotiroxina deve ser iniciada em BAIXA DOSE (12,5-25 mcg/dia) com titulação gradual a cada 4-6 semanas (risco de descompensação cardiovascular com dose plena). A dose plena calculada por peso (1,6 mcg/kg) é para jovens adultos sem comorbidades.",
+  },
+  {
+    id: 22, tema: "Tireoide", enunciado: "Mulher de 34 anos comparece à unidade básica de saúde relatando perda ponderal não intencional de 6 kg em 2 meses, palpitações, intolerância ao calor, tremores finos em extremidades e ansiedade. Ao exame físico: FC 112 bpm, PA 146×88 mmHg, pele quente e úmida, bócio difuso não nodular e tremor fino postural. TSH < 0,01 μUI/mL; T4 livre elevado; T3 elevado. O diagnóstico mais provável e a melhor conduta terapêutica inicial são:",
+    alternativas: ["Doença de Graves; iniciar betabloqueador não seletivo e droga antitireoidiana (metimazol).", "Adenoma tóxico; indicar radioiodoterapia como tratamento inicial imediato.", "Hipertireoidismo central; solicitar ressonância magnética de hipófise antes de tratamento.", "Tireoidite subaguda; iniciar anti-inflamatório não esteroidal e observar evolução clínica."],
+    correta: 0,
+    gabarito: "Hipertireoidismo em jovem com bócio DIFUSO = Doença de Graves (anticorpo TRAb). Tratamento: metimazol (antitireoidiano) + propranolol (betabloqueador não seletivo) para controle dos sintomas adrenérgicos rapidamente. Adenoma tóxico tem bócio nodular. Tireoidite subaguda é autolimitada. Hipertireoidismo central é raro.",
+  },
+  {
+    id: 23, tema: "Tireoide", enunciado: "Mulher, 37 anos, apresentando irregularidade menstrual, alopecia com eflúvio anágeno e transtorno do humor. Exames laboratoriais evidenciam TSH = 12 mUI/L e T4 livre = 0,2 ng/dL. Qual o diagnóstico mais provável?",
+    alternativas: ["Esclerodermia", "Doença de Graves", "Carcinoma papilífero da tireoide", "Tireoidite de Hashimoto"],
+    correta: 3,
+    gabarito: "TSH muito elevado (12) com T4 livre baixo = hipotireoidismo primário. A causa mais comum em mulheres jovens é a Tireoidite de Hashimoto (tireoidite autoimune crônica). Os anticorpos anti-TPO e anti-Tireoglobulina confirmam o diagnóstico. Doença de Graves causa HIPERtireoidismo. A combinação alopecia + irregularidade menstrual + humor é típica do hipotireoidismo.",
+  },
+  {
+    id: 24, tema: "Tireoide", enunciado: "Mulher, 45 anos, refere quadro de perda de peso, palpitação e insônia há 1 mês. Nega uso de medicamentos. Ao exame físico: bom estado geral, sem alterações oftalmológicas, normotensa, taquicárdica, nódulo palpável em lobo direito da tireoide, sem outras alterações. Assinale a alternativa CORRETA quanto à conduta e hipótese diagnóstica:",
+    alternativas: ["Dosagens de TSH, TRAb e ultrassonografia da tireoide. Doença de Graves.", "Dosagens de TSH, T4 livre e anti TPO. Doença de Graves.", "Dosagens de TSH, T4 livre e cintilografia da tireoide. Doença de Plummer.", "Dosagens de TSH, TRAb e ultrassonografia da tireoide. Tireoidite de Hashimoto.", "Dosagens de TSH, T4 livre e antiTPO. Tireoidite de Hashimoto."],
+    correta: 2,
+    gabarito: "Hipertireoidismo com NÓDULO SOLITÁRIO (sem exoftalmia, sem bócio difuso) = Doença de Plummer (adenoma tóxico). A cintilografia é o exame de escolha para identificar o nódulo 'quente' autônomo (hiperfuncionante). O TRAb é específico para Graves. A USG identifica nódulos mas não a funcionalidade. Anti-TPO é para Hashimoto.",
+  },
+  // ──── BLOCO: NEFROLOGIA ────
+  {
+    id: 25, tema: "Nefrologia", enunciado: "Paciente de 58 anos com Doença Renal Crônica e proteinúria de 800 mg/g apresenta PA de 152x94 mmHg. Dentre as opções abaixo, qual classe medicamentosa de anti-hipertensivo oral deve ser priorizada?",
+    alternativas: ["Diurético isolado", "Bloqueador de canal de cálcio", "Inibidor da Enzima Conversora de Angiotensina", "Betabloqueador"],
+    correta: 2,
+    gabarito: "Em pacientes com DRC e proteinúria significativa (≥300 mg/g), os IECA ou BRA são a classe de escolha por oferecerem nefroproteção adicional além do controle pressórico (reduzem a pressão intraglomerular e a proteinúria). BCC são úteis em combinação mas não como monoproteção renal. Betabloqueadores não têm efeito nefroprotetor.",
+  },
+  {
+    id: 26, tema: "Nefrologia", enunciado: "Paciente de 70 anos, internado por pneumonia grave, evolui com hipotensão e redução da diurese (0,3 mL/kg/h nas últimas 12 horas). Creatinina aumentou de 1,0 para 1,9 mg/dL em 48 horas. Qual é o mecanismo mais provável da injúria renal?",
+    alternativas: ["Glomerulonefrite rapidamente progressiva", "Nefrite intersticial medicamentosa", "Necrose tubular aguda isquêmica", "Obstrução urinária por hipertrofia prostática"],
+    correta: 2,
+    gabarito: "Em sepse com hipotensão, o mecanismo mais comum de IRA é a Necrose Tubular Aguda (NTA) isquêmica, secundária à hipoperfusão renal prolongada. A NTA é a causa mais comum de IRA intrínseca em pacientes hospitalizados. Nefrite intersticial seria mais associada a uso de antibióticos. Obstrução seria pós-renal (oligúria sem hipotensão).",
+  },
+  {
+    id: 27, tema: "Nefrologia", enunciado: "Paciente feminina, 29 anos, com lúpus eritematoso sistêmico, apresenta-se clinicamente estável com as seguintes alterações nos exames laboratoriais: hematúria, proteinúria de 3,7 g/dia e elevação da creatinina. Qual é a melhor conduta nesse caso?",
+    alternativas: ["Iniciar antibiótico", "Realizar biópsia renal", "Realizar corticoide empiricamente", "Iniciar diurético"],
+    correta: 1,
+    gabarito: "Paciente com LES e proteinúria >3g/dia + hematúria + elevação de creatinina = nefrite lúpica provável. A biópsia renal é OBRIGATÓRIA para classificar histologicamente (Classe I a VI da ISN/RPS) e definir o tratamento imunossupressor adequado. Corticoide empírico pode ser usado em casos muito graves enquanto se aguarda biópsia, mas não substitui o diagnóstico histológico.",
+  },
+  // ──── BLOCO: PNEUMOLOGIA ────
+  {
+    id: 28, tema: "Pneumologia", enunciado: "Paciente do sexo masculino, 18 anos, vai ao seu médico para acompanhamento de asma. Seu peakflow foi de 400L/min (80% do seu melhor valor obtido) e atualmente faz uso de budesonida 400μg inalados duas vezes ao dia e utilizada salbutamol inalado 2 a 3 vezes ao dia. Há boa aderência à medicação, entretanto, desperta 2 a 3 vezes por semana com tosse que é aliviada com 'bombadas' de salbutamol. Qual das seguintes condutas é a melhor abordagem para este paciente neste momento?",
+    alternativas: ["Prescrever Claritromicina 250mg duas vezes ao dia.", "Iniciar Prednisona 20mg/dia, associado a bamifilina 300mg via oral a noite.", "Prescrever Prednisona 40mg por dia durante sete dias.", "Iniciar Prednisona 40mg/dia, reduzindo para 20 e 10mg a cada dois dias, até uma semana.", "Adicionar um ß-agonista de longa ação como formoterol ao tratamento com budesonida."],
+    correta: 4,
+    gabarito: "Paciente com asma parcialmente controlada (sintomas noturnos 2-3x/semana, uso de SABA frequente) já em CI em dose média. O próximo passo é STEP UP: adicionar LABA (formoterol ou salmeterol) ao corticoide inalatório. Esta associação CI+LABA é o padrão de tratamento no Step 3. Corticoides orais são reservados para crises. Claritromicina não tem indicação.",
+  },
+  {
+    id: 29, tema: "Pneumologia", enunciado: "Mulhe cis de 28 anos atendida em Pronto atendimento, sem comorbidades, refere tosse produtiva com escarro purulento, desconforto torácico e febre há 3 dias. FC 100 bpm; FR 25 irpm; Saturação O2 95% em repouso; ausculta pulmonar com estertores úmidos na base esquerda. Radiografia torácica revela infiltrado no lobo inferior esquerdo. Ureia 17,5 mg/dL; Leuco 18.000 (bastões 6%). Com base no escore de risco CURB-65 qual a conduta terapêutica mais adequada?",
+    alternativas: ["Tratamento ambulatorial com terapêutica via oral, com amoxilina com ácido clavulânico.", "Tratamento ambulatorial com terapêutica via oral com moxifloxacino.", "Tratamento hospitalar em UTI com terapêutica EV, com cefalosporina de terceira geração.", "Tratamento hospitalar em enfermaria com terapêutica EV, com quinolona respiratória."],
+    correta: 0,
+    gabarito: "CURB-65: Confusão (0) + Ureia <43mg/dL (0) + FR≥30 (0) + PA<90/60 (0) + Idade ≥65 (0) = CURB-65 = 0. CURB 0-1: tratamento AMBULATORIAL. A droga de escolha para PAC leve em ambulatório é Amoxicilina 500mg 8/8h ou com clavulanato. Moxifloxacino é reservado para falha terapêutica ou alergia à penicilina.",
+  },
+  {
+    id: 30, tema: "Pneumologia", enunciado: "JSS, 48 anos, masculino, em acompanhamento ambulatorial com diagnóstico de HAS, rinite e asma. Vem para consulta com queixa de pigarro frequente e crises de tosse há 2 meses. Ao exame: FC=79bpm; PA=170x90mmHg; FR=18ipm; Temperatura axilar=36,5C; AR: murmúrio vesicular bem distribuído e com sibilos esparsos. O paciente está em crise de asma e tem indicação do uso de corticoide sistêmico. Marque a alternativa correta para o caso acima:",
+    alternativas: ["O paciente está em crise de asma e tem indicação do uso de corticoide sistêmico.", "O uso do antimicrobiano está indicado mesmo na ausência de febre.", "A pressão arterial está elevada constitui uma emergência hipertensiva."],
+    correta: 0,
+    gabarito: "FC normal, PA elevada mas sem LOA, sibilos ao AR = crise de asma. Corticoide sistêmico (prednisolona) está indicado em crises moderadas-graves para reverter inflamação brônquica. A PA elevada não constitui emergência sem LOA. Antibiótico não é indicado sem evidência de infecção bacteriana. Crises de asma têm como pilares: SABA + corticoide sistêmico + O2.",
+  },
+  // ──── BLOCO: GASTRO & INFECTO ────
+  {
+    id: 31, tema: "Gastro & Infecto", enunciado: "Mário tem 45 anos refere empachamento pós prandial e queimação epigástrica há mais de 06 meses, podemos afirmar que:",
+    alternativas: ["Ele deve realizar uma endoscopia digestiva alta.", "O paciente pode receber um tratamento com inibidor de bomba de próton por oito semanas, recomendações de MEV e ser reavaliado.", "Entrar com um pró-cinético como primeira escolha.", "Os anti depressivos tricíclicos estão contra-indicados no controle dos sintomas."],
+    correta: 1,
+    gabarito: "Dispepsia funcional (empachamento + queimação epigástrica >6 meses) sem sinais de alarme em <45 anos: conduta é TRATAMENTO EMPÍRICO com IBP por 8 semanas + MEV e reavaliação. EDA só é obrigatória com sinais de alarme (disfagia, emagrecimento, hematêmese, anemia) ou falha terapêutica. Pró-cinéticos são opção, não primeira escolha. ADT (amitriptilina) são usados na dispepsia funcional refratária.",
+  },
+  {
+    id: 32, tema: "Gastro & Infecto", enunciado: "Paciente sexo feminino, 62 anos, procura atendimento com queixa de pirose há 10 anos. Relata que faz uso contínuo de Omeprazol, porém sem melhora do quadro, que piora nos períodos de maior estresse. A paciente relata também já ter feito tratamento para H. pylori cerca de 3 anos e refere que vem perdendo peso, cerca de 8 Kg em 3 meses. Em relação aos dados relatados acima, qual o principal exame para essa paciente?",
+    alternativas: ["Manometria e pHmetria esofágica", "Endoscopia digestiva alta", "Colonoscopia", "Tomografia de abdome superior"],
+    correta: 1,
+    gabarito: "Paciente com DRGE refratária ao IBP (10 anos), com perda de peso expressiva (8kg/3 meses) = SINAL DE ALARME. A EDA é obrigatória para excluir neoplasia esofágica ou gástrica, Esôfago de Barrett com displasia e outras causas estruturais de pirose refratária. Sinais de alarme na DRGE: disfagia progressiva, odinofagia, perda de peso, hematêmese.",
+  },
+  {
+    id: 33, tema: "Gastro & Infecto", enunciado: "Mulher, 47 anos, internada com diarreia severa e desidratação evoluiu no internamento sonolência e com perda de motricidade nos quatro membros. O neurologista sugeriu uma Ressonância Nuclear Magnética de crânio que mostrou uma desmielinização em topografia de tronco encefálico. Qual situação mais provavelmente precipitou este problema?",
+    alternativas: ["Correção lenta de uma hipercalemia", "Piora do quadro de desidratação", "Piora de uma hipomagnesemia", "Correção rápida de uma hiponatremia", "Acidente Vascular Cerebral (AVC) isquêmico hemisférico"],
+    correta: 3,
+    gabarito: "Desmielinização de tronco encefálico = Síndrome de Desmielinização Osmótica (SDO), anteriormente chamada mielinólise pontina central. É causada pela CORREÇÃO RÁPIDA da hiponatremia. Pacientes desidratados com diarreia frequentemente desenvolvem hiponatremia. A correção deve ser lenta (<8-10 mEq/L nas primeiras 24h). Correção rápida causa edema osmótico das células mielinizadas.",
+  },
+  {
+    id: 34, tema: "Gastro & Infecto", enunciado: "Com relação aos sinais de alarme na Dengue, é mais correto afirmar que:",
+    alternativas: ["Desde o início da doença o paciente já apresenta sinais de que não vai evoluir bem.", "O paciente que não desenvolve sinais de alarme até 4-5o dias de doença certamente terá uma boa evolução.", "Dor abdominal intensa, vômitos persistentes, elevação do hematócrito, hipotensão postural, letargia... são sinais de gravidade que precisam ser pesquisados apenas nos pacientes com a forma grave da doença.", "A maioria dos sinais de alarme é resultante do aumento da permeabilidade vascular, podem surgir entre o 3-4o dias de doença e esta possibilidade deve ser avisada a todos os pacientes com Dengue."],
+    correta: 3,
+    gabarito: "Os sinais de alarme na dengue ocorrem classicamente no período de defervescência (3-4º dia), quando há aumento da permeabilidade vascular com extravasamento de plasma. São eles: dor abdominal intensa, vômitos persistentes, acúmulo de líquidos, sangramento mucoso, letargia, hipotensão postural, hepatomegalia >2cm, aumento do hematócrito. TODOS os pacientes devem ser orientados sobre esses sinais.",
+  },
+  // ──── BLOCO: HEMATOLOGIA ────
+  {
+    id: 35, tema: "Hematologia", enunciado: "O Sr. Everaldo tem 70 anos e está em investigação de anemia; o médico na consulta anterior solicitou exames laboratoriais. O hemograma e o esfregaço revelaram anemia macrocítica com anisocitose e poiquilocitose, grandes eritrócitos ovais (macro-ovalócitos), neutrófilos hipersegmentados e reticulocitopenia. Qual o diagnóstico dessa anemia?",
+    alternativas: ["Anemia hemolítica", "Anemia megaloblástica", "Anemia ferropriva", "Anemia aplástica", "Anemia autoimune"],
+    correta: 1,
+    gabarito: "A tríade clássica de Anemia Megaloblástica é: VCM elevado (macrocitose) + neutrófilos hipersegmentados (≥5 lobos) + macro-ovalócitos no esfregaço + reticulocitopenia + DHL muito elevada. As causas são deficiência de B12 ou ácido fólico. Anemia hemolítica teria reticulocitose. Ferropriva é microcítica. Aplástica tem pancitopenia.",
+  },
+  {
+    id: 36, tema: "Hematologia", enunciado: "Paciente 18 anos portador de anemia falciforme, apresenta poliartralgia intensa há 1 dia tendo feito uso de 4 comprimidos de dipirona e 2 de Tylex (codeína/paracetamol) sem resposta, deu entrada na emergência ainda com muita dor. Qual opção terapêutica deveria ser instituída junto com a hidratação vigorosa?",
+    alternativas: ["Morfina EV iniciando sempre em baixas doses", "Tramadol EV com metoclopramida em pré medicação", "Fentanil em forma de adesivos cutâneos", "Paracetamol VO na dose de 4g/dia", "Morfina EV sempre em dose maior que a equianalgésica"],
+    correta: 0,
+    gabarito: "Crise vasooclusiva grave em anemia falciforme sem resposta a analgésicos não opioides: a morfina EV é o opioide de escolha. Deve ser iniciada em dose padrão (não necessariamente baixa, mas titulada conforme resposta). Tramadol tem menor potência analgésica para dor grave. Fentanil transdérmico não é adequado para dor aguda (onset lento). O tratamento é morfina + hidratação + O2 se necessário.",
+  },
+  {
+    id: 37, tema: "Hematologia", enunciado: "Homem, 55 anos, sem comorbidades. Anemia microcítica hipocrômica, ferritina 4 ng/mL. Nega sangramento visível. Não usa AINEs. Além de iniciar reposição de ferro, qual é a conduta prioritária?",
+    alternativas: ["Investigar sangramento oculto no trato gastrointestinal", "Solicitar eletroforese de hemoglobina", "Pesquisar anticorpos antinucleares", "Solicitar dosagem de vitamina B12"],
+    correta: 0,
+    gabarito: "Homem ≥50 anos com anemia ferropriva sem causa evidente (sem sangramento visível, sem uso de AINEs) = investigação mandatória de sangramento oculto no TGI (colonoscopia + EDA). O câncer colorretal é a causa mais importante a ser excluída nesse perfil. Talassemia teria ferritina normal. ANA e B12 não estão indicados na anemia ferropriva.",
+  },
+];
+
+// ─── COMPONENTES ─────────────────────────────────────────────────────────────
+
+const TEMAS_UNICOS = [...new Set(QUESTOES.map(q => q.tema))];
+
+function MetricCard({ label, value, sub, accent }) {
+  return (
+    <div style={{ borderColor: accent + "40" }} className="bg-gray-900 border rounded-xl p-4 flex flex-col gap-1 min-w-0">
+      <span className="text-gray-400 text-xs font-medium uppercase tracking-wider truncate">{label}</span>
+      <span style={{ color: accent }} className="text-3xl font-black tabular-nums leading-none">{value}</span>
+      {sub && <span className="text-gray-500 text-xs">{sub}</span>}
+    </div>
+  );
+}
+
+function ProgressBar({ percent }) {
+  const color = percent >= 80 ? "#4ade80" : percent >= 60 ? "#facc15" : "#f87171";
+  const glow = percent >= 80 ? "0 0 8px #4ade8088" : "none";
+  return (
+    <div className="h-1.5 bg-gray-700 rounded-full overflow-hidden mt-2">
+      <div style={{ width: `${percent}%`, background: color, boxShadow: glow, transition: "width 0.5s ease" }} className="h-full rounded-full" />
+    </div>
+  );
+}
+
+function ResumoCard({ card }) {
+  return (
+    <div className={`${card.color} border rounded-2xl p-5 flex flex-col gap-3`}>
+      <div className="flex items-center gap-2 mb-1">
+        <span className="text-xl">{card.icon}</span>
+        <h3 className={`font-bold text-base ${card.titleColor}`}>{card.title}</h3>
+      </div>
+      {card.content.map((block, i) => {
+        if (block.type === "table") return (
+          <div key={i} className="overflow-x-auto rounded-lg">
+            <table className="w-full text-xs border-collapse">
+              <thead>
+                <tr>
+                  {block.headers.map((h, j) => (
+                    <th key={j} className="bg-black/10 px-2 py-1.5 text-left font-semibold text-gray-700 border border-white/30">{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {block.rows.map((row, j) => (
+                  <tr key={j} className="even:bg-black/5">
+                    {row.map((cell, k) => (
+                      <td key={k} className="px-2 py-1.5 border border-white/20 text-gray-700 text-xs">{cell}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        );
+        if (block.type === "badge-list") return (
+          <div key={i}>
+            {block.label && <p className="text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">{block.label}</p>}
+            <div className="flex flex-wrap gap-1.5">
+              {block.items.map((item, j) => (
+                <span key={j} className="bg-white/60 border border-white/80 text-gray-700 text-xs px-2.5 py-1 rounded-full font-medium shadow-sm">{item}</span>
+              ))}
+            </div>
+          </div>
+        );
+        if (block.type === "numbered") return (
+          <ol key={i} className="space-y-1">
+            {block.items.map((item, j) => (
+              <li key={j} className="flex gap-2 text-xs text-gray-700">
+                <span className="flex-shrink-0 w-5 h-5 rounded-full bg-white/70 border border-white/80 flex items-center justify-center font-bold text-gray-600">{j + 1}</span>
+                <span className="pt-0.5">{item}</span>
+              </li>
+            ))}
+          </ol>
+        );
+        if (block.type === "alert") return (
+          <div key={i} className="bg-white/50 border-l-4 border-yellow-500 rounded-r-lg px-3 py-2 text-xs text-gray-700 font-medium flex gap-2">
+            <span className="flex-shrink-0">⚡</span>
+            <span>{block.text}</span>
+          </div>
+        );
+        return null;
+      })}
+    </div>
+  );
+}
+
+function QuestaoCard({ q, idx }) {
+  const [selected, setSelected] = useState(null);
+  const [showGabarito, setShowGabarito] = useState(false);
+
+  const handleSelect = (i) => {
+    if (selected !== null) return;
+    setSelected(i);
+    setShowGabarito(true);
+  };
+
+  return (
+    <div className="bg-gray-900 border border-gray-700/60 rounded-2xl overflow-hidden">
+      <div className="px-5 py-4 border-b border-gray-700/60 flex items-start gap-3">
+        <span className="flex-shrink-0 w-8 h-8 rounded-xl bg-gray-800 border border-gray-600 flex items-center justify-center text-xs font-black text-gray-300">{idx + 1}</span>
+        <p className="text-sm text-gray-200 leading-relaxed">{q.enunciado}</p>
+      </div>
+      <div className="px-5 py-4 space-y-2">
+        {q.alternativas.map((alt, i) => {
+          const letra = String.fromCharCode(65 + i);
+          let bg = "bg-gray-800/60 border-gray-700 hover:bg-gray-700/60 hover:border-gray-500";
+          let textColor = "text-gray-300";
+          if (selected !== null) {
+            if (i === q.correta) { bg = "bg-emerald-900/60 border-emerald-500"; textColor = "text-emerald-200"; }
+            else if (i === selected && i !== q.correta) { bg = "bg-red-900/60 border-red-500"; textColor = "text-red-200"; }
+            else { bg = "bg-gray-800/40 border-gray-700/40"; textColor = "text-gray-500"; }
+          }
+          return (
+            <button key={i} onClick={() => handleSelect(i)}
+              className={`w-full text-left flex items-start gap-3 border rounded-xl px-4 py-3 transition-all duration-200 ${bg} ${selected === null ? "cursor-pointer" : "cursor-default"}`}>
+              <span className={`flex-shrink-0 w-6 h-6 rounded-full border flex items-center justify-center text-xs font-bold ${selected !== null && i === q.correta ? "bg-emerald-500 border-emerald-400 text-white" : selected !== null && i === selected && i !== q.correta ? "bg-red-500 border-red-400 text-white" : "border-gray-600 text-gray-400"}`}>{letra}</span>
+              <span className={`text-sm leading-relaxed ${textColor}`}>{alt}</span>
+            </button>
+          );
+        })}
+      </div>
+      {showGabarito && (
+        <div className="mx-5 mb-5 rounded-xl bg-indigo-950/80 border border-indigo-500/30 p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-indigo-400 font-bold text-xs uppercase tracking-widest">💡 Gabarito Comentado</span>
+          </div>
+          <p className="text-sm text-indigo-100/90 leading-relaxed">{q.gabarito}</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── APP PRINCIPAL ────────────────────────────────────────────────────────────
+
+export default function ClinicaIntegradaIII() {
+  const [activeTab, setActiveTab] = useState("simulado");
+  const [temaAtivo, setTemaAtivo] = useState(RESUMOS[0].id);
+  const [temaSimulado, setTemaSimulado] = useState("Todos");
+  const [respostas, setRespostas] = useState({});
+
+  const resumoAtivo = RESUMOS.find(r => r.id === temaAtivo);
+
+  const questoesFiltradas = temaSimulado === "Todos" ? QUESTOES : QUESTOES.filter(q => q.tema === temaSimulado);
+
+  const total = QUESTOES.length;
+  const respondidas = Object.keys(respostas).length;
+  const acertos = Object.entries(respostas).filter(([id, val]) => {
+    const q = QUESTOES.find(q => q.id === parseInt(id));
+    return q && val === q.correta;
+  }).length;
+  const aproveitamento = respondidas > 0 ? Math.round((acertos / respondidas) * 100) : 0;
+
+  const getTemaStat = (tema) => {
+    const qs = QUESTOES.filter(q => q.tema === tema);
+    const resp = qs.filter(q => respostas[q.id] !== undefined);
+    const acert = resp.filter(q => respostas[q.id] === q.correta);
+    const pct = resp.length > 0 ? Math.round((acert.length / resp.length) * 100) : 0;
+    return { total: qs.length, respondidas: resp.length, acertos: acert.length, pct };
+  };
+
+  const handleQuestaoAnswer = (qId, val) => {
+    setRespostas(prev => ({ ...prev, [qId]: val }));
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-950 text-white" style={{ fontFamily: "'Sora', 'DM Sans', system-ui, sans-serif" }}>
+      {/* HEADER */}
+      <header className="sticky top-0 z-40 bg-gray-950/95 backdrop-blur border-b border-gray-800">
+        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-pink-500 flex items-center justify-center text-sm font-black">C</div>
+            <div>
+              <h1 className="text-sm font-black text-white tracking-tight leading-none">Clínica Integrada III</h1>
+              <p className="text-xs text-gray-500 leading-none mt-0.5">Plataforma de Estudos · BAHIANA</p>
+            </div>
+          </div>
+          <div className="flex gap-1">
+            {[{ id: "simulado", label: "📝 Simulado" }, { id: "resumos", label: "📚 Resumos" }].map(t => (
+              <button key={t.id} onClick={() => setActiveTab(t.id)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${activeTab === t.id ? "bg-violet-600 text-white" : "text-gray-400 hover:text-white hover:bg-gray-800"}`}>
+                {t.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </header>
+
+      <main className="max-w-6xl mx-auto px-4 py-6 pb-20">
+        {/* ── SIMULADO ── */}
+        {activeTab === "simulado" && (
+          <div className="space-y-6">
+            {/* MÉTRICAS */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <MetricCard label="Total de Questões" value={total} accent="#a855f7" />
+              <MetricCard label="Respondidas" value={respondidas} sub={`de ${total}`} accent="#3b82f6" />
+              <MetricCard label="Acertos" value={acertos} sub={`de ${respondidas}`} accent="#22c55e" />
+              <MetricCard label="Aproveitamento" value={`${aproveitamento}%`} sub={respondidas > 0 ? `${acertos}/${respondidas}` : "—"} accent="#f59e0b" />
+            </div>
+
+            {/* TEMAS COM PROGRESSO */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {TEMAS_UNICOS.map(tema => {
+                const stat = getTemaStat(tema);
+                const cor = stat.pct >= 80 ? "#4ade80" : stat.pct >= 60 ? "#facc15" : "#f87171";
+                return (
+                  <button key={tema} onClick={() => setTemaSimulado(temaSimulado === tema ? "Todos" : tema)}
+                    style={{ borderColor: temaSimulado === tema ? cor : undefined }}
+                    className={`bg-gray-900 border rounded-xl p-3 text-left transition-all ${temaSimulado === tema ? "border-opacity-100" : "border-gray-700/50 hover:border-gray-600"}`}>
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs font-semibold text-gray-300 truncate">{tema}</span>
+                      <span className="text-xs text-gray-500 ml-1 flex-shrink-0">{stat.respondidas}/{stat.total}</span>
+                    </div>
+                    <ProgressBar percent={stat.respondidas > 0 ? stat.pct : 0} />
+                    {stat.respondidas > 0 && <span style={{ color: cor }} className="text-xs font-bold mt-1 block">{stat.pct}%</span>}
+                  </button>
+                );
+              })}
+              <button onClick={() => setTemaSimulado("Todos")}
+                className={`bg-gray-900 border rounded-xl p-3 text-left transition-all ${temaSimulado === "Todos" ? "border-violet-500" : "border-gray-700/50 hover:border-gray-600"}`}>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold text-gray-300">Todas</span>
+                  <span className="text-xs text-gray-500">{respondidas}/{total}</span>
+                </div>
+                <ProgressBar percent={respondidas > 0 ? aproveitamento : 0} />
+              </button>
+            </div>
+
+            {/* QUESTOES */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <h2 className="text-sm font-bold text-gray-200">{temaSimulado === "Todos" ? "Todas as questões" : temaSimulado}</h2>
+                <span className="bg-gray-800 text-gray-400 text-xs px-2 py-0.5 rounded-full">{questoesFiltradas.length} questões</span>
+              </div>
+              {questoesFiltradas.map((q, idx) => (
+                <QuestaoCard key={q.id} q={q} idx={idx} />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ── RESUMOS ── */}
+        {activeTab === "resumos" && (
+          <div className="space-y-5">
+            {/* ABAS DE TEMAS */}
+            <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+              {RESUMOS.map(r => (
+                <button key={r.id} onClick={() => setTemaAtivo(r.id)}
+                  className={`flex-shrink-0 px-4 py-2 rounded-xl text-xs font-bold transition-all border ${temaAtivo === r.id ? `bg-gradient-to-r ${r.color} text-white border-transparent shadow-lg` : "bg-gray-900 text-gray-400 border-gray-700 hover:text-white hover:border-gray-500"}`}>
+                  {r.label}
+                </button>
+              ))}
+            </div>
+
+            {/* CONTEÚDO DO TEMA */}
+            {resumoAtivo && (
+              <div>
+                <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r ${resumoAtivo.color} text-white text-sm font-bold mb-5 shadow-lg`}>
+                  <span>📖</span>
+                  <span>{resumoAtivo.label}</span>
+                  <span className="opacity-70">— Lâmina de Revisão</span>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {resumoAtivo.cards.map((card, i) => (
+                    <ResumoCard key={i} card={card} />
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </main>
+
+      {/* FOOTER */}
+      <footer className="fixed bottom-0 left-0 right-0 bg-gray-950/95 backdrop-blur border-t border-gray-800 py-3 text-center">
+        <p className="text-xs text-gray-500">
+          Criado por{" "}
+          <span className="font-bold bg-gradient-to-r from-violet-400 to-pink-400 bg-clip-text text-transparent">
+            @brendaasena_
+          </span>
+          {" "}· Clínica Integrada III · BAHIANA 2026
+        </p>
+      </footer>
+    </div>
+  );
+}
