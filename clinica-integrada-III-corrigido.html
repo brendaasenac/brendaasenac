@@ -1,0 +1,1641 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Clínica Integrada III · BAHIANA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg-main: linear-gradient(135deg,#f8fafc 0%,#f1f5f9 40%,#e8edf4 100%);
+  --white:#ffffff;
+  --gray-50:#f8fafc;
+  --gray-100:#f1f5f9;
+  --gray-200:#e2e8f0;
+  --gray-300:#cbd5e1;
+  --gray-400:#94a3b8;
+  --gray-500:#64748b;
+  --gray-600:#475569;
+  --gray-700:#334155;
+  --gray-800:#1e293b;
+  --gray-900:#0f172a;
+  --emerald:#059669;
+  --emerald-light:#d1fae5;
+  --violet:#7c3aed;
+  --violet-light:#ede9fe;
+  --rose:#e11d48;
+  --rose-light:#ffe4e6;
+  --amber:#d97706;
+  --amber-light:#fef3c7;
+  --blue:#2563eb;
+  --blue-light:#dbeafe;
+  --teal:#0d9488;
+  --teal-light:#ccfbf1;
+  --pink:#db2777;
+  --pink-light:#fce7f3;
+  --shadow-sm:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+  --shadow-md:0 4px 12px rgba(0,0,0,.08),0 2px 4px rgba(0,0,0,.05);
+  --shadow-lg:0 10px 30px rgba(0,0,0,.10),0 4px 8px rgba(0,0,0,.06);
+  --radius-sm:8px;
+  --radius-md:14px;
+  --radius-lg:20px;
+  --radius-xl:28px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:'DM Sans',system-ui,sans-serif;
+  background:var(--bg-main);
+  min-height:100vh;
+  color:var(--gray-800);
+  -webkit-font-smoothing:antialiased;
+}
+.font-display{font-family:'Playfair Display',Georgia,serif;}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:6px;height:6px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--gray-300);border-radius:99px;}
+
+/* ── LOGIN SCREEN ── */
+#login-screen{
+  position:fixed;inset:0;z-index:1000;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,#ecfdf5 0%,#f0fdfa 50%,#f0fdf4 100%);
+  padding:24px;
+}
+.login-card{
+  background:var(--white);
+  border-radius:var(--radius-xl);
+  padding:48px 40px;
+  max-width:420px;width:100%;
+  box-shadow:var(--shadow-lg),0 0 0 1px rgba(0,0,0,.04);
+  text-align:center;
+}
+.login-logo{
+  width:56px;height:56px;
+  background:linear-gradient(135deg,#059669,#0d9488);
+  border-radius:16px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:24px;
+  margin:0 auto 24px;
+  box-shadow:0 8px 20px rgba(5,150,105,.3);
+}
+.login-eyebrow{
+  font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--emerald);font-weight:600;margin-bottom:8px;
+}
+.login-title{
+  font-family:'Playfair Display',serif;
+  font-size:28px;font-style:italic;font-weight:700;
+  color:var(--gray-800);margin-bottom:6px;
+}
+.login-sub{font-size:13px;color:var(--gray-500);margin-bottom:32px;}
+.login-input{
+  width:100%;border:1.5px solid var(--gray-200);
+  border-radius:var(--radius-md);
+  padding:14px 18px;font-size:14px;
+  font-family:'DM Sans',sans-serif;
+  color:var(--gray-800);
+  outline:none;transition:border-color .2s;
+  background:var(--gray-50);
+}
+.login-input:focus{border-color:var(--emerald);background:var(--white);}
+.login-btn{
+  width:100%;margin-top:14px;
+  background:linear-gradient(135deg,#059669,#0d9488);
+  color:var(--white);border:none;border-radius:var(--radius-md);
+  padding:14px 18px;font-size:14px;font-weight:600;
+  font-family:'DM Sans',sans-serif;
+  cursor:pointer;transition:opacity .2s,transform .1s;
+  box-shadow:0 4px 14px rgba(5,150,105,.35);
+}
+.login-btn:hover{opacity:.92;transform:translateY(-1px);}
+.login-btn:active{transform:translateY(0);}
+.login-hint{font-size:11px;color:var(--gray-400);margin-top:16px;line-height:1.6;}
+
+/* ── MAIN APP ── */
+#app{display:none;}
+#app.visible{display:block;}
+
+/* ── HEADER ── */
+.app-header{
+  background:rgba(255,255,255,.88);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--gray-200);
+  position:sticky;top:0;z-index:100;
+}
+.header-inner{
+  max-width:960px;margin:0 auto;
+  padding:14px 20px;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;
+}
+.header-brand{text-align:left;}
+.header-eyebrow{
+  font-size:10px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--emerald);font-weight:600;
+}
+.header-title{
+  font-family:'Playfair Display',serif;
+  font-size:20px;font-style:italic;font-weight:700;
+  color:var(--gray-800);line-height:1.2;
+}
+.header-sub{font-size:11px;color:var(--gray-400);}
+.header-actions{display:flex;align-items:center;gap:8px;}
+.user-badge{
+  background:var(--gray-100);border:1px solid var(--gray-200);
+  border-radius:99px;padding:6px 12px;
+  font-size:12px;font-weight:600;color:var(--gray-600);
+  display:flex;align-items:center;gap:6px;
+}
+.logout-btn{
+  background:none;border:1.5px solid var(--gray-200);border-radius:99px;
+  padding:6px 12px;font-size:12px;color:var(--gray-500);
+  cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;
+}
+.logout-btn:hover{border-color:var(--rose);color:var(--rose);}
+
+/* ── NAV PILLS ── */
+.nav-pills{
+  display:flex;gap:6px;
+  background:var(--white);
+  border:1px solid var(--gray-200);
+  border-radius:99px;
+  padding:4px;
+  box-shadow:var(--shadow-sm);
+}
+.nav-pill{
+  background:transparent;border:none;border-radius:99px;
+  padding:8px 20px;font-size:13px;font-weight:500;
+  color:var(--gray-500);cursor:pointer;
+  transition:all .2s;font-family:'DM Sans',sans-serif;
+  white-space:nowrap;
+}
+.nav-pill.active{
+  background:var(--gray-800);color:var(--white);
+  box-shadow:var(--shadow-sm);
+}
+
+/* ── MAIN CONTENT ── */
+.main-content{
+  max-width:960px;margin:0 auto;
+  padding:28px 20px 100px;
+}
+
+/* ── SECTION HEADER ── */
+.section-eyebrow{
+  font-size:10px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--violet);font-weight:600;margin-bottom:6px;
+}
+.section-title{
+  font-family:'Playfair Display',serif;
+  font-size:26px;font-style:italic;font-weight:700;
+  color:var(--gray-800);margin-bottom:4px;
+}
+.section-sub{font-size:13px;color:var(--gray-500);margin-bottom:24px;}
+
+/* ── METRICS GRID ── */
+.metrics-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:12px;
+  margin-bottom:20px;
+}
+@media(min-width:600px){.metrics-grid{grid-template-columns:repeat(4,1fr);}}
+.metric-card{
+  background:var(--white);border:1px solid var(--gray-200);
+  border-radius:var(--radius-lg);padding:18px 20px;
+  box-shadow:var(--shadow-sm);
+}
+.metric-label{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--gray-400);font-weight:600;}
+.metric-value{font-size:32px;font-weight:800;line-height:1.1;margin-top:4px;}
+.metric-sub{font-size:11px;color:var(--gray-400);margin-top:2px;}
+
+/* ── TEMA GRID ── */
+.tema-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:10px;
+  margin-bottom:28px;
+}
+@media(min-width:600px){.tema-grid{grid-template-columns:repeat(3,1fr);}}
+@media(min-width:900px){.tema-grid{grid-template-columns:repeat(5,1fr);}}
+.tema-card{
+  background:var(--white);border:1.5px solid var(--gray-200);
+  border-radius:var(--radius-md);padding:14px;
+  cursor:pointer;transition:all .2s;
+  text-align:left;
+}
+.tema-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px);}
+.tema-card.active{border-color:var(--violet);background:#faf5ff;}
+.tema-name{font-size:12px;font-weight:600;color:var(--gray-700);margin-bottom:2px;}
+.tema-count{font-size:11px;color:var(--gray-400);}
+.progress-bar-bg{height:4px;background:var(--gray-100);border-radius:99px;margin-top:8px;overflow:hidden;}
+.progress-bar-fill{height:100%;border-radius:99px;transition:width .5s ease;}
+.tema-pct{font-size:11px;font-weight:700;margin-top:4px;}
+
+/* ── QUESTOES ── */
+.questoes-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:16px;
+}
+.questoes-title{font-size:15px;font-weight:700;color:var(--gray-700);}
+.questoes-badge{
+  background:var(--gray-100);border:1px solid var(--gray-200);
+  border-radius:99px;padding:3px 10px;font-size:11px;color:var(--gray-500);
+}
+.questao-card{
+  background:var(--white);border:1px solid var(--gray-200);
+  border-radius:var(--radius-lg);overflow:hidden;
+  margin-bottom:14px;box-shadow:var(--shadow-sm);
+}
+.questao-header{
+  padding:18px 20px;border-bottom:1px solid var(--gray-100);
+  display:flex;gap:12px;align-items:flex-start;
+}
+.questao-num{
+  flex-shrink:0;width:32px;height:32px;
+  background:var(--gray-100);border:1px solid var(--gray-200);
+  border-radius:10px;display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:800;color:var(--gray-500);font-family:'DM Mono',monospace;
+}
+.questao-tema-badge{
+  display:inline-flex;align-items:center;
+  background:var(--violet-light);color:var(--violet);
+  border-radius:99px;padding:2px 8px;font-size:10px;font-weight:600;
+  margin-bottom:6px;
+}
+.questao-enunciado{font-size:13.5px;color:var(--gray-700);line-height:1.7;}
+.alternativas{padding:16px 20px;display:flex;flex-direction:column;gap:8px;}
+.alt-btn{
+  display:flex;align-items:flex-start;gap:10px;
+  border:1.5px solid var(--gray-200);border-radius:var(--radius-md);
+  padding:12px 16px;cursor:pointer;background:var(--white);
+  transition:all .2s;text-align:left;width:100%;
+  font-family:'DM Sans',sans-serif;
+}
+.alt-btn:hover:not(:disabled){border-color:var(--gray-400);background:var(--gray-50);}
+.alt-btn:disabled{cursor:default;}
+.alt-btn.correta{border-color:#059669;background:#f0fdf4;}
+.alt-btn.errada{border-color:#e11d48;background:#fff1f2;}
+.alt-btn.neutra{opacity:.5;}
+.alt-letra{
+  flex-shrink:0;width:24px;height:24px;
+  border-radius:50%;border:1.5px solid var(--gray-300);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;color:var(--gray-500);
+  background:var(--white);
+}
+.alt-btn.correta .alt-letra{background:#059669;border-color:#059669;color:var(--white);}
+.alt-btn.errada .alt-letra{background:#e11d48;border-color:#e11d48;color:var(--white);}
+.alt-text{font-size:13px;color:var(--gray-700);line-height:1.6;padding-top:1px;}
+.alt-btn.correta .alt-text{color:#065f46;}
+.alt-btn.errada .alt-text{color:#9f1239;}
+.gabarito-box{
+  margin:0 20px 20px;
+  background:linear-gradient(135deg,#f5f3ff,#faf5ff);
+  border:1px solid #ddd6fe;border-radius:var(--radius-md);
+  padding:16px 18px;
+}
+.gabarito-label{
+  font-size:10px;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--violet);font-weight:700;margin-bottom:8px;
+  display:flex;align-items:center;gap:6px;
+}
+.gabarito-text{font-size:13px;color:#4c1d95;line-height:1.7;}
+
+/* ── RESUMOS ── */
+.resumos-tabs{
+  display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;
+  scrollbar-width:none;margin-bottom:24px;
+}
+.resumos-tabs::-webkit-scrollbar{display:none;}
+.resumo-tab{
+  flex-shrink:0;padding:9px 20px;border-radius:99px;
+  font-size:12px;font-weight:600;border:1.5px solid var(--gray-200);
+  background:var(--white);color:var(--gray-600);
+  cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;
+}
+.resumo-tab:hover{border-color:var(--gray-400);}
+.resumo-tab.active{
+  background:var(--gray-800);color:var(--white);
+  border-color:transparent;box-shadow:var(--shadow-sm);
+}
+.resumo-heading{
+  display:flex;align-items:center;gap:12px;margin-bottom:20px;
+}
+.resumo-heading-title{
+  font-family:'Playfair Display',serif;
+  font-size:22px;font-style:italic;font-weight:700;color:var(--gray-800);
+}
+.resumo-heading-tag{
+  padding:4px 12px;border-radius:99px;font-size:11px;font-weight:600;
+}
+
+/* ── BENTO GRID ── */
+.bento-grid{
+  display:grid;grid-template-columns:1fr;gap:14px;
+}
+@media(min-width:640px){.bento-grid{grid-template-columns:1fr 1fr;}}
+.bento-card{
+  border-radius:var(--radius-lg);padding:20px;border:1px solid rgba(0,0,0,.06);
+  box-shadow:var(--shadow-sm);
+}
+.bento-card-title{
+  font-size:13px;font-weight:700;margin-bottom:14px;
+  display:flex;align-items:center;gap:8px;
+}
+.bento-card-icon{font-size:18px;}
+
+/* CARD COLORS */
+.card-violet{background:#f5f3ff;border-color:#ddd6fe;}
+.card-violet .bento-card-title{color:#5b21b6;}
+.card-blue{background:#eff6ff;border-color:#bfdbfe;}
+.card-blue .bento-card-title{color:#1e40af;}
+.card-emerald{background:#ecfdf5;border-color:#a7f3d0;}
+.card-emerald .bento-card-title{color:#065f46;}
+.card-amber{background:#fffbeb;border-color:#fde68a;}
+.card-amber .bento-card-title{color:#92400e;}
+.card-rose{background:#fff1f2;border-color:#fecdd3;}
+.card-rose .bento-card-title{color:#9f1239;}
+.card-teal{background:#f0fdfa;border-color:#99f6e4;}
+.card-teal .bento-card-title{color:#134e4a;}
+.card-pink{background:#fdf2f8;border-color:#fbcfe8;}
+.card-pink .bento-card-title{color:#831843;}
+.card-orange{background:#fff7ed;border-color:#fed7aa;}
+.card-orange .bento-card-title{color:#9a3412;}
+.card-indigo{background:#eef2ff;border-color:#c7d2fe;}
+.card-indigo .bento-card-title{color:#3730a3;}
+
+/* ── TABLE ── */
+.resumo-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px;}
+.resumo-table th{
+  background:rgba(0,0,0,.07);padding:7px 10px;
+  text-align:left;font-weight:700;color:var(--gray-700);
+  border:1px solid rgba(255,255,255,.6);
+}
+.resumo-table td{
+  padding:7px 10px;border:1px solid rgba(0,0,0,.06);
+  color:var(--gray-700);vertical-align:top;line-height:1.5;
+}
+.resumo-table tr:nth-child(even) td{background:rgba(0,0,0,.03);}
+
+/* ── BADGE LIST ── */
+.badge-section-label{
+  font-size:10px;text-transform:uppercase;letter-spacing:.12em;
+  font-weight:700;color:var(--gray-500);margin-bottom:8px;
+}
+.badge-wrap{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:4px;}
+.badge{
+  display:inline-flex;align-items:center;
+  background:rgba(255,255,255,.75);border:1px solid rgba(0,0,0,.1);
+  border-radius:99px;padding:4px 10px;font-size:11.5px;font-weight:500;
+  color:var(--gray-700);line-height:1.3;
+}
+
+/* ── NUMBERED ── */
+.numbered-list{display:flex;flex-direction:column;gap:6px;}
+.numbered-item{display:flex;gap:8px;align-items:flex-start;font-size:12.5px;color:var(--gray-700);}
+.num-circle{
+  flex-shrink:0;width:20px;height:20px;
+  background:rgba(255,255,255,.8);border:1px solid rgba(0,0,0,.12);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:800;color:var(--gray-600);
+}
+
+/* ── ALERT BOX ── */
+.alert-box{
+  background:rgba(255,255,255,.6);border-left:3px solid var(--amber);
+  border-radius:0 var(--radius-sm) var(--radius-sm) 0;
+  padding:10px 14px;font-size:12px;color:var(--gray-700);
+  line-height:1.6;margin-top:8px;font-weight:500;
+  display:flex;gap:8px;
+}
+
+/* ── FOOTER ── */
+.app-footer{
+  position:fixed;bottom:0;left:0;right:0;
+  background:rgba(255,255,255,.92);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border-top:1px solid var(--gray-200);
+  padding:10px 20px;text-align:center;z-index:50;
+}
+.footer-text{font-size:11px;color:var(--gray-400);}
+.footer-name{
+  font-weight:700;
+  background:linear-gradient(90deg,#7c3aed,#db2777);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+
+/* ── UTIL ── */
+.hidden{display:none!important;}
+.divider{height:1px;background:var(--gray-100);margin:12px 0;}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════════
+     LOGIN SCREEN
+════════════════════════════════════════════════════════ -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">🩺</div>
+    <p class="login-eyebrow">Medicina · BAHIANA EBMSP</p>
+    <h1 class="login-title font-display">Clínica Integrada III</h1>
+    <p class="login-sub">Guia para estudos 2026 · Acesse sua conta</p>
+    <input class="login-input" id="login-input" type="text" placeholder="Digite seu nome ou matrícula" autocomplete="off"/>
+    <button class="login-btn" onclick="doLogin()">Entrar na Plataforma →</button>
+    <p class="login-hint">Seu progresso é salvo automaticamente.<br/>Acesse de qualquer dispositivo com o mesmo login.</p>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════
+     MAIN APP
+════════════════════════════════════════════════════════ -->
+<div id="app">
+
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="header-brand">
+        <p class="header-eyebrow">Medicina · BAHIANA EBMSP</p>
+        <h1 class="header-title font-display">Clínica Integrada III</h1>
+        <p class="header-sub">Guia para estudos 2026</p>
+      </div>
+      <div class="header-actions">
+        <div class="nav-pills">
+          <button class="nav-pill active" onclick="showTab('simulado',this)">📝 Simulado</button>
+          <button class="nav-pill" onclick="showTab('resumos',this)">📚 Resumos</button>
+        </div>
+        <div class="user-badge">
+          <span>👤</span>
+          <span id="user-display">—</span>
+        </div>
+        <button class="logout-btn" onclick="doLogout()">Sair</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-content">
+
+    <!-- ═══════ SIMULADO ═══════ -->
+    <div id="tab-simulado">
+      <div style="margin-bottom:20px">
+        <p class="section-eyebrow">Dashboard</p>
+        <h2 class="section-title font-display">Seu Desempenho</h2>
+      </div>
+
+      <!-- Métricas -->
+      <div class="metrics-grid" id="metrics-area"></div>
+
+      <!-- Temas -->
+      <div class="tema-grid" id="tema-grid"></div>
+
+      <!-- Questões -->
+      <div class="questoes-header">
+        <span class="questoes-title" id="questoes-title">Todas as questões</span>
+        <span class="questoes-badge" id="questoes-count"></span>
+      </div>
+      <div id="questoes-area"></div>
+    </div>
+
+    <!-- ═══════ RESUMOS ═══════ -->
+    <div id="tab-resumos" style="display:none">
+      <div style="margin-bottom:20px">
+        <p class="section-eyebrow">Material de Revisão</p>
+        <h2 class="section-title font-display">Lâminas de Estudo</h2>
+        <p class="section-sub">Cards coloridos por categoria para revisão rápida e eficiente.</p>
+      </div>
+      <div class="resumos-tabs" id="resumos-tabs"></div>
+      <div id="resumos-content"></div>
+    </div>
+
+  </main>
+
+  <footer class="app-footer">
+    <p class="footer-text">Criado por <span class="footer-name">@brendaasena_</span> · Clínica Integrada III · BAHIANA 2026</p>
+  </footer>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════
+// DATA — QUESTÕES (mínimo 12 por tema)
+// ════════════════════════════════════════════════════
+const QUESTOES = [
+// ──────────────── HAS (12 questões) ────────────────
+{id:1,tema:"HAS",
+enunciado:"Homem, 49 anos, negro, encaminhado ao ADAB por dificuldade de controle da pressão arterial, apesar do uso correto das medicações (Losartana 100mg/dia, Anlodipino 10mg/dia, Hidroclorotiazida 25mg/dia). PA = 160x100 mmHg; FC = 58 bpm; exames sem anormalidades. Qual seria nesse momento a melhor opção terapêutica?",
+alternativas:["Aumentar hidroclorotiazida para 25mg 2 vezes ao dia.","Associar atenolol 100mg 1 vez ao dia.","Associar espironolactona 25mg/dia.","Aumentar anlodipino para 10mg 2 vezes ao dia.","Associar clonidina 0,100mg 1 vez ao dia."],
+correta:2,
+gabarito:"A: Incorreta. Dobrar a tiazida seria ineficaz e aumentaria o risco de hipocalemia. B: Incorreta. Betabloqueador não é 4ª opção preferencial na HAS resistente. C: CORRETA. Trata-se de HAS Resistente (3 drogas em doses plenas incluindo tiazídico sem controle). A 4ª droga de escolha é espironolactona 25mg/dia, que reduz aldosterona e melhora controle pressórico. D: Incorreta. Anlodipino já está na dose máxima. E: Incorreta. Clonidina tem alta incidência de efeitos colaterais (hipotensão ortostática, sedação, disfunção erétil)."},
+
+{id:2,tema:"HAS",
+enunciado:"Paciente sexo masculino, 51 anos, retorna à UBS assintomático. PA = 138×88 mmHg; IMC = 26 kg/m²; Glicemia jejum = 90 mg/dL; triglicérides = 182 mg/dL; colesterol total = 195 mg/dL. A conduta mais adequada nesse caso é:",
+alternativas:["Iniciar hidroclorotiazida 25mg/dia","Iniciar losartana 25mg/dia e sinvastatina 20mg/dia","Iniciar anlodipino 5mg/dia e ciprofibrato 100mg/dia","Terapia não farmacológica – Mudança no Estilo de Vida (MEV)","Iniciar enalapril 5mg/dia"],
+correta:3,
+gabarito:"A: Incorreta. PA de 138x88 não atinge o limiar para início de anti-hipertensivo (≥140x90). B: Incorreta. LDL não está elevado, não há indicação de estatina no momento. C: Incorreta. Fibrato não está indicado com TG de 182 (critério seria TG>500). D: CORRETA. PA elevada (pré-hipertensão) com perfil de baixo risco cardiovascular → MEV (redução de sal, exercício, perda de peso) é suficiente. E: Incorreta. Sem indicação farmacológica neste momento."},
+
+{id:3,tema:"HAS",
+enunciado:"Paciente masculino, 59 anos, em uso de hidroclorotiazida, enalapril e anlodipino em doses plenas, PA consultório = 164×92 mmHg. MAPA 24h = 134×82; PA vigília = 134×76 mmHg; PA sono = 134×84 mmHg. Potássio sérico = 4,2 meq/L. Assinale a alternativa correta quanto às condutas diagnóstica e terapêutica:",
+alternativas:["Manter o esquema terapêutico e investigar hipertensão secundária.","Iniciar espironolactona e investigar apneia obstrutiva do sono.","Suspender hidroclorotiazida e iniciar dose noturna de simpaticolítico de ação central.","Iniciar dose noturna de betabloqueador, visando à melhora do comportamento pressórico no sono."],
+correta:1,
+gabarito:"A: Incorreta. A MAPA está controlada — não há HAS verdadeiramente resistente. B: CORRETA. MAPA com PA controlada vs PA consultório elevada = Hipertensão do Avental Branco (HAB). O padrão non-dipper (sono sem queda fisiológica) é sugestivo de SAHOS, que é a principal causa secundária de HAS resistente. Investigação com polissonografia + considerar espironolactona se HAR confirmada. C: Incorreta. Simpaticolítico não é indicado como 1ª opção. D: Incorreta. Betabloqueador noturno não resolve o problema de base."},
+
+{id:4,tema:"HAS",
+enunciado:"Mulher de 55 anos, cefaleia recorrente há 3 semanas, hipertensa conhecida em uso irregular de hidroclorotiazida. PA: 182×108 mmHg. Exame neurológico normal. Fundoscopia sem papiledema. A hipótese diagnóstica mais provável e conduta inicial são:",
+alternativas:["Cefaleia secundária à HAS; solicitar tomografia de crânio urgente.","Emergência hipertensiva; internar em UTI e reduzir agressivamente a PA.","Cefaleia associada a HAS não complicada; reajustar tratamento e acompanhar resposta clínica.","Enxaqueca sem aura; solicitar ressonância magnética de crânio."],
+correta:2,
+gabarito:"A: Incorreta. TC não está indicada sem déficit neurológico focal ou sinais de LOA. B: Incorreta. Emergência hipertensiva exige lesão aguda de órgão-alvo (encefalopatia, AVC, dissecção aórtica). Aqui não há LOA. C: CORRETA. Urgência hipertensiva — PA elevada SEM LOA aguda. Conduta: reajuste ambulatorial da medicação anti-hipertensiva, sem necessidade de UTI. D: Incorreta. Enxaqueca não é diagnóstico em paciente hipertensa com abandono de medicação."},
+
+{id:5,tema:"HAS",
+enunciado:"Homem, 52 anos, assintomático, check-up. PA média 158×96 mmHg em duas consultas (intervalo 1 semana). IMC 27. Função renal e perfil lipídico normais. Sem LOA. De acordo com a Diretriz Brasileira de HAS 2025, a melhor conduta inicial é:",
+alternativas:["Iniciar monoterapia com IECA ou BRA e titular após 3 meses.","Iniciar monoterapia com betabloqueador por ser paciente jovem.","Iniciar monoterapia com diurético de alça associado a restrição de sódio.","Iniciar terapia farmacológica com associação de dois fármacos anti-hipertensivos de primeira linha."],
+correta:3,
+gabarito:"A: Incorreta. HAS estágio 2 (≥160×100) não deve ser tratada com monoterapia inicial — controle é mais lento e inadequado. B: Incorreta. Betabloqueador não é anti-hipertensivo de 1ª linha sem indicação específica. C: Incorreta. Diurético de alça (furosemida) não é 1ª linha para HAS. D: CORRETA. Conforme a Diretriz Brasileira 2025, PA ≥160×100 mmHg indica início imediato com COMBINAÇÃO de 2 drogas (ex: IECA/BRA + BCC ou IECA/BRA + tiazídico)."},
+
+{id:6,tema:"HAS",
+enunciado:"Mulher, 62 anos, com diagnóstico de HAS há 1 ano. MRPA média de aferições: 150×89 mmHg. No consultório, PA estava em 168×91 mmHg. Usa Losartana 100mg/dia + Hidroclorotiazida 25mg/dia + Anlodipino 10mg/dia. Apresenta edema maleolar bilateral 2+/4+. Qual a melhor conduta para este paciente?",
+alternativas:["Associar furosemida 40mg/dia via oral pela manhã.","Aumentar dose de anlodipino para 10mg 12/12h.","Substituir a hidroclorotiazida por clortalidona 25mg/dia.","Associar atenolol 25mg 12/12h."],
+correta:2,
+gabarito:"A: Incorreta. Furosemida (diurético de alça) não é preferencial na HAS sem insuficiência cardíaca ou renal avançada. B: Incorreta. Anlodipino já está na dose máxima de 10mg/dia. C: CORRETA. MRPA mostrando PA fora da meta com 3 drogas. A troca de hidroclorotiazida por clortalidona (maior potência e duração de ação) é recomendada como passo anterior a acrescentar espironolactona. Clortalidona tem maior evidência cardiovascular. D: Incorreta. Betabloqueador não é 4ª opção preferencial."},
+
+{id:7,tema:"HAS",
+enunciado:"Com relação ao tratamento da hipertensão arterial sistêmica, é INCORRETO afirmar que:",
+alternativas:["A espironolactona é a medicação de escolha como quarta droga no tratamento da hipertensão resistente.","A clonidina é uma droga anti-hipertensiva potente e apresenta baixa incidência de efeitos colaterais.","O principal efeito colateral do anlodipino é o edema pré-maleolar.","Os betabloqueadores são inferiores em relação aos outros anti-hipertensivos em pacientes sem comorbidades e com indicação de monoterapia.","O uso dos inibidores da enzima conversora da angiotensina (IECA) são os preferenciais em pacientes diabéticos por retardar a progressão da nefropatia diabética."],
+correta:1,
+gabarito:"A: Correta (espironolactona é 4ª droga em HAS resistente). B: INCORRETA — esta é a alternativa que a questão pede. Clonidina tem ALTA incidência de efeitos colaterais: hipotensão ortostática, sedação, disfunção erétil, e tem risco de hipertensão rebote com suspensão abrupta. C: Correta (edema é o principal EA do anlodipino). D: Correta (BB são menos eficazes como monoterapia em pacientes sem comorbidades). E: Correta (IECA/BRA são preferenciais em DM por nefroproteção)."},
+
+{id:8,tema:"HAS",
+enunciado:"Michael, 17 anos, tem diagnóstico recente de hipertensão severa e no exame de abdome ausculta-se um sopro. Qual o exame mais indicado neste caso?",
+alternativas:["Dosagem de T3 e TSH","Arteriografia renal","Dosagem de metanefrinas na urina","Dosagem de aldosterona"],
+correta:1,
+gabarito:"A: Incorreta. Hipotireoidismo raramente causa HAS grave em jovens. B: CORRETA. Jovem com HAS severa + sopro abdominal = estenose de artéria renal (causa renovascular de HAS secundária). Arteriografia renal (ou angiorressonância/angiotomografia como screening) é o exame indicado para confirmar e localizar a estenose. C: Incorreta. Metanefrinas são para feocromocitoma (sem sopro abdominal). D: Incorreta. Aldosterona seria para hiperaldosteronismo primário, que não cursa com sopro."},
+
+{id:9,tema:"HAS",
+enunciado:"Homem de 64 anos, sedentário, sem acompanhamento médico há 8 anos, apresentou síncope após esforço físico moderado e precedido de dor precordial. Qual o diagnóstico mais provável?",
+alternativas:["Estenose mitral","Estenose aórtica","Estenose tricúspide","Insuficiência aórtica"],
+correta:1,
+gabarito:"A: Incorreta. Estenose mitral cursa com dispneia e hemoptise, não com síncope de esforço. B: CORRETA. Estenose aórtica grave: tríade clássica = dor anginosa + síncope de esforço + dispneia (IC). Idoso sedentário com sopro sistólico ejetivo no foco aórtico é o perfil típico. C: Incorreta. Estenose tricúspide não causa síncope de esforço. D: Incorreta. Insuficiência aórtica cursa com dispneia, não síncope de esforço."},
+
+{id:10,tema:"HAS",
+enunciado:"Paciente masculino, 59 anos, diagnóstico de HAS há 1 ano, MRPA: média 152×89 mmHg. Consulório PA: 164×91 mmHg. Refere uso regular de Losartana 100mg/dia + Clortalidona 25mg/dia + Anlodipino 10mg/dia. Edema maleolar bilateral 2+/4+. Qual a melhor conduta?",
+alternativas:["Associar espironolactona 25mg/dia.","Associar furosemida 40mg/dia, via oral.","Substituir a hidroclorotiazida por clortalidona 25mg/dia.","Associar atenolol 25mg 12/12h."],
+correta:0,
+gabarito:"A: CORRETA. Paciente com HAS resistente real (3 drogas em dose plena, incluindo diurético, MRPA fora de meta). A 4ª droga de escolha é espironolactona 25mg/dia. Estudos como PATHWAY-2 confirmam benefício. B: Incorreta. Furosemida não é preferencial na HAS resistente sem IC/DRC avançada. C: Incorreta. Já usa clortalidona (não hidroclorotiazida). D: Incorreta. Betabloqueador não é 4ª opção preferencial."},
+
+{id:11,tema:"HAS",
+enunciado:"Homem, 47 anos, obesidade grau 1, dislipidemia e intolerância à glicose. Atorvastatina 20mg/dia. PA duas consultas = 172×106 mmHg; FC em repouso = 84 bpm. Função renal normal. EAS sem proteinúria. Qual a melhor terapia anti-hipertensiva inicial?",
+alternativas:["Inibidor do sistema renina-angiotensina-aldosterona (SRAA) + bloqueador de canal de cálcio, por inibirem a progressão do remodelamento cardíaco e promoverem a nefroproteção.","Inibidor sistema renina-angiotensina-aldosterona (SRAA) + betabloqueador, por promoverem nefroproteção e pelo alto risco de doença coronariana associada.","Associar inibidor da enzima conversora da angiotensina (IECA) + bloqueador de receptores da angiotensina (BRA), para inibição dupla do sistema SRAA.","Tiazídico + bloqueador de canal de cálcio, para melhor redução da pressão arterial sistólica.","Inibidor do sistema renina-angiotensina-aldosterona(SRAA) + espironolactona + hidralazina, visando à remodelação cardíaca."],
+correta:0,
+gabarito:"A: CORRETA. Paciente jovem com síndrome metabólica, intolerância à glicose e proteinúria potencial — IECA/BRA + BCC é a combinação preferencial. IECA/BRA oferecem nefroproteção e reduzem progressão para DM; BCC não altera metabolismo glicídico. B: Incorreta. BB piora metabolismo glicídico em pacientes com intolerância à glicose. C: Incorreta. IECA + BRA (duplo bloqueio) é contraindicado (risco de hipercalemia e IRA). D: Incorreta. Tiazídico piora metabolismo glicídico. E: Incorreta. Espironolactona não é 1ª linha."},
+
+{id:12,tema:"HAS",
+enunciado:"Com relação à técnica de aferição da pressão arterial pelo método MRPA (Monitorização Residencial da Pressão Arterial), assinale a alternativa CORRETA:",
+alternativas:["Aferir a PA três vezes pela manhã, antes do café da manhã, e três vezes ao final da tarde, antes do jantar, durante 5 dias consecutivos.","Aferir a PA três vezes ao dia, sendo uma vez antes do café da manhã, uma vez antes do almoço e uma vez antes do jantar, durante 5 dias consecutivos.","Aferir a PA três vezes pela manhã, antes do café da manhã, e três vezes ao final da tarde, antes do jantar, durante 7 dias consecutivos.","Aferir a PA 2 vezes pela manhã e 2 vezes à noite, durante 5 dias consecutivos."],
+correta:0,
+gabarito:"A: CORRETA. A técnica da MRPA preconizada pelas diretrizes brasileiras é: 3 medidas pela manhã (antes do café e medicação), 3 medidas ao final da tarde (antes do jantar), por 5 dias consecutivos. O primeiro dia é descartado e calcula-se a média dos demais. PA média ≥135×85 mmHg = diagnóstico de HAS. B: Incorreta. A distribuição não inclui medida ao almoço. C: Incorreta. São 5 dias, não 7 (7 dias é para protocolos de pesquisa). D: Incorreta. São 3 medidas em cada período, não 2."},
+
+// ──────────────── DIABETES (12 questões) ────────────────
+{id:13,tema:"Diabetes",
+enunciado:"Paciente sexo masculino, 45 anos, portador de obesidade grau 2 realizou exame de glicemia de jejum cujo resultado foi 120 mg/dL. Quais dos alimentos abaixo são considerados de baixo índice glicêmico e devem ter seu consumo estimulado?",
+alternativas:["Batata doce e inhame","Arroz branco e batata inglesa","Macarrão e bolacha de sal","Feijão e suco de laranja","Aipim e pão refinado"],
+correta:0,
+gabarito:"A: CORRETA. Batata doce e inhame possuem baixo índice glicêmico (IG<55), pois são digeridos mais lentamente, promovendo menor pico glicêmico. B: Incorreta. Arroz branco e batata inglesa têm IG alto. C: Incorreta. Produtos refinados têm IG alto. D: Incorreta. Feijão tem baixo IG, mas suco de laranja (sem a fibra da fruta) tem IG moderado-alto. E: Incorreta. Aipim e pão refinado têm IG alto."},
+
+{id:14,tema:"Diabetes",
+enunciado:"Paciente 60 anos apresenta TFG estimada de 52 mL/min/1,73m² e relação albumina/creatinina urinária de 50 mg/g, persistentes em exames repetidos após 4 meses. Com base nesses dados, qual é o diagnóstico mais adequado?",
+alternativas:["Injúria renal aguda","Síndrome nefrítica","Doença renal crônica","Síndrome nefrótica"],
+correta:2,
+gabarito:"A: Incorreta. IRA é definida por elevação aguda de creatinina em <48h ou <7 dias. B: Incorreta. Síndrome nefrítica cursa com hematúria dismórfica, proteinúria menor, HAS e oligúria. C: CORRETA. DRC = TFG <60 mL/min/1,73m² OU marcadores de dano renal (albuminúria ≥30 mg/g) por ≥3 meses. Este paciente tem TFG 52 (G3a) + albuminúria persistente confirmada = DRC estágio G3aA2. D: Incorreta. Síndrome nefrótica exige proteinúria >3,5g/dia."},
+
+{id:15,tema:"Diabetes",
+enunciado:"Maria José Oliveira, feminino, 65 anos, negra, obesa, DM há 20 anos. HbA1c 8,8%; glicemia de jejum 289 mg/dL. Em uso irregular de metformina XR 2g/dia, gliclazida MR 60mg/dia e acarbose. IMC 34,5. PA 180x85 mmHg. Edema MMII (+/4). Qual a melhor conduta terapêutica medicamentosa para o controle glicêmico?",
+alternativas:["Estimular a aderência ao tratamento e suspender a acarbose pois ainda não há necessidade de insulinizar.","Manter metformina XR 2g/dia e acrescentar inibidor de SGLT2 e insulina bed time.","Suspender a acarbose e a metformina e introduzir terapia plena com insulina.","Manter medicação em uso e orientar dieta e atividade física.","Manter todas as medicações e acrescentar inibidor de DPPIV."],
+correta:1,
+gabarito:"A: Incorreta. HbA1c de 8,8% com uso irregular e doses máximas de 2 drogas indica necessidade de intensificação. B: CORRETA. Manter metformina (1ª linha), adicionar iSGLT2 (empagliflozina/dapagliflozina — benefício cardiovascular e renal nesta paciente com HAS, obesa) + insulina NPH bedtime para controle da glicemia basal elevada (289 mg/dL). C: Incorreta. Suspender metformina sem contraindicação (TFG não foi informada como <30) não é indicado. D: Incorreta. Apenas MEV é insuficiente com HbA1c 8,8%. E: Incorreta. iDPPIV tem benefício glicêmico menor que iSGLT2 neste perfil."},
+
+{id:16,tema:"Diabetes",
+enunciado:"Homem de 54 anos, recém-diagnosticado com DM2, retorna após 3 meses de MEV. HbA1c atual: 7,6%; IMC 30; sem DCV; função renal e hepática normais. A conduta terapêutica mais adequada neste momento é:",
+alternativas:["Iniciar terapia combinada com dois hipoglicemiantes orais, devido à falha do tratamento inicial.","Iniciar insulinoterapia basal devido à elevação progressiva da HbA1c.","Iniciar metformina, associada à intensificação estruturada das mudanças do estilo de vida, com reavaliação em 3 meses.","Substituir a estratégia não farmacológica por sulfonilureia, visando maior rapidez no controle glicêmico."],
+correta:2,
+gabarito:"A: Incorreta. HbA1c 7,6% após 3 meses é falha da MEV, não do tratamento farmacológico (que ainda não foi iniciado). B: Incorreta. Insulina não é indicada com HbA1c <9% sem sintomas graves. C: CORRETA. Metformina é a droga de 1ª linha no DM2. MEV deve ser intensificada (não abandonada). Reavaliação em 3 meses é adequada. D: Incorreta. Sulfonilureia não é preferencial como 1ª linha (risco de hipoglicemia, ganho de peso)."},
+
+{id:17,tema:"Diabetes",
+enunciado:"Homem de 52 anos, fadiga e poliúria há 3 meses. Histórico familiar de DM2 (mãe). IMC 31, PA 138×86. Glicemia jejum: 168 mg/dL; HbA1c: 8,1%; Creatinina normal. Assintomático do ponto de vista metabólico. Melhor conduta diagnóstica e terapêutica inicial:",
+alternativas:["O diagnóstico de DM2 está confirmado; iniciar metformina associada a mudanças no estilo de vida.","Iniciar insulinoterapia basal imediatamente, devido ao valor elevado da HbA1c.","Repetir a glicemia de jejum para confirmação diagnóstica e iniciar apenas MEV.","Iniciar sulfonilureia como monoterapia, por promover controle glicêmico mais rápido."],
+correta:0,
+gabarito:"A: CORRETA. Dois critérios positivos simultâneos (glicemia ≥126 + HbA1c ≥6,5%) dispensam repetição — diagnóstico confirmado. Conduta: metformina + MEV. B: Incorreta. Insulina não é 1ª linha sem sintomas graves ou HbA1c≥10%. C: Incorreta. Dois critérios diagnósticos simultâneos dispensam repetição. D: Incorreta. Sulfonilureia não é 1ª linha — maior risco de hipoglicemia e ganho de peso."},
+
+{id:18,tema:"Diabetes",
+enunciado:"J.P.S., 68 anos, masculino, DM2 há 10 anos, HAS há 18 anos. Glimepirida 8mg/dia, metformina 2550mg/dia, Hb A1C=12%. PA=170×88mmHg; edema MMII; hipocromia de mucosas; ↓acuidade visual. Marque a alternativa correta:",
+alternativas:["A lesão renal mais comum em diabéticos é a tubulopatia do tipo IV","As tiazolidinedionas são as drogas de escolha em pacientes com resistência insulínica e que apresentam complicações cardiovasculares","Insulina noturna deverá ser introduzida para melhor controle dos níveis glicêmicos","Pacientes com creatinina >2,0mg/dL podem usar metformina em doses mais baixas"],
+correta:2,
+gabarito:"A: Incorreta. A lesão renal mais comum no DM é a glomerulopatia (nefropatia diabética — espessamento da membrana basal glomerular e expansão mesangial). B: Incorreta. Tiazolidinedionas são contraindicadas em IC e não são preferidas com DCV estabelecida. C: CORRETA. HbA1c=12% com duas drogas em doses máximas = necessidade de insulinização. A insulina NPH noturna é a opção mais custo-efetiva para iniciar. D: Incorreta. Metformina é contraindicada com creatinina >1,4mg/dL em mulheres e >1,5 em homens (ou TFG<30)."},
+
+{id:19,tema:"Diabetes",
+enunciado:"Homem de 19 anos com poliúria, polidipsia, polifagia e perda ponderal de 7 kg em 2 meses. Glicemia 286 mg/dL; HbA1c 10,8%; Cetonúria (+). Gasometria: sem acidose metabólica. IMC 19. Sem histórico familiar de DM2. Conduta mais adequada:",
+alternativas:["Repetir a glicemia de jejum para confirmação e iniciar metformina como monoterapia.","Solicitar pesquisa de autoanticorpos pancreáticos antes de iniciar qualquer tratamento.","Iniciar hipoglicemiante oral associado a MEV e acompanhar resposta clínica.","Confirmar o diagnóstico clínico de DM1 e iniciar insulinoterapia basal-bolus associada a orientações sobre automonitorização glicêmica."],
+correta:3,
+gabarito:"A: Incorreta. Diagnóstico de DM já confirmado. Metformina não é adequada para DM1. B: Incorreta. Autoanticorpos confirmam DM1, mas não retardam o tratamento que deve ser imediato. C: Incorreta. Hipoglicemiantes orais não são indicados em DM1. D: CORRETA. Quadro clínico clássico de DM1 (jovem magro, início abrupto com os 4P + cetonúria). A insulinoterapia basal-bolus é o tratamento obrigatório. A automonitorização é essencial para ajuste de doses."},
+
+{id:20,tema:"Diabetes",
+enunciado:"Mulher, 58 anos, DM2 há 10 anos, boa adesão à terapia não farmacológica e uso regular de metformina e sulfonilureia há 5 anos, já com doses máximas. Hemoglobina glicada de 9,5%. Em relação à proposta terapêutica, assinale a alternativa correta.",
+alternativas:["Iniciar insulina regular 0,3UI/kg em dose única no almoço.","Iniciar insulina NPH 0,3UI/kg em dose única no almoço.","Iniciar insulina NPH 0,1UI/kg em dose única à noite.","Iniciar insulina regular 0,3UI/kg em dose única à noite."],
+correta:2,
+gabarito:"A: Incorreta. Insulina regular no almoço não cobre a glicemia basal (jejum) que é o maior problema. B: Incorreta. NPH ao almoço não é a estratégia padrão de insulinização basal. C: CORRETA. Insulinização basal: NPH à noite (bedtime) em dose inicial de 0,1-0,2 UI/kg cobre a glicemia de jejum e complementa os antidiabéticos orais (manter metformina). D: Incorreta. Insulina regular não é adequada como insulina basal noturna."},
+
+{id:21,tema:"Diabetes",
+enunciado:"A respeito do tratamento do diabetes mellitus tipo 2, numere a coluna B, relacionando o mecanismo de ação ao respectivo medicamento da linha de 1: Sitagliptina; 2: Empagliflozina; 3: Pioglitazona; 4: Acarbose; 5: Metformina. ( ) Inibidor cotransportador sódio-glicose 2 (SGLT2). ( ) Inibidor dipeptidil peptidase 4 (DPP-4). ( ) Agonista do receptor GLP1. ( ) Diminuição da produção hepática de glicose. ( ) Inibidor das enzimas intestinais α-glicosidases.",
+alternativas:["2–1–5–3–4","3–2–4–5–1","4–1–5–2–3","3–2–1–4–5","3–2–1–5–4"],
+correta:4,
+gabarito:"Analisando cada mecanismo: Inibidor SGLT2 = Empagliflozina (2); Inibidor DPP-4 = Sitagliptina (1); Agonista GLP1 = não está listado entre as opções numeradas (erro intencional da questão — resposta-padrão considerada é 3-2-1-5-4); Inibidor produção hepática de glicose = Metformina (5); Inibidor α-glicosidases = Acarbose (4). Sequência: 2–1–(ausente)–5–4, o que corresponde à alternativa E (3–2–1–5–4) pela lógica da questão original."},
+
+{id:22,tema:"Diabetes",
+enunciado:"Paciente do sexo feminino, 68 anos, DM2 em seguimento há 15 anos. Boa adesão à terapia não farmacológica e uso regular de metformina e sulfonilureia há 5 anos, doses máximas. PA = 154×92mmHg. Hemoglobina glicada de 9,5%. Qual a alternativa correta sobre as complicações crônicas do diabetes?",
+alternativas:["A presença de sangue na urina é o primeiro sinal da nefropatia diabética.","Bexiga neurogênica, disfunção erétil e gastroparesia são causadas pela neuropatia motora associada ao diabetes.","O teste de tolerância à glicose deve ser feito em todo paciente com glicemia acima de 126mg/dL.","A investigação das complicações crônicas no DM tipo 1 devem ser realizadas anualmente após 5 anos do diagnóstico.","HbA1c é um importante marcador do controle glicêmico dos últimos 30 dias e pode ser utilizada no diagnóstico do diabetes."],
+correta:3,
+gabarito:"A: Incorreta. O primeiro sinal da nefropatia diabética é a microalbuminúria (30-300mg/g de creatinina), não hematúria. B: Incorreta. Bexiga neurogênica, disfunção erétil e gastroparesia são causadas pela neuropatia AUTONÔMICA, não motora. C: Incorreta. TOTG é indicado para rastreio em pacientes com glicemia entre 100-125 mg/dL. D: CORRETA. No DM1, as complicações microvasculares começam a ser rastreadas a partir de 5 anos do diagnóstico, anualmente. No DM2, desde o diagnóstico. E: Incorreta. HbA1c reflete os últimos 3 meses (90 dias), não 30 dias."},
+
+{id:23,tema:"Diabetes",
+enunciado:"Dona Iracema, 54 anos, menopausada há dois anos, diabética, hipertensa, com obstrução de carótida com estenose maior que 50%, risco cardiovascular muito alto, LDL=145mg/dL, Triglicérides=258mg/dL. Em uso de sinvastatina 40mg/dia regularmente sem interromper. Qual proposta terapêutica para alcançar a meta no tratamento da dislipidemia?",
+alternativas:["Retirar a sinvastatina e adotar ezetimiba","Trocar a sinvastatina por uma estatina de alta potência","Associar fibrato a sinvastatina","Aumentar a sinvastatina para 80mg/dia"],
+correta:1,
+gabarito:"A: Incorreta. Ezetimiba como monoterapia não é suficiente para o risco muito alto desta paciente. B: CORRETA. Paciente de muito alto risco (DM + DCV estabelecida/estenose carotídea) com LDL=145mg/dL, meta <50mg/dL ou redução ≥50%. Sinvastatina 40mg é de potência média — deve-se trocar por estatina de alta potência (atorvastatina 40-80mg ou rosuvastatina 20-40mg). C: Incorreta. Associação estatina+fibrato aumenta risco de miopatia sem reduzir mortalidade CV. D: Incorreta. Sinvastatina 80mg tem alto risco de miopatia e não é recomendada."},
+
+{id:24,tema:"Diabetes",
+enunciado:"Quais classes de drogas abaixo têm efeito em aumentar o peso e deveriam ser a última opção em pacientes diabéticos obesos recém diagnosticados?",
+alternativas:["Inibidores da SGLT2 e gliptinas","Glitazonas e Biguanidas","Biguanidas e análogos do GLP-1","Sulfonilureias e insulinas","Acarbose e biguanidas"],
+correta:3,
+gabarito:"A: Incorreta. iSGLT2 promovem perda de peso (glicosúria) e gliptinas são peso-neutras. B: Incorreta. Glitazonas aumentam peso, mas biguanidas (metformina) são peso-neutras. C: Incorreta. Metformina e análogos GLP-1 promovem perda de peso. D: CORRETA. Sulfonilureias (ganho de 2-5kg por estimulação da secreção insulínica) e insulinas (ganho de 2-10kg por efeito anabólico) são as classes que mais promovem ganho de peso e devem ser evitadas como 1ª opção em obesos. E: Incorreta. Acarbose e metformina são peso-neutras."},
+
+// ──────────────── INSUFICIÊNCIA CARDÍACA (12 questões) ────────────────
+{id:25,tema:"Insuf. Cardíaca",
+enunciado:"O paciente da questão acima vinha em uso de espironolactona para insuficiência cardíaca e realizou exames que mostraram K+ = 6,5 (VN 3,5 a 5,5) e função renal normal. Foi suspensa a espironolactona. O médico assistente notou ainda arritmia complexa ao ECG. Qual das opções abaixo seria a melhor para o tratamento imediato da hipercalemia que estabiliza a membrana celular?",
+alternativas:["Hemodiálise","Fenoterol inalado","Gluconato de cálcio","Poliestireno sulfonato de cálcio","Furosemida"],
+correta:2,
+gabarito:"A: Incorreta. Hemodiálise é medida de última instância para hipercalemia refratária. B: Incorreta. Fenoterol não tem papel no tratamento de emergência da hipercalemia. C: CORRETA. Hipercalemia grave (6,5) com arritmia ao ECG = emergência. Gluconato de cálcio EV é a PRIMEIRA medida — antagoniza a membrana celular cardíaca em 1-3 minutos, prevenindo fibrilação ventricular. Não reduz o potássio sérico. D: Incorreta. Resinas de troca são medidas demoradas (horas-dias). E: Incorreta. Furosemida aumenta excreção de potássio mas não é de ação imediata suficiente em arritmia."},
+
+{id:26,tema:"Insuf. Cardíaca",
+enunciado:"Paciente, feminino, 60 anos, diabética, diarreia intensa há 2 dias. Exame: desidratada, levemente hipotensa, glicemia 200 mg/dL, sódio 160 mEq/L (VN 135-145), potássio normal. Qual a opção de reidratação para esta paciente?",
+alternativas:["Solução salina hipertônica venosa","Solução glicosada venosa","Terapia de reidratação oral","Solução salina isotônica venosa","Solução salina hipotônica venosa"],
+correta:3,
+gabarito:"A: Incorreta. Salina hipertônica pioraria a hipernatremia. B: Incorreta. Solução glicosada aumentaria ainda mais a glicemia (200 mg/dL). C: Incorreta. Desidratação moderada-grave com hipotensão contraindica reidratação oral. D: CORRETA. Salina isotônica (SF 0,9%) corrige o volume intravascular de forma segura sem redução abrupta do sódio (risco de edema cerebral). A correção da hipernatremia deve ser gradual (≤10 mEq/L por 24h). E: Incorreta. Salina hipotônica é usada APÓS estabilização hemodinâmica."},
+
+{id:27,tema:"Insuf. Cardíaca",
+enunciado:"Com relação ao tratamento da insuficiência cardíaca crônica, é CORRETO afirmar que:",
+alternativas:["Todas as alternativas estão corretas.","A espironolactona reduz a mortalidade na IC em classe funcional III ou IV da NYHA, com fração de ejeção reduzida.","A digoxina reduz o risco de hospitalização, sem redução da mortalidade de pacientes com IC crônica.","A ivabradina associada à terapêutica-padrão da IC em paciente com FC >70 bpm e ritmo sinusal reduz o risco do evento combinado de morte cardiovascular ou hospitalização por IC.","Os diuréticos na IC reduzem a retenção hídrica e melhoram a qualidade de vida do paciente."],
+correta:0,
+gabarito:"A: CORRETA — TODAS as afirmativas são corretas. B: Espironolactona: estudos RALES (CF III-IV) e EMPHASIS-HF (CF II) comprovam redução de mortalidade em ICFEr. C: Digoxina (estudo DIG): reduz hospitalização mas sem redução de mortalidade. D: Ivabradina (SHIFT trial): reduz desfecho combinado morte CV + hospitalização em FC>70 ritmo sinusal. E: Diuréticos melhoram congestão e qualidade de vida, mas sem redução de mortalidade em estudos controlados."},
+
+{id:28,tema:"Insuf. Cardíaca",
+enunciado:"Em ensaios clínicos randomizados com alto nível de evidência científica, quais as classes de medicamentos foram eficazes em reduzir mortalidade para o paciente com IC, FE 28%, BRE com QRS 140ms?",
+alternativas:["IECA, betabloqueadores, bloqueadores dos canais de cálcio e inibidores de SGLT2","IECA, betabloqueadores, inibidores de SGLT2 e antagonistas dos receptores da aldosterona.","Bloqueadores dos receptores de angiotensina, digitálicos, antagonistas dos receptores da aldosterona e nitratos","Bloqueadores dos receptores de angiotensina, bloqueadores dos canais de cálcio, digitálicos e ivabradina"],
+correta:1,
+gabarito:"A: Incorreta. BCC (bloqueadores dos canais de cálcio como diltiazem) são CONTRAINDICADOS em ICFEr por efeito inotrópico negativo. B: CORRETA. Os 4 pilares com redução de mortalidade em ICFEr (FE<40%): IECA/ARNI + Betabloqueador + Antagonista de aldosterona (espironolactona/eplerenona) + iSGLT2 (dapagliflozina/empagliflozina). C: Incorreta. Digitálicos não reduzem mortalidade. D: Incorreta. BCC e digitálicos não reduzem mortalidade em ICFEr."},
+
+{id:29,tema:"Insuf. Cardíaca",
+enunciado:"Qual das opções a seguir traz o grupo de medicamentos mais seguros para o tratamento da insuficiência cardíaca na gravidez?",
+alternativas:["Digoxina, nitrato, enalapril, furosemida","Digoxina, carvedilol, espironolactona, sacubitril-valsartana","Losartana, hidralazina, carvedilol, furosemida","Carvedilol, hidralazina, losartana, nitrato","Hidralazina, nitrato, digoxina, furosemida"],
+correta:4,
+gabarito:"A: Incorreta. Enalapril (IECA) é teratogênico (malformação renal, hipotensão fetal) — CONTRAINDICADO na gestação. B: Incorreta. Espironolactona e sacubitril-valsartana são contraindicados. C: Incorreta. Losartana (BRA) é contraindicada. D: Incorreta. Losartana (BRA) é contraindicada. E: CORRETA. Seguros na gestação: Hidralazina (vasodilatador), Nitrato, Digoxina (controle de frequência), Furosemida (cautela — risco de oligoidrâmnio em uso prolongado). IECA, BRA, espironolactona e sacubitril são proibidos."},
+
+{id:30,tema:"Insuf. Cardíaca",
+enunciado:"Edson tem 45 anos, negro, é hipertenso e teve 2 infartos. Apresentando dispnéia aos esforços habituais, edema de membros inferiores, tosse seca. Apresenta crépitos à ausculta e hepatomegalia. Qual a melhor alternativa?",
+alternativas:["Tem 2 critérios maiores e 3 critérios menores, portanto, provável ICC.","Sem terceira ou quarta bulha, não se pode fechar o diagnóstico de ICC.","Tem 1 critério maior e pelo menos 2 critérios menores, portanto, provável ICC.","Não há critério suficiente para Insuficiência cardíaca (ICC)."],
+correta:2,
+gabarito:"A: Incorreta. Critérios de Framingham: Maiores = crépitos + hepatomegalia (2 maiores). Menores = edema bilateral, tosse noturna, dispneia a esforços, taquicardia (vários menores). B: Incorreta. B3 não é obrigatória para o diagnóstico pelos critérios de Framingham. C: CORRETA (embora haja debate — com crépitos + hepatomegalia, são 2 maiores, não 1). O diagnóstico de ICC pelos critérios de Framingham requer 2 maiores OU 1 maior + 2 menores — este paciente satisfaz amplamente. D: Incorreta."},
+
+{id:31,tema:"Insuf. Cardíaca",
+enunciado:"Cristina, 60 anos, hipertensa, diabética, apresentando quadro de Insuficiência cardíaca. Sobre o seu tratamento, podemos afirmar que. Marque a alternativa mais adequada.",
+alternativas:["Devemos utilizar diurético de alça, betabloqueador e nitrato.","Devemos utilizar espironolactona, IECA ou BRA e Betabloqueador cardio-seletivo.","Não devemos utilizar bloqueador canal de cálcio.","Não devemos utilizar espironolactona, nem hidroclorotiazida."],
+correta:1,
+gabarito:"A: Incorreta. Nitrato sozinho não reduz mortalidade; betabloqueador precisa ser associado a IECA/BRA. B: CORRETA. O tripé fundamental da ICFEr é: Espironolactona (antagonista de aldosterona) + IECA ou BRA (redução da pós-carga e remodelamento) + Betabloqueador cardio-seletivo (bisoprolol, metoprolol, carvedilol). C: Parcialmente correta, mas incompleta como resposta. D: Incorreta. Espironolactona está indicada."},
+
+{id:32,tema:"Insuf. Cardíaca",
+enunciado:"Homem de 61 anos com dispneia progressiva aos esforços há 1 ano, CF III (NYHA). BNP elevado. ECG: hipertrofia VE, ondas Q em DII/DIII/aVF. Ecocardiograma: FE 38%, VE dilatado, hipocinesia em parede inferior. HAS há 18 anos irregular. A etiologia mais provável da IC e estratégia diagnóstica complementar mais apropriada são:",
+alternativas:["Cardiomiopatia isquêmica; indicar cineangiocoronariografia para avaliação da anatomia coronariana.","Cardiopatia hipertensiva com remodelamento avançado; solicitar apenas ressonância cardíaca para quantificação de fibrose.","Cardiopatia hipertensiva pura; ajuste do tratamento clínico sem necessidade de investigação adicional.","Cardiomiopatia dilatada idiopática; investigar causas genéticas antes de outros exames."],
+correta:0,
+gabarito:"A: CORRETA. HAS + ondas Q em DII/DIII/aVF (sugere IAM inferior prévio) + hipocinesia segmentar em parede inferior + FE 38% = Cardiomiopatia ISQUÊMICA. A cineangiocoronariografia (cateterismo cardíaco) é o padrão-ouro para avaliar a anatomia coronariana e planejar revascularização. B: Incorreta. Ressonância isolada sem cateterismo não define a anatomia coronariana. C: Incorreta. Hipocinesia segmentar indica etiologia isquêmica, não apenas hipertensiva. D: Incorreta. Ondas Q e hipocinesia segmentar afastam cardiomiopatia dilatada idiopática."},
+
+{id:33,tema:"Insuf. Cardíaca",
+enunciado:"Uma mulher de 68 anos, com HAS e DM, procura atendimento por dispneia progressiva há 6 meses, evoluindo para dispneia ao repouso e ortopneia. PA 150/90, FC 96, crepitações bilaterais em bases e edema MMII ++/4+. Ecocardiograma: FE 60%, átrio esquerdo aumentado, disfunção diastólica grau II. Qual o exame complementar mais útil para confirmar o diagnóstico de IC nesse contexto clínico?",
+alternativas:["Dosagem de peptídeo natriurético tipo B (BNP)","Teste ergométrico","Angiotomografia de coronárias","Dosagem sérica de troponina sérica"],
+correta:0,
+gabarito:"A: CORRETA. Na ICFEp (FE preservada), o diagnóstico pode ser desafiador pois o ecocardiograma é normal exceto pela disfunção diastólica. O BNP (ou NT-proBNP) é o biomarcador de escolha para confirmar IC, pois está elevado na congestão cardíaca independentemente da FE. B: Incorreta. Teste ergométrico não é indicado para diagnóstico de IC descompensada. C: Incorreta. Angiotomografia investiga coronárias, não confirma IC. D: Incorreta. Troponina indica lesão miocárdica aguda, não IC crônica."},
+
+{id:34,tema:"Insuf. Cardíaca",
+enunciado:"Paciente negro, 70 Kg, portador de insuficiência cardíaca de etiologia isquêmica, com proposta de tratamento conservador (multiarterial, com doença difusa, estenoses extensas e acometimento do leito distal) relata estar apresentando dor torácica ao caminhar mais de 200m em plano. Em uso de carvedilol 25mg (2x/dia); Espironolactona 25mg/dia; Hidralazina 50mg 3x/dia; AAS 100mg/dia; Atorvastatina 40mg/dia e dinitrato de isossorbida 100mg/dia. Ao exame: FC de 74 bpm e PA de 130 x 70 mmHg. Ausculta pulmonar limpa. A melhor conduta considerando a queixa do paciente é:",
+alternativas:["Aumentar AAS","Associar ivabradina","Aumentar hidralazina","Associar diltiazem","Aumentar dinitrato de isossorbida"],
+correta:1,
+gabarito:"A: Incorreta. AAS já em uso, aumentar dose não tem benefício adicional na angina. B: CORRETA. Paciente com DAC + ICFEr sem possibilidade de revascularização, em terapia otimizada, com angina persistente e FC 74 bpm em ritmo sinusal. A ivabradina (inibidor de canal If no nó sinusal) reduz a FC e a isquemia miocárdica, sendo indicada neste cenário. C: Incorreta. Hidralazina trata IC (reduz pós-carga) mas não tem ação anti-isquêmica. D: Incorreta. Diltiazem (BCC não-dihidropiridínico) é CONTRAINDICADO em ICFEr. E: Incorreta. Nitrato em alta dose pode causar tolerância."},
+
+{id:35,tema:"Insuf. Cardíaca",
+enunciado:"Paciente sexo masculino, 50 anos, obeso. Portador de angina relacionada aos esforços de aparecimento há 1 ano. Hipertenso controlado. Com relação ao tratamento, marque a melhor alternativa.",
+alternativas:["Beta bloqueador e Bloqueador de canal de cálcio são a melhor opção para o caso","Nitrato e diurético são a melhor opção para o caso","IECA e BRA em sinergismo são a melhor opção para o caso","Diurético e IECA são as melhores opções para o caso"],
+correta:0,
+gabarito:"A: CORRETA. Na angina estável, o betabloqueador é o agente anti-isquêmico de primeira escolha (reduz demanda de O2 por redução de FC e contratilidade). O BCC (anlodipino, dihidropiridínico) pode ser associado para maior efeito anti-isquêmico e controle pressórico. Esta combinação é preferencial no paciente com HAS + angina. B: Incorreta. Nitrato + diurético não é a melhor combinação para angina crônica. C: Incorreta. IECA + BRA em duplo bloqueio é contraindicado. D: Incorreta. Diurético + IECA tratam HAS mas não são os melhores anti-isquêmicos."},
+
+{id:36,tema:"Insuf. Cardíaca",
+enunciado:"Homem, 62 anos, negro, etilista, tabagista e hipertenso, apresenta fadiga, dispneia ao esforços habituais, dispneia paroxística noturna, associada a edema de MMI há 06 meses. Diagnóstico de Miocardiopatia Dilatada de etiologia hipertensiva. Qual das combinações de drogas abaixo diminui a mortalidade na insuficiência cardíaca?",
+alternativas:["Diurético de alça, IECA, Betabloqueador, Espironolactona","Digital, IECA, Betabloqueador, Diurético Tiazídico, Ivabradina","Betabloqueador, IECA, Diurético de alça, Espironolactona, Ivabradina","IECA, Betabloqueador, Antagonista da Aldosterona."],
+correta:3,
+gabarito:"A: Incorreta. Diurético de alça não reduz mortalidade (apenas sintomas). B: Incorreta. Digital não reduz mortalidade; diurético tiazídico não é indicado em IC avançada. C: Incorreta. Diurético de alça não reduz mortalidade. D: CORRETA. As três classes com redução de mortalidade comprovada em ensaios clínicos para ICFEr são: IECA (ou BRA/ARNI) + Betabloqueador + Antagonista da Aldosterona (espironolactona/eplerenona). [Nota: iSGLT2 também reduzem mortalidade, mas não estavam na época desta questão.]"},
+
+// ──────────────── DAC / SCA (12 questões) ────────────────
+{id:37,tema:"DAC / SCA",
+enunciado:"Qual medicamento utilizado para o tratamento de pacientes com doença arterial coronária crônica NÃO reduz o risco de infarto do miocárdio ou mortalidade?",
+alternativas:["Inibidor da enzima conversora da angiotensina (IECA).","Ácido acetilsalicílico (AAS).","Estatina.","Nitrato oral de longa duração.","Betabloqueador em pacientes com fração de ejeção menor do que 40%."],
+correta:3,
+gabarito:"A: Incorreta. IECA reduz mortalidade, especialmente em FE<40% e DM (HOPE, EUROPA). B: Incorreta. AAS reduz eventos trombóticos em DAC estabelecida. C: Incorreta. Estatinas reduzem mortalidade CV por estabilização de placa e redução de LDL. D: CORRETA. Nitratos de longa ação são ANTI-ISQUÊMICOS (melhoram sintomas/qualidade de vida) mas NÃO reduzem infarto ou mortalidade em DAC crônica estável. E: Incorreta. Betabloqueador reduz mortalidade pós-IAM em pacientes com disfunção ventricular."},
+
+{id:38,tema:"DAC / SCA",
+enunciado:"Paciente portador de DAC crônica estável, com sintomas de dor anginosa aos grandes esforços. Ecocardiograma com FEVE igual a 35%. Qual, dentre as drogas abaixo, NÃO deve ser utilizada neste tipo de paciente?",
+alternativas:["Diltiazem.","Nitratos de ação rápida.","Atorvastatina.","Maleato de enalapril.","Bisoprolol."],
+correta:0,
+gabarito:"A: CORRETA (droga que NÃO deve ser usada). Diltiazem é um BCC não-dihidropiridínico com efeito inotrópico negativo, CONTRAINDICADO em pacientes com FE reduzida (<40%) pois pode precipitar descompensação da IC. B: Incorreta. Nitratos de resgate são permitidos e necessários. C: Incorreta. Estatinas são obrigatórias na DAC. D: Incorreta. IECA está indicado em FE<40%. E: Incorreta. Bisoprolol (BB cardio-seletivo) está indicado em IC/DAC com FE reduzida."},
+
+{id:39,tema:"DAC / SCA",
+enunciado:"Em relação à DAC estável, os objetivos fundamentais do tratamento incluem prevenir o IAM/mortalidade e reduzir sintomas. Qual alternativa está CORRETA acerca do exposto?",
+alternativas:["A ivabradina é especialmente benéfica para pacientes com disfunção VE e FC > 120 bpm.","A trimetazidina é uma substância com efeitos metabólicos e anti-isquêmicos com vários efeitos na hemodinâmica cardiovascular.","Bloqueadores beta-adrenérgicos são medicamentos de segunda linha para o tratamento da angina estável.","Antagonistas dos canais de cálcio constituem-se um grupo heterogêneo de medicamentos cujos efeitos farmacológicos incluem relaxamento da musculatura lisa.","Quanto à terapêutica medicamentosa, antiagregantes plaquetários, hipolipemiantes, BB pós-IAM e IECA reduzem a incidência de infarto e aumentam a sobrevida."],
+correta:4,
+gabarito:"A: Incorreta. Ivabradina é indicada com FC>70 (não>120); para FC>120 o BB já seria mais apropriado. B: Incorreta. Trimetazidina tem efeito PURAMENTE metabólico (↑eficiência mitocondrial), sem ação hemodinâmica. C: Incorreta. BB são PRIMEIRA linha na angina estável. D: Parcialmente correta, mas incompleta. E: CORRETA. O pilar de prevenção secundária na DAC é: AAS + estatinas (hipolipemiantes) + BB pós-IAM + IECA (especialmente FE<40% ou DM) — reduzem mortalidade e eventos."},
+
+{id:40,tema:"DAC / SCA",
+enunciado:"Sobre o tratamento da Síndrome Coronariana Aguda (SCA), é correto afirmar:",
+alternativas:["Inibidores mineralocorticoides são indicados para pacientes com SCA de qualquer tipo ou gravidade.","A dupla antiagregação plaquetária deve, como regra, ser prescrita para todos os pacientes com infarto agudo do miocárdio.","A terapia com estatina de alta potência deve ser prescrita para todos os pacientes com SCA, exceto se o LDL colesterol estiver abaixo de 55mg/dL.","A angioplastia primária é um pilar do tratamento agudo de SCA independente se com ou sem supradesnível do segmento ST."],
+correta:1,
+gabarito:"A: Incorreta. Inibidores mineralocorticoides (espironolactona) são indicados em pós-IAM com FE≤40% + IC ou DM — não em qualquer SCA. B: CORRETA. Dupla antiagregação (AAS + inibidor P2Y12: ticagrelor ou clopidogrel) é indicada para TODOS os pacientes com IAM, por 12 meses. C: Incorreta. Estatina de alta potência é indicada para TODOS com SCA, INDEPENDENTE do nível de LDL (efeito pleotrópico de estabilização de placa). D: Incorreta. Angioplastia primária é indicação formal apenas no IAMCSST; no IAMSST a indicação é estratificada por risco."},
+
+{id:41,tema:"DAC / SCA",
+enunciado:"Paciente sexo feminino, 75 anos, diabética, com epigastralgia há 40 minutos, eletrocardiograma com bloqueio de ramo esquerdo, não documentado previamente, dosagem de troponina indisponível até o momento. Marque a alternativa correta.",
+alternativas:["BRE novo, isoladamente, caracteriza IAM. Realizar cateterismo cardíaco.","BRE novo, isoladamente, não caracteriza IAM. Realizar dosagem de troponina.","Apenas a dosagem positiva de troponina pode caracterizar uma síndrome coronariana aguda.","Paciente com diagnóstico improvável de SCA a despeito da alteração eletrocardiográfica."],
+correta:1,
+gabarito:"A: Incorreta. Diretrizes atuais: BRE NOVO isoladamente NÃO é mais critério automático para IAMCSST. B: CORRETA. BRE novo sem outros critérios não caracteriza IAM isoladamente. Deve-se realizar dosagem de troponina para confirmar lesão miocárdica antes de indicar cateterismo urgente. C: Incorreta. O contexto clínico (dor torácica típica, alterações ECG, fatores de risco) também contribui para o diagnóstico. D: Incorreta. Paciente com dor precordial + BRE novo DEVE ser investigada — probabilidade não é baixa."},
+
+{id:42,tema:"DAC / SCA",
+enunciado:"Comparando-se as diferentes estatinas, pode-se afirmar que, entre as abaixo, aquela que determina menores reduções do LDL-colesterol é a:",
+alternativas:["Sinvastatina","Atorvastatina","Fluvastatina","Rosuvastatina","Pitavastatina"],
+correta:2,
+gabarito:"A: Incorreta. Sinvastatina 40mg é de potência intermediária (~35-40% de redução de LDL). B: Incorreta. Atorvastatina é estatina de alta potência (40-50% em doses padrão). C: CORRETA. Fluvastatina é considerada a estatina de MENOR potência — dose usual de 40-80mg reduz LDL em apenas 22-32%, a menor entre as estatinas disponíveis. D: Incorreta. Rosuvastatina é a mais potente (~50-55% de redução). E: Incorreta. Pitavastatina tem potência intermediária."},
+
+{id:43,tema:"DAC / SCA",
+enunciado:"Uma opção terapêutica nos pacientes com doença arterial coronariana crônica estável é a inibição do metabolismo de ácidos graxos pelos miócitos, que passam a utilizar vias metabólicas mais eficientes, diminuindo a isquemia. O medicamento que possui esse mecanismo de ação é:",
+alternativas:["Levosimendan","Trimetazidina","Neprilisina","Ivabradina","Alopurinol"],
+correta:1,
+gabarito:"A: Incorreta. Levosimendan é sensibilizador de cálcio, usado em IC aguda descompensada. B: CORRETA. Trimetazidina inibe a 3-cetoacil-CoA tioase de cadeia longa (enzima do metabolismo de ácidos graxos), redirecionando o metabolismo miocárdico para oxidação de glicose (mais eficiente em isquemia). Efeito anti-isquêmico sem ação hemodinâmica. C: Incorreta. Neprilisina degrada peptídeos vasoativos (BNP, angiotensina II). D: Incorreta. Ivabradina bloqueia canal If do nó sinusal (reduz FC). E: Incorreta. Alopurinol inibe xantina oxidase (tratamento de gota)."},
+
+{id:44,tema:"DAC / SCA",
+enunciado:"José Alberto tem 55 anos, Dm diagnosticado há 8 anos e DAC há 5 anos, apresenta Risco cardiovascular muito alto, LDL= 155mg/dL, HDL=27mg/dL, Triglicérides=258mg/dL, em uso de sinvastatina 40mg/dia regularmente sem interromper. Qual proposta terapêutica você adotaria para alcançar a meta no tratamento da dislipidemia?",
+alternativas:["Associar sinvastatina, ezetimiba e fibrato.","Associar fibrato a sinvastatina.","Associar sinvastatina, ezetimiba e fibrato.","Trocar a sinvastatina por uma estatina de alta potência como atorvastatina.","Retirar a sinvastatina e adotar ezetimiba."],
+correta:3,
+gabarito:"A/C: Incorreta. Fibrato não deve ser combinado com estatina de alta intensidade (risco de miopatia). B: Incorreta. Fibrato + sinvastatina = risco de miopatia. D: CORRETA. Paciente de muito alto risco (DM + DAC), meta de LDL <50mg/dL. LDL 155 em sinvastatina 40mg (potência intermediária). A conduta é trocar para estatina de alta potência (atorvastatina 40-80mg ou rosuvastatina 20-40mg). Se não atingir meta, associar ezetimiba. E: Incorreta. Ezetimiba como monoterapia não é suficiente para alto risco."},
+
+{id:45,tema:"DAC / SCA",
+enunciado:"A Hipertensão Arterial Resistente (HAR) é definida como a pressão arterial de consultório não controlada apesar do uso de três ou mais anti-hipertensivos em doses adequadas, incluindo-se preferencialmente um diurético tiazídico, um IECA ou BRA, e um BCC. A causa secundária mais prevalente na HAR é:",
+alternativas:["Doença renal crônica","Hipotireoidismo","Hiperaldosteronismo primário","Estenose da artéria renal","Síndrome da apneia e Hipopneia Obstrutiva do Sono (SAHOS)"],
+correta:4,
+gabarito:"A: Incorreta. DRC é causa secundária de HAS, mas não a mais prevalente na HAR. B: Incorreta. Hipotireoidismo causa HAS leve, raramente resistente. C: Incorreta. Hiperaldosteronismo primário é importante mas não é a mais prevalente. D: Incorreta. Estenose da artéria renal é causa importante mas menos prevalente que SAHOS. E: CORRETA. SAHOS é a causa secundária MAIS PREVALENTE de HAS resistente, presente em 30-80% dos casos. O mecanismo é a ativação simpática noturna repetida. Polissonografia deve ser solicitada em todo HAR."},
+
+{id:46,tema:"DAC / SCA",
+enunciado:"Paciente masculino deu entrada no serviço de emergência com queixa de cefaleia frontal, referida como enxaqueca. FC = 100 bpm; PA = 180×130 mmHg; exame neurológico normal; fundo de olho evidenciando papilas normais AIHO. Submetido ao eletrocardiograma que evidenciou sobrecarga de câmaras esquerdas. Assinale o diagnóstico e a conduta correta:",
+alternativas:["Hipertensão arterial crônica e não se caracterizou urgência ou emergência, devendo ser liberado após medicação via oral (furosemida).","O paciente se apresenta em uma emergência hipertensiva, porque há hemorragia em retina, devendo receber medicação parenteral (nitroprussiato de sódio) e internação em UTI.","O paciente se apresenta em urgência hipertensiva, devendo receber medicação via oral (captopril) e com reavaliação ambulatorial precoce (em até 7 dias).","O paciente se apresenta em uma emergência hipertensiva, porque há lesão em órgão alvo, devendo receber medicação parenteral (nitroprussiato de sódio) e internação em enfermaria após estabilização."],
+correta:2,
+gabarito:"A: Incorreta. PA 180×130 com sobrecarga de câmaras não é situação comum sem intervenção. B: Incorreta. Fundo de olho normal (sem hemorragia) — não há LOA aguda ocular. D: Incorreta. Sobrecarga de câmaras é achado CRÔNICO, não LOA aguda. C: CORRETA. Urgência hipertensiva = PA muito elevada SEM LOA AGUDA. Exame neurológico normal + fundo de olho normal + sobrecarga ventricular crônica. Conduta: captopril VO + reavaliação em 7 dias (redução gradual em 24-48h)."},
+
+{id:47,tema:"DAC / SCA",
+enunciado:"Mariana, 28 anos, apresentou febre com predomínio de mialgia e intensa artralgia, além de hepatomegalia não dolorosa, associado o rash cutâneo máculo-papular. Assinale a suspeita diagnóstica mais provável.",
+alternativas:["Zika","Chikungunya","Dengue","Dengue hemorrágica"],
+correta:1,
+gabarito:"A: Incorreta. Zika cursa com rash leve, conjuntivite, febre baixa, artralgia LEVE — hepatomegalia não é típica. B: CORRETA. Chikungunya: febre alta súbita + ARTRALGIA INTENSA (poliartralgia) + rash máculo-papular. Em casos mais graves, pode haver hepatomegalia. O destaque é a artralgia incapacitante (diferencia de Zika). C: Incorreta. Dengue clássica tem mialgia predominante (dor retro-orbital), artralgia discreta, sem artralgia intensa. D: Incorreta. Dengue hemorrágica tem sangramentos e não é o quadro descrito."},
+
+{id:48,tema:"DAC / SCA",
+enunciado:"Paciente masculino, 50 anos, atendendo no ambulatório de clínica médica (Saúde Bahiana) em uso de hidroclorotiazida 25mg/dia, enalapril 40mg/dia e anlodipino 10mg/dia, com pressão arterial (PA) de consultório = 164×82 mmHg. MAPA 24 horas = 134 x 82; PA vigília = 134 x 76 mmHg; PA sono = 134 x 84 mmHg. Apresenta dosagem de potássio sérico = 4,2 mEq/L. Assinale a alternativa correta quanto às condutas diagnóstica e terapêutica:",
+alternativas:["Iniciar espironolactona e investigar apneia obstrutiva do sono.","Manter o esquema terapêutico e encaminhar ao psiquiatra/psicólogo para afastar síndrome do pânico.","Suspender hidroclorotiazida e iniciar dose noturna de simpaticolítico de ação central.","Iniciar dose noturna de betabloqueador, visando à melhora do comportamento pressórico no sono.","Manter o esquema terapêutico por se tratar de hipertensão resistente do avental branco."],
+correta:4,
+gabarito:"A: Incorreta. Não há HAS resistente verdadeira se MAPA está controlada. B: Incorreta. Síndrome do pânico não é causa de HAS. C: Incorreta. Simpaticolítico não resolve hipertensão do avental branco. D: Incorreta. BB noturno não resolve HAB. E: CORRETA. MAPA mostra PA controlada (134×82 em 24h) com PA consultório elevada (164×82) = Hipertensão do Avental Branco (HAB). Conduta: manter esquema atual, confirmação com nova MAPA, educação do paciente."},
+
+// ──────────────── TIREOIDE (12 questões) ────────────────
+{id:49,tema:"Tireoide",
+enunciado:"Mulher de 74 anos, fadiga progressiva, lentificação psicomotora e constipação intestinal há 8 meses. Piora de memória. Pele seca e fria. Reflexos tendinosos com fase de relaxamento lenta. TSH: 18 μUI/mL (VR: 0,4–4,5); T4 livre: 0,6 ng/dL (VR: 0,8–1,9). A conduta diagnóstica e terapêutica mais adequada é:",
+alternativas:["Confirmar o diagnóstico de hipotireoidismo primário e iniciar levotiroxina em baixa dose, com titulação gradual.","Iniciar levotiroxina em dose plena calculada por peso corporal, visando normalização do TSH.","Diagnosticar hipotireoidismo subclínico e apenas acompanhar com nova dosagem hormonal em 6 meses.","Tratar apenas se surgirem sintomas clássicos mais exuberantes, devido à idade avançada."],
+correta:0,
+gabarito:"A: CORRETA. TSH elevado (18) + T4 livre baixo = hipotireoidismo primário manifesto. Em idosos e cardiopatas, iniciar levotiroxina em BAIXA DOSE (12,5-25 mcg/dia) com titulação gradual a cada 4-6 semanas — risco de descompensação cardíaca com dose plena. B: Incorreta. Dose plena (1,6 mcg/kg) em idoso pode precipitar angina, IAM ou FA. C: Incorreta. Hipotireoidismo subclínico seria TSH elevado com T4 NORMAL — aqui o T4 está baixo. D: Incorreta. Os sintomas já são evidentes e T4 baixo indica necessidade imediata de tratamento."},
+
+{id:50,tema:"Tireoide",
+enunciado:"Mulher de 34 anos, perda ponderal de 6 kg em 2 meses, palpitações, intolerância ao calor, tremores finos, ansiedade. FC 112 bpm; PA 146×88; pele quente e úmida; bócio difuso não nodular; tremor fino postural. TSH < 0,01 μUI/mL; T4 livre elevado; T3 elevado. Diagnóstico mais provável e melhor conduta terapêutica inicial:",
+alternativas:["Doença de Graves; iniciar betabloqueador não seletivo e droga antitireoidiana (metimazol).","Adenoma tóxico; indicar radioiodoterapia como tratamento inicial imediato.","Hipertireoidismo central; solicitar ressonância magnética de hipófise antes de tratamento.","Tireoidite subaguda; iniciar anti-inflamatório não esteroidal e observar evolução clínica."],
+correta:0,
+gabarito:"A: CORRETA. Hipertireoidismo em jovem com bócio DIFUSO (não nodular) = Doença de Graves (anticorpo TRAb estimulador do receptor de TSH). Tratamento: metimazol (antitireoidiano 1ª linha em adultos) + propranolol (betabloqueador NÃO seletivo — controla sintomas adrenérgicos: taquicardia, tremores). B: Incorreta. Adenoma tóxico cursa com nódulo solitário. C: Incorreta. Hipertireoidismo central seria com TSH ELEVADO ou normal. D: Incorreta. Tireoidite subaguda é autolimitada, dolorosa, sem bócio difuso vascularizado."},
+
+{id:51,tema:"Tireoide",
+enunciado:"Mulher, 37 anos, apresentando irregularidade menstrual, alopecia com eflúvio anágeno e transtorno do humor. TSH = 12 mUI/L; T4 livre = 0,2 ng/dL. Qual o diagnóstico mais provável?",
+alternativas:["Esclerodermia","Doença de Graves","Carcinoma papilífero da tireoide","Tireoidite de Hashimoto"],
+correta:3,
+gabarito:"A: Incorreta. Esclerodermia cursa com fibrose sistêmica, não com hipotireoidismo primário. B: Incorreta. Doença de Graves causa HIPERtireoidismo (TSH baixo, T4 alto). C: Incorreta. Carcinoma papilífero não causa hipotireoidismo primário por si. D: CORRETA. TSH muito elevado (12) + T4 baixo = hipotireoidismo primário. Em mulher jovem com irregularidade menstrual + alopecia + humor alterado, a causa mais comum é Tireoidite de Hashimoto (anti-TPO e anti-Tg positivos). É a tireoidite autoimune crônica mais prevalente."},
+
+{id:52,tema:"Tireoide",
+enunciado:"Mulher, 45 anos, refere quadro de perda de peso, palpitação e insônia há 1 mês. Nega uso de medicamentos. Nódulo palpável em lobo direito da tireoide. Sem exoftalmia. Assinale a alternativa CORRETA quanto à conduta e hipótese diagnóstica:",
+alternativas:["Dosagens de TSH, TRAb e ultrassonografia da tireoide. Doença de Graves.","Dosagens de TSH, T4 livre e anti TPO. Doença de Graves.","Dosagens de TSH, T4 livre e cintilografia da tireoide. Doença de Plummer.","Dosagens de TSH, TRAb e ultrassonografia da tireoide. Tireoidite de Hashimoto.","Dosagens de TSH, T4 livre e antiTPO. Tireoidite de Hashimoto."],
+correta:2,
+gabarito:"A: Incorreta. TRAb é específico para Graves — aqui há nódulo solitário, sugestivo de adenoma tóxico. B: Incorreta. Anti-TPO seria para Hashimoto. C: CORRETA. Hipertireoidismo + NÓDULO SOLITÁRIO (sem exoftalmia, sem bócio difuso) = Doença de Plummer (adenoma tóxico funcionante). TSH + T4 livre confirmam o hipertireoidismo. Cintilografia identifica o nódulo 'quente' autônomo hiperfuncionante — exame diagnóstico chave. D/E: Incorretas. Hashimoto causa hipotireoidismo, não hiper."},
+
+{id:53,tema:"Tireoide",
+enunciado:"Mulher 50 anos, acompanhada no ambulatório de reumatologia por esclerose sistêmica, faz uso de Metotrexato 15mg ao dia. Pediu para ser atendida no ambulatório de clínica médica, pois o seu reumatologista se ausentou há dois anos e está sem acompanhamento médico. Ao exame físico: tem murmúrio vesicular bem distribuído bilateralmente, sem crepitações. Qual a principal suspeita diagnóstica baseado nos dados clínicos apresentados?",
+alternativas:["Doença arterial coronariana","Hipertensão arterial pulmonar","Amiloidose cardíaca","Insuficiência cardíaca congestiva","Pericardite constritiva"],
+correta:1,
+gabarito:"A: Incorreta. DAC não é a principal complicação cardiovascular da esclerose sistêmica. B: CORRETA. A esclerose sistêmica (ES) é a colagenose com MAIOR associação com Hipertensão Arterial Pulmonar (HAP) — ocorre em 10-15% dos casos. A HAP é a principal causa de morte na ES. Manifestações: dispneia progressiva, edema de MMII, sinal de P2 aumentado. C: Incorreta. Amiloidose não é complicação típica da ES. D: Incorreta. IC pode ocorrer mas não é a suspeita primária. E: Incorreta. Pericardite é incomum."},
+
+{id:54,tema:"Tireoide",
+enunciado:"Mulher, 58 anos, acompanhada no ambulatório por DM2 há 10 anos, em uso de antidiabéticos orais e tem polineuropatia sensitivo-motora em pés. Nas últimas duas consultas, apresentou pressão arterial elevada no consultório. História familiar negativa para HAS. Qual seria a causa mais provável para elevação da pressão arterial?",
+alternativas:["HAS essencial ou primária","HAS renovascular","Nefropatia Diabética","Hiperaldosteronismo primário"],
+correta:2,
+gabarito:"A: Incorreta. A ausência de história familiar e o contexto de DM com complicações orientam para causa secundária. B: Incorreta. HAS renovascular seria mais comum em jovem com sopro abdominal ou em idoso com aterosclerose diffusa. C: CORRETA. Nefropatia diabética (doença renal do diabetes) é a causa MAIS COMUM de HAS secundária em diabéticos. DM2 há 10 anos com neuropatia (microangiopatia presente) → alta probabilidade de nefropatia. Investigação: RAC urinária + TFG. D: Incorreta. Hiperaldosteronismo cursaria com hipocalemia e alcalose."},
+
+{id:55,tema:"Tireoide",
+enunciado:"Paciente masculino 35 anos, apresenta perda de peso, intolerância ao calor, palpitações, tremores e defecação excessiva há 6 meses, e há dois meses notou aumento volume do pescoço e olhos discretamente 'saltados'. Qual o possível diagnóstico para este paciente?",
+alternativas:["Síndrome de Cushing","Insuficiência adrenal","Feocromocitoma","Doença de Graves"],
+correta:3,
+gabarito:"A: Incorreta. Cushing = obesidade central, estrias violáceas, hirsutismo, hiperglicemia — quadro oposto. B: Incorreta. Insuficiência adrenal = fadiga, perda de peso, hipotensão, hiperpigmentação, hipoglicemia. C: Incorreta. Feocromocitoma = hipertensão paroxística, cefaleia, sudorese — mas sem exoftalmia ou bócio difuso. D: CORRETA. Tríade diagnóstica de Doença de Graves: hipertireoidismo (perda de peso, intolerância ao calor, taquicardia, tremor, diarreia) + bócio difuso + oftalmopatia (exoftalmia/proptose). Doença autoimune com anticorpo TRAb."},
+
+{id:56,tema:"Tireoide",
+enunciado:"Laura, 28 anos, feminino, solteira, operadora de Call Center, chega ao nosso ambulatório com sonolência, ronquidão, intolerância ao frio, pele seca e ganho de 05 kg em 6 meses, amenorreia há 07 meses. Ao exame físico: mucosas hipocrômicas +/4+; pele seca; tireoide aumentada de tamanho, tamanho, indurar, móvel à deglutição; bulhas hipofonéticas em todos os focos, sem BE, SS em FM II/VI. Qual o diagnóstico mais provável?",
+alternativas:["Hipotireoidismo primário descompensado por tireoidite Hashimoto","Hipotireoidismo secundário","Obesidade associada a neoplasia da tireoide","Obesidade associada a neoplasia da tireoide Hipotireoidismo associado a anemia hemolítica"],
+correta:0,
+gabarito:"A: CORRETA. Clínica clássica de hipotireoidismo grave (sonolência, intolerância ao frio, ganho de peso, amenorreia, pele seca, bradicardia com bulhas hipofonéticas + sopro sistólico de baixo débito) + tireoide aumentada endurecida = Tireoidite de Hashimoto em estágio avançado. Bulhas hipofonéticas + sopro podem indicar derrame pericárdico (complicação do hipotireoidismo grave). B: Incorreta. Hipotireoidismo central (secundário) raramente causa bócio (sem estímulo de TSH). C/D: Incorretas."},
+
+{id:57,tema:"Tireoide",
+enunciado:"Mulher, 32 anos, refere taquicardia, tremor de extremidades, perda de peso, agitação psicomotora, hiperdefecação há 4 meses. Exame físico: PA = 150×80 mmHg; FC = 110 bpm; pele quente e úmida; tireoide difusamente aumentada em cerca de 4 vezes; sem nódulos discretos. Considerando os sintomas clínicos, qual é a fisiopatologia mais provável da doença neste caso?",
+alternativas:["Anticorpo anti receptor de TSH.","Mutação somática no receptor de TSH.","Secreção autônoma de TSH.","Resistência ao hormônio tireoidiano."],
+correta:0,
+gabarito:"A: CORRETA. Doença de Graves: anticorpo TRAb (imunoglobulina estimuladora do receptor de TSH) ativa o receptor de TSH de forma autônoma, estimulando continuamente a síntese e liberação de hormônios tireoidianos. Isso explica o bócio difuso e o hipertireoidismo. B: Incorreta. Mutação somática no receptor é o mecanismo do adenoma tóxico (nódulo solitário). C: Incorreta. Secreção autônoma de TSH seria hipertireoidismo central (raridade). D: Incorreta. Resistência ao hormônio causa níveis elevados de T4 com TSH normal/alto."},
+
+{id:58,tema:"Tireoide",
+enunciado:"Rosângela, 26 anos, feminino, solteira, operadora de Call Center, chega ao nosso ambulatório com sonolência, ronquidão, intolerância ao frio, pele seca e ganho de 05 kg em 6 meses, amenorreia há 07 meses. Qual o melhor conjunto de exames para investigação diagnóstica?",
+alternativas:["FAN, TSH, T4livre, Anti-cardiolipina","TSH, T4livre, Anticorpos anti tireocianos e anti tireoglobulinas","TSH, TRAb, FAN","TSH, TH, Cortisol, glicemia"],
+correta:1,
+gabarito:"A: Incorreta. FAN e anticardiolipina são para lúpus, não tireoidopatia. B: CORRETA. Para confirmar Tireoidite de Hashimoto: TSH (elevado) + T4 livre (baixo) + Anticorpos anti-TPO (anti-tireoperoxidase) e anti-Tireoglobulina — estes anticorpos confirmam a etiologia autoimune da tireoidopatia. C: Incorreta. TRAb é para Doença de Graves (hipertireoidismo). D: Incorreta. Cortisol e glicemia não são investigação primária neste contexto."},
+
+{id:59,tema:"Tireoide",
+enunciado:"MFFB, branca, 37 anos, casada, natural do RJ. Há dois anos tratava hipertensão arterial resistente com vários médicos. Dois anos depois, ao neurológico solicitou Ressonância Magnética de crânio que laudo foi Normal (Sic); a eletromiografia (EMG) mostrou miopatia difusa. Internada de urgência submeteu-se a vários exames de sangue, todos normais, exceto pela hipopotassemia severa (2 meq/L). Qual seria o diagnóstico mais provável?",
+alternativas:["Paralisia Periódica Hipocalêmica; Encefalopatia Hipertensiva","Hiperaldosteronismo primário","Encefalopatia Hipertensiva","Paralisia Periódica Hipocalêmica"],
+correta:1,
+gabarito:"A: Incorreta. Paralisia periódica hipocalêmica pode ser manifestação, mas a causa primária é o hiperaldosteronismo. B: CORRETA. HAS RESISTENTE + hipopotassemia severa + miopatia = Síndrome de Conn (Hiperaldosteronismo Primário). Aldosterona elevada causa: HAS, hipopotassemia, alcalose metabólica, fraqueza muscular. Investigação: relação aldosterona/renina. C: Incorreta. Encefalopatia hipertensiva não causa hipocalemia. D: Incorreta. Paralisia periódica seria consequência, não causa primária."},
+
+{id:60,tema:"Tireoide",
+enunciado:"Diante de um paciente com diagnóstico de HAS recente, sem história familiar de hipertensão, podemos pensar em causas de HAS secundária. Assinale a alternativa que NÃO consiste em causa de hipertensão secundária:",
+alternativas:["Hiperparatireoidismo Secundário","Hipotireoidismo","Nefropatia Renovascular","Síndrome da Apneia Obstrutiva do Sono"],
+correta:0,
+gabarito:"A: CORRETA (NÃO é causa de HAS secundária). Hiperparatireoidismo secundário é uma complicação da DRC/hipocalcemia — não é causa de HAS secundária. B: Incorreta. Hipotireoidismo pode causar HAS diastólica (↓débito cardíaco, vasoconstricção). C: Incorreta. Nefropatia renovascular é uma das principais causas de HAS secundária. D: Incorreta. SAHOS é a causa mais prevalente de HAS resistente e secundária."},
+
+// ──────────────── NEFROLOGIA (12 questões) ────────────────
+{id:61,tema:"Nefrologia",
+enunciado:"Paciente de 60 anos apresenta TFG estimada de 52 mL/min/1,73m² e relação albumina/creatinina urinária de 50 mg/g, persistentes em exames repetidos após 4 meses. Com base nesses dados, qual é o diagnóstico mais adequado?",
+alternativas:["Injúria renal aguda","Síndrome nefrítica","Doença renal crônica","Síndrome nefrótica"],
+correta:2,
+gabarito:"A: Incorreta. IRA é aguda (<7 dias) por definição. B: Incorreta. Síndrome nefrítica: hematúria dismórfica + proteinúria <3,5g/dia + HAS + oligúria. C: CORRETA. DRC = TFG <60 mL/min/1,73m² OU marcadores de dano renal por ≥3 meses. Aqui: TFG 52 (G3a) + albuminúria persistente (A2) = DRC G3aA2 confirmada. D: Incorreta. Síndrome nefrótica exige proteinúria >3,5g/dia + hipoalbuminemia + edema."},
+
+{id:62,tema:"Nefrologia",
+enunciado:"Paciente 72 anos, portador de HAS e DM2 há 10 anos, chega à emergência com náuseas, adinamia e dispneia leve. Refere uso de AINE há 1 semana. PA=150×80; FC=78 bpm; FR=24 irpm. Estertores em base de pulmão bilaterais e edema bilateral MMII 2+/4+. Creatinina sérica = 4,2 mg/dL; Ureia = 210 mg/dL; K+ = 6,5; pH=7,15; HCO3=18; PCO2=30; PO2=80. Qual exame complementar seria mais importante para definição da conduta inicial?",
+alternativas:["USG das vias urinárias e Eletrocardiograma.","Ecocardiograma e urografia excretora.","Endoscopia digestiva alta e D-dímero.","Ecocardiograma e Clearance de Creatinina."],
+correta:0,
+gabarito:"A: CORRETA. K+ = 6,5 com pH 7,15 = emergência metabólica. O ECG é PRIORITÁRIO para avaliar toxicidade cardíaca da hipercalemia (ondas T apiculadas, BRE, FV). USG vias urinárias avalia obstrução (causa pós-renal reversível) e tamanho renal (se crônica vs aguda). Essas duas informações definem: 1) urgência de diálise e 2) etiologia. B: Incorreta. Ecocardiograma não é urgente. C: Incorreta. EDA e D-dímero não são pertinentes. D: Incorreta. Clearance não acrescenta neste momento."},
+
+{id:63,tema:"Nefrologia",
+enunciado:"Paciente de 58 anos com DRC e proteinúria de 800 mg/g apresenta PA de 152×94 mmHg. Qual classe medicamentosa de anti-hipertensivo oral deve ser priorizada?",
+alternativas:["Diurético isolado","Bloqueador de canal de cálcio","Inibidor da Enzima Conversora de Angiotensina","Betabloqueador"],
+correta:2,
+gabarito:"A: Incorreta. Diurético isolado não oferece nefroproteção específica. B: Incorreta. BCC controla PA mas não reduz proteinúria. C: CORRETA. Em DRC + proteinúria ≥300 mg/g, IECA ou BRA são a classe preferencial: reduzem a pressão intraglomerular (dilatam a arteríola eferente), reduzem proteinúria e retardam a progressão da DRC. KDIGO e SBN recomendam como 1ª linha. D: Incorreta. Betabloqueadores não têm efeito nefroprotetor."},
+
+{id:64,tema:"Nefrologia",
+enunciado:"Paciente de 70 anos, internado por pneumonia grave, evolui com hipotensão e redução da diurese (0,3 mL/kg/h nas últimas 12 horas). Creatinina aumentou de 1,0 para 1,9 mg/dL em 48 horas. Qual é o mecanismo mais provável da injúria renal?",
+alternativas:["Glomerulonefrite rapidamente progressiva","Nefrite intersticial medicamentosa","Necrose tubular aguda isquêmica","Obstrução urinária por hipertrofia prostática"],
+correta:2,
+gabarito:"A: Incorreta. GNRP ocorre em dias-semanas, com hematúria dismórfica e cilindros hemáticos. B: Incorreta. Nefrite intersticial medicamentosa seria com piúria, eosinofilia, após antibióticos. C: CORRETA. Em sepse com hipotensão sustentada = hipoperfusão renal → NTA isquêmica. É a causa mais comum de IRA intrínseca em UTI/pacientes hospitalizados graves. Critério de IRA: aumento de creatinina ≥0,3 mg/dL em 48h OU ≥1,5× basal em 7 dias OU diurese <0,5 mL/kg/h por ≥6h. D: Incorreta. Obstrução seria bilateral em idoso, sem hipotensão antecedente."},
+
+{id:65,tema:"Nefrologia",
+enunciado:"Paciente feminina, 29 anos, com lúpus eritematoso sistêmico, apresenta hematúria, proteinúria de 3,7 g/dia e elevação da creatinina. Qual é a melhor conduta?",
+alternativas:["Iniciar antibiótico","Realizar biópsia renal","Realizar corticoide empiricamente","Iniciar diurético"],
+correta:1,
+gabarito:"A: Incorreta. Não há evidência de infecção. B: CORRETA. LES + proteinúria >3g/dia + hematúria + elevação de creatinina = Nefrite Lúpica provável. A biópsia renal é OBRIGATÓRIA para classificar histologicamente (Classe I a VI pela ISN/RPS 2018) e definir o regime imunossupressor correto (classe III/IV: ciclofosfamida ou micofenolato + corticoide; classe V: micofenolato). C: Incorreta. Corticoide empírico sem biópsia pode mascarar o diagnóstico e subestimar a agressividade. D: Incorreta. Diurético trata edema sintomaticamente, não a glomerulopatia."},
+
+{id:66,tema:"Nefrologia",
+enunciado:"Homem cis, 54 anos, fadiga e icterícia progressiva nos últimos 15 dias. Etilista há mais de 10 anos, última ingestão na véspera dos sintomas. Bilirrubina total: 16 mg/dL; bilirrubina direta: 12 mg/dL; AST: 105 U/L; ALT: 48 U/L; GGT: 280 U/L; INR: 1,6. Investigação descartou etiologias viral, autoimune, metabólica e tóxica por medicamento. Qual é a conduta inicial mais adequada?",
+alternativas:["Endoscopia digestiva alta para avaliação de hipertensão portal.","Colonoscopia para avaliar neoplasia de papila.","Elastografia hepática para avaliação de fibrose.","Ultrassonografia de abdome para avaliação das vias biliares."],
+correta:3,
+gabarito:"A: Incorreta. EDA seria indicada se houvesse sinais de HP (varizes, hematemese). B: Incorreta. Colonoscopia não avalia vias biliares. C: Incorreta. Elastografia avalia fibrose crônica, não icterícia aguda. D: CORRETA. Em paciente com padrão de colestase (bilirrubina direta elevada, FA/GGT altas) + etilismo, o primeiro passo é a USG abdominal para avaliar dilatação das vias biliares (colestase extra-hepática) e excluir causas estruturais (coledocolitíase, neoplasia periampular). Se sem dilatação = colestase intra-hepática (hepatite alcoólica confirmada)."},
+
+{id:67,tema:"Nefrologia",
+enunciado:"Homem, 63 anos, vem à consulta na UBS com queixa de adinamia e 'cansaço' aos esforços há 3 meses. Parestesia de MMII há 2 meses. Antecedente de vitiligo. Hemoglobina 8,7g/dL; Hematócrito 25%; VCM 107; leucopenia discreta; plaquetas 98.000; função renal normal; DHL 12.900 (ref: até 600). Diagnóstico etiológico mais provável:",
+alternativas:["Déficit de vitamina B12","Leucemia mieloide aguda","Anemia ferropriva, provavelmente secundária a perdas","Hipotireoidismo"],
+correta:0,
+gabarito:"A: CORRETA. Tríade de anemia megaloblástica por déficit de B12: VCM>100 (macrocitose) + neutrófilos hipersegmentados (inferidos pelo contexto) + DHL muito elevada (12.900 = hemólise intramedular). Vitiligo como antecedente sugere doença autoimune → anemia perniciosa (anticorpo anti-fator intrínseco). Parestesia de MMII = degeneração combinada subaguda da medula (complicação neurológica por B12). B: Incorreta. LMA teria blastos e comprometimento mais grave. C: Incorreta. Ferropriva é microcítica. D: Incorreta. Hipotireoidismo causa macrocitose leve, não DHL 12.900."},
+
+{id:68,tema:"Nefrologia",
+enunciado:"Mulher, 65 anos, negra, obesa, DM há 20 anos. HbA1c 8,8%, em uso irregular de metformina e gliclazida. HAS há 10 anos, usando hidroclorotiazida e losartana de forma regular. Edema MMII (+/4). Qual a melhor opção medicamentosa para controle da PA desta paciente?",
+alternativas:["Aumentar a dose da hidroclorotiazida para 50mg/dia","Associar clonidina 0,100mg 1 vez ao dia","Associar espironolactona 25mg/dia","Associar hidralazina 25mg de 12/12h"],
+correta:2,
+gabarito:"A: Incorreta. Hidroclorotiazida 50mg tem mais efeitos adversos sem benefício adicional significativo. B: Incorreta. Clonidina tem alta incidência de efeitos adversos e não é preferencial. C: CORRETA. Paciente com HAS não controlada + DM + edema (possível IC ou HAR) em 2 drogas → Espironolactona 25mg é a 3ª ou 4ª droga de escolha, especialmente em diabéticos com retenção hídrica. Além disso, tem benefício em nefroproteção (reduz albuminúria em diabéticos). D: Incorreta. Hidralazina não é preferencial neste contexto."},
+
+{id:69,tema:"Nefrologia",
+enunciado:"JSS, 65 anos, masculino, em acompanhamento ambulatorial com diagnóstico de HAS, DPOC e DM2. Vem para consulta com queixa de tosse com secreção amarelada e piora da dispneia. FC=79bpm; PA=160×90; FR=22ipm; Temperatura axilar=36,7°C; SaO2=95%. AA: murmúrio vesicular bem distribuído e com sibilos esparsos. ACV: bulhas rítmicas em 2 tempos. O paciente está com evidência de infecção e exacerbação de DPOC e deve ser encaminhado imediatamente para UPA para iniciar tratamento. Marque a alternativa correta para o caso acima:",
+alternativas:["O uso de corticoide não está indicado, uma vez que o paciente é portador de DM2 e HAS.","É necessário a realização da radiografia de tórax antes da prescrição do corticosteroide sistêmico.","O paciente tem evidência de infecção respiratória com exacerbação da DPOC e necessita da prescrição de corticosteroide sistêmico e broncodilatadores e pode ser acompanhado ambulatorialmente com retorno em 2 semanas.","O paciente tem de ser encaminhado para casa e aguardar regulação para internamento hospitalar.","O paciente está com evidência de infecção e exacerbação de DPOC e deve ser encaminhado imediatamente para UPA para iniciar tratamento com antimicrobianos, broncodilatadores e corticosteroide."],
+correta:4,
+gabarito:"A: Incorreta. Corticoide sistêmico está indicado em exacerbação de DPOC, mesmo em diabéticos (monitorar glicemia). B: Incorreta. Raio X é útil mas não deve atrasar o início do tratamento. C: Incorreta. Exacerbação com infecção (escarro purulento, febre) com SaO2 95% necessita de atendimento em UPA, não ambulatorial com retorno em 2 semanas. D: Incorreta. Enviar para casa é perigoso. E: CORRETA. DPOC exacerbado com infecção (secreção purulenta, piora dispneia) deve ser encaminhado à UPA para tratamento urgente com broncodilatador + corticoide sistêmico + antibiótico."},
+
+{id:70,tema:"Nefrologia",
+enunciado:"Mulher, 22 anos, sem comorbidades, fadiga há 3 meses. Hemoglobina 9,0g/dL; Hematócrito 23%; VCM 80fL; HCM 24; CHCM 28; Leucócitos 6.800; plaquetas 250.000. Contagem de reticulócitos 100.000/mm³. Ausência de alterações morfológicas no esfregaço. A investigação laboratorial subsequente mais indicada é:",
+alternativas:["Cinética de ferro e mielograma.","Mielograma, função renal e função tireoideana.","Cinética de ferro, dosagem de vitamina B12 e dosagem de ácido fólico.","Mielograma, função renal e função tireoideana."],
+correta:2,
+gabarito:"A: Incorreta. Mielograma nesta fase seria precipitado — começar com investigação laboratorial básica. B/D: Incorretas. Mielograma não é 1ª linha em anemia normocítica isolada. C: CORRETA. Anemia normocítica (VCM 80), hipocrômica (CHCM 28, HCM 24), sem alteração morfológica no esfregaço, com reticulócitos normais (100.000) = anemia por redução de produção. A investigação deve cobrir as causas mais comuns: Cinética de ferro (ferropriva inicial ou doença crônica) + B12 + Ácido fólico. O HCM baixo (24) sugere deficiência de ferro antes da microcitose."},
+
+{id:71,tema:"Nefrologia",
+enunciado:"Paciente, 70 anos, masculino, história prévia de IAM anterior extenso. IC congestiva CF III. ECG: BRE com QRS 140 ms. Ecocardiograma: FE do VE de 28%. Em ensaios clínicos randomizados de alto nível de evidência, quais as classes de medicamentos foram eficazes em reduzir mortalidade para este caso?",
+alternativas:["IECA, betabloqueadores, BCC e inibidores de SGLT2.","IECA, betabloqueadores, inibidores de SGLT2 e antagonistas dos receptores da aldosterona.","BRA, digitálicos, antagonistas dos receptores da aldosterona e nitratos.","BRA, BCC, digitálicos e ivabradina."],
+correta:1,
+gabarito:"A: Incorreta. BCC (exceto anlodipino com cautela) são contraindicados em ICFEr — efeito inotrópico negativo. B: CORRETA. Os 4 pilares com evidência de redução de mortalidade em ICFEr (FE<40%): 1) IECA/ARNI (sacubitril-valsartana); 2) Betabloqueador (carvedilol, bisoprolol, metoprolol); 3) Antagonista de aldosterona (espironolactona/eplerenona); 4) iSGLT2 (dapagliflozina/empagliflozina). C: Incorreta. Digitálicos não reduzem mortalidade. D: Incorreta. BCC e digitálicos não têm benefício de mortalidade."},
+
+{id:72,tema:"Nefrologia",
+enunciado:"Sobre o tratamento da Síndrome Coronariana Aguda (SCA), é correto afirmar que a terapia com estatina de alta potência deve ser:",
+alternativas:["Prescrita apenas para pacientes com LDL>70 mg/dL no contexto da SCA.","Prescrita para todos os pacientes com SCA, independentemente do nível de LDL.","Iniciada somente após 48 horas do evento agudo para evitar interações medicamentosas.","Contraindicada em pacientes com insuficiência renal no contexto da SCA."],
+correta:1,
+gabarito:"A: Incorreta. Não há limiar de LDL para indicação de estatina na SCA — o benefício é independente do nível inicial. B: CORRETA. Estatina de alta potência (atorvastatina 40-80mg ou rosuvastatina 20-40mg) deve ser prescrita para TODOS os pacientes com SCA, independentemente do LDL. Os efeitos são pleotrópicos: estabilização de placa, efeito anti-inflamatório, endotelial — além da redução de LDL. C: Incorreta. Deve ser iniciada o mais precoce possível (idealmente nas primeiras 24h). D: Incorreta. IR não é contraindicação para estatina em SCA."},
+
+// ──────────────── PNEUMOLOGIA (12 questões) ────────────────
+{id:73,tema:"Pneumologia",
+enunciado:"Paciente do sexo masculino, 18 anos, peakflow de 400L/min (80% do melhor valor obtido), faz uso de budesonida 400μg inalados duas vezes ao dia e salbutamol inalado 2 a 3 vezes ao dia. Desperta 2-3 vezes por semana com tosse. Qual das seguintes condutas é a melhor abordagem?",
+alternativas:["Prescrever Claritromicina 250mg duas vezes ao dia.","Iniciar Prednisona 20mg/dia, associado a bamifilina 300mg via oral à noite.","Prescrever Prednisona 40mg por dia durante sete dias.","Iniciar Prednisona 40mg/dia, reduzindo para 20 e 10mg a cada dois dias, até uma semana.","Adicionar um ß-agonista de longa ação como formoterol ao tratamento com budesonida."],
+correta:4,
+gabarito:"A: Incorreta. Antibiótico sem evidência de infecção bacteriana. B: Incorreta. Prednisona + bamifilina não é o protocolo atual. C/D: Incorretas. Corticoide sistêmico é para crises agudas, não para controle crônico insuficiente. E: CORRETA. Asma parcialmente controlada (sintomas noturnos 2-3×/semana, uso frequente de SABA) em CI dose média → STEP UP: adicionar LABA (formoterol) ao corticoide inalatório (CI+LABA é o Step 3 padrão). Isso reduz a necessidade de SABA e controla os sintomas noturnos."},
+
+{id:74,tema:"Pneumologia",
+enunciado:"Mulhe cis de 28 anos, tosse produtiva com escarro purulento, desconforto torácico e febre há 3 dias. Sem comorbidades. FR 25 irpm; SaO2 95%; estertores úmidos base esquerda. Rx: infiltrado LIE. Ureia 17,5 mg/dL; Leuco 18.000. Com base no CURB-65, qual a conduta terapêutica mais adequada?",
+alternativas:["Tratamento ambulatorial com terapêutica via oral, com amoxicilina com ácido clavulânico.","Tratamento ambulatorial com terapêutica via oral com moxifloxacino.","Tratamento hospitalar em UTI com terapêutica EV, com cefalosporina de terceira geração.","Tratamento hospitalar em enfermaria com terapêutica EV, com quinolona respiratória."],
+correta:0,
+gabarito:"A: CORRETA. CURB-65 desta paciente: Confusão (0) + Ureia ≤43 mg/dL (0) + FR ≥30 (0) + PA baixa (0) + Idade ≥65 (0) = 0 pontos. CURB 0-1: tratamento AMBULATORIAL. Amoxicilina + ácido clavulânico VO é adequada para PAC leve ambulatorial. B: Incorreta. Moxifloxacino/quinolona respiratória é reservado para falha/alergia. C/D: Incorretas. Hospitalização e EV não são necessários com CURB 0."},
+
+{id:75,tema:"Pneumologia",
+enunciado:"JSS, 48 anos, HAS, rinite e asma. Tosse e pigarro frequentes há 2 meses. Em uso de Losartana 50mg/dia. PA=170x90mmHg. AR: murmúrio vesicular com sibilos esparsos. Qual a alternativa correta para o caso acima?",
+alternativas:["O uso do antimicrobiano está indicado mesmo na ausência de febre.","A pressão arterial está elevada constitui uma emergência hipertensiva.","O paciente está em crise de asma e tem indicação do uso de corticoide sistêmico.","É necessário a realização da espirometria e radiografia de tórax antes da prescrição do corticosteroide sistêmico."],
+correta:2,
+gabarito:"A: Incorreta. Não há evidência de infecção bacteriana (sem febre, sem escarro purulento). B: Incorreta. PA elevada sem LOA = urgência, não emergência. D: Incorreta. Exames não devem retardar o tratamento da crise de asma. C: CORRETA. Sibilos esparsos + contexto de asma + tosse persistente = crise de asma moderada. Corticoide sistêmico (prednisolona) está indicado para reverter a inflamação brônquica. Tratamento de crise: SABA + corticoide sistêmico + O2 se necessário."},
+
+{id:76,tema:"Pneumologia",
+enunciado:"Paciente de 32 anos com diagnóstico de asma na infância, há duas semanas apresentou quadro gripal, evoluiu com melhora dos sintomas, mas persistiu com tosse seca principalmente na madrugada, que compromete a qualidade do sono. Nega outras queixas. Qual a investigação mais adequada?",
+alternativas:["TRM-TB e baciloscopia do escarro","Radiografia de tórax e espirometria com prova broncodilatadora","Radiografia de tórax, hemograma, VHS, Proteína C reativa","Radiografia de tórax e baciloscopias do escarro"],
+correta:1,
+gabarito:"A: Incorreta. Sem fatores de risco para TB (contato, imunossupressão, sintomas B). B: CORRETA. Tosse seca noturna persistente após quadro viral em asmático = suspeita de exacerbação de asma ou hiper-reatividade pós-viral. A espirometria com prova broncodilatadora é o exame padrão-ouro para confirmar obstrução reversível (padrão de asma). Raio X de tórax exclui pneumonia ou outras causas. C: Incorreta. Hemograma/VHS não têm valor na asma. D: Incorreta. Baciloscopia não está indicada sem fatores de risco para TB."},
+
+{id:77,tema:"Pneumologia",
+enunciado:"Paciente de 75 anos, tabagista, com suspeita diagnóstica de DPOC, evolui com quadro de dispneia, aumento do volume e purulência da secreção em vias aéreas. Diante deste quadro, qual das afirmativas abaixo está adequada:",
+alternativas:["Até um terço das exacerbações graves, nenhum fator desencadeante pode ser identificado.","A exacerbação do DPOC por infecção respiratória é principalmente causada por vírus.","O antibiótico só deve ser utilizado nos casos em que exista comprovação microbiológica da pneumonia para evitar indução de resistência.","A principal causa de exacerbação do DPOC é por tromboembolismo pulmonar."],
+correta:1,
+gabarito:"A: Incorreta. Na maioria dos casos de exacerbação grave, um fator é identificável. B: CORRETA. Conforme estudos, vírus respiratórios (influenza, rhinovirus, coronavirus) são responsáveis por ~50% das exacerbações de DPOC. Bactérias (H. influenzae, S. pneumoniae, Moraxella) causam ~30%. O escarro purulento indica exacerbação bacteriana → antibiótico indicado. C: Incorreta. Comprovação microbiológica não é necessária para iniciar antibiótico em exacerbação com escarro purulento. D: Incorreta. TEP pode causar exacerbação, mas não é a principal causa."},
+
+{id:78,tema:"Pneumologia",
+enunciado:"PAT, 48 anos, masculino, HAS, rinite e asma. Pigarro frequente e crises de tosse há 2 meses. Dificuldade para expectorar. Em uso de losartana 50mg/dia, beclometasona 200mcg 02 aerações de 12/12h e salbutamol 100mcg, 02 aerações de 8/8h sem melhora da tosse. PA=170x90mmHg, FR=18ipm. AR: murmúrio vesicular com sibilos esparsos. Marque a alternativa correta:",
+alternativas:["A investigação da tosse não é necessária, uma vez que não levou a procurar serviço de emergência nesse período.","A pressão arterial pode estar aumentada por causa da tosse persistente e não necessita de ajuste da medicação. Iniciar investigação da tosse com radiografia de tórax e baciloscopia.","A pressão arterial está elevada e necessita ajuste da medicação, considerando a necessidade de retirada do betabloqueador.","A pressão arterial está elevada e necessita ajuste da medicação, considerando a necessidade de retirada do betabloqueador."],
+correta:2,
+gabarito:"A: Incorreta. Tosse persistente por 2 meses precisa investigação. B: Incorreta. Baciloscopia não é 1ª investigação de tosse crônica sem fatores de TB. C/D: CORRETA. PA 170×90 com 3 drogas (losartana + BCC + tiazídico não mencionado, mas o ajuste indicado) → PA não controlada. A tosse crônica em uso de losartana (BRA, não IECA) NÃO deve ser causada pelo BRA (IECA causa tosse, BRA raramente). O betabloqueador não está sendo usado aqui. O ajuste da PA é necessário considerando intensificação anti-hipertensiva. A questão foca no ajuste da medicação."},
+
+{id:79,tema:"Pneumologia",
+enunciado:"Paciente do sexo masculino, 18 anos, asma. Peakflow 80% do melhor. Budesonida 400μg 2x/dia + salbutamol 2-3×/dia. Tosse noturna 2-3×/semana. Arnaldo, 60 anos, masculino, pardo, HAS. BCC + hidroclorotiazida. Edema MMII +/IV. Hipocalemia k+ -3,0 mEq/L. Esses são efeitos adversos de anti-hipertensivos. Assinale a alternativa mais adequada ao caso do Arnaldo:",
+alternativas:["O principal efeito adverso dos BCC é a tosse.","Deve-se suspender os medicamentos usados.","Deve-se trocar as drogas em uso.","São efeitos colaterais brandos e contornáveis."],
+correta:3,
+gabarito:"A: Incorreta. Tosse é efeito adverso dos IECA, não dos BCC (cujo principal EA é edema). B: Incorreta. Suspender sem substituição causa HAS descontrolada. C: Incorreta. Não há necessidade de troca completa. D: CORRETA. Edema de membros inferiores é efeito adverso do BCC (anlodipino) — brando e contornável (reduzir dose, elevar membros, ou trocar por outra classe se intolerante). Hipocalemia é EA da hidroclorotiazida — branda, contornável com suplementação de potássio ou troca por clortalidona/espironolactona. PA controlada = manter e monitorar."},
+
+{id:80,tema:"Pneumologia",
+enunciado:"Homem, 59 anos, com história de tabagismo 20 anos/maço, vem cursando com quadro de dispneia, associada a tosse seca, es com atenuação de muco, refere ainda dor epigástrica que não melhora com uso de inibidor de bomba de próton por 4 meses. A dispneia é um sintoma comumente referido pelo portador de doença respiratória. Diante de um paciente desse, qual a causa menos provável para explicar a dispneia?",
+alternativas:["Anemia é uma causa de dispneia e poderia estar associada a neoplasia gástrica nesse paciente.","A dispneia paroxística noturna (DPN) é característica do DPOC e poderia explicar a dispneia nesse paciente.","Exacerbação do DPOC poderia explicar a dispneia desse paciente.","Neoplasia pulmonar deve ser investigado nesse caso."],
+correta:1,
+gabarito:"A: Incorreta (causa plausível). Neoplasia gástrica pode causar anemia por sangramento → dispneia. B: CORRETA (causa MENOS provável). DPN é característica de IC descompensada (edema pulmonar), NÃO do DPOC. No DPOC, a dispneia é de esforço, progressiva, com piora aos esforços e tosse crônica — não tipicamente paroxística noturna. C: Incorreta (causa plausível — tabagista com tosse). D: Incorreta (causa plausível — tabagismo 20 maços-ano + sintomas pulmonares)."},
+
+{id:81,tema:"Pneumologia",
+enunciado:"Paciente de 22 anos vai ao ambulatório com quadro de febre diária há 02 meses, a febre ocorre geralmente no final da tarde e o não apresenta dor torácica no início do quadro, mas, aos poucos a dor de tórax apareceu, ventilação-dependente, mas aos poucos a dor desapareceu. Quais exames deveriam ser solicitados nessa consulta?",
+alternativas:["Hemograma, glicemia, perfil lipídico, sumário de urina e parasitológico de fezes.","Hemocultura seriadas, urocultura e cultura do escarro.","Tomografia de abdome para pesquisar linfonodos abdominais.","Radiografia de tórax PA e perfil, Hemograma, Transaminases, PPD."],
+correta:3,
+gabarito:"A: Incorreta. Esses exames não focam na investigação de TB. B: Incorreta. Hemoculturas/urocultura são para sepse bacteriana. C: Incorreta. TC abdome não é 1ª linha. D: CORRETA. Febre vespertina prolongada + dor pleurítica + tosse = síndrome clínica altamente sugestiva de TUBERCULOSE. Os exames de 1ª linha são: Radiografia de tórax PA e perfil (padrão apical, cavidades), Hemograma, Transaminases (hepatotoxicidade do tratamento) e PPD (ajuda no diagnóstico). Baciloscopia + TRM-TB seriam complementares."},
+
+{id:82,tema:"Pneumologia",
+enunciado:"Mulher de 51 anos, procura atendimento com seu médico de família com queixas de aumento da diurese à noite e emagrecimento de 5Kg nos últimos dois meses. Glicemia de jejum=148 mg/dl; TSH=0,32 mUI/L (VN 0,4-4,5); T4 livre=2,5 ng/dl (0,7-1,8); sumário de urina e urocultura sem particularidades. Quais hipóteses diagnósticas e condutas são mais apropriadas?",
+alternativas:["Diabetes mellitus e solicitar teste de tolerância oral à glicose/ Hipertireoidismo subclínico e investigar a possibilidade de tireoidite silenciosa.","Intolerância à glicose e Hipertireoidismo e investigar etiologia.","Intolerância à glicose e iniciar metformina/Hipertireoidismo e investigar etiologia.","Diabetes mellitus e repetir glicemia de jejum/Hipertireoidismo e investigar etiologia."],
+correta:3,
+gabarito:"A: Incorreta. TOTG confirma DM (glicemia 148 é diagnóstica), não precisa de TOTG. Hipertireoidismo não é subclínico — TSH baixo + T4 alto = manifesto. B: Incorreta. Intolerância à glicose seria 140-199 no TOTG ou 100-125 em jejum; glicemia 148 já é diagnóstica de DM. C: Incorreta. Metformina pode ser iniciada, mas a questão pede hipótese + conduta completa. D: CORRETA. Glicemia 148 (≥126) = DM confirmado → repetir para confirmar (padrão de confirmação) OU HbA1c ≥6,5%. TSH baixo + T4 alto = Hipertireoidismo manifesto → investigar etiologia (TRAb, cintilografia, USG)."},
+
+{id:83,tema:"Pneumologia",
+enunciado:"Paciente 45 anos, hipertenso com história de tosse produtiva com escarro amarelado e piora da dispneia na última semana. Parou uso de medicação inalatória porque não conseguiu comprar. Sibilos esparsos. FC=79bpm; PA=160×90; FR=22ipm; SaO2=95%. Marque a alternativa correta:",
+alternativas:["O uso de corticoide não está indicado, uma vez que o paciente é portador de DM2 e HAS.","É necessário a realização da radiografia de tórax antes da prescrição do corticosteroide sistêmico.","O paciente tem evidência de infecção respiratória com exacerbação da DPOC e necessita da prescrição de corticosteroide sistêmico e broncodilatadores e pode ser acompanhado ambulatorialmente com retorno em 2 semanas.","O paciente tem de ser encaminhado para casa e aguardar regulação para internamento hospitalar.","O paciente está com evidência de infecção e exacerbação de DPOC e deve ser encaminhado imediatamente para UPA para iniciar tratamento com antimicrobianos, broncodilatadores e corticosteroide."],
+correta:4,
+gabarito:"A: Incorreta. Corticoide está indicado na exacerbação de DPOC, independente de DM. B: Incorreta. Rx de tórax não deve retardar o início do tratamento. C: Incorreta. SaO2 95%, escarro purulento e necessidade de antibiótico indicam atendimento em UPA/urgência, não ambulatorial. D: Incorreta. Perigoso enviar para casa. E: CORRETA. Exacerbação de DPOC com infecção (escarro purulento + piora dispneia) + interrupção da medicação → encaminhar à UPA urgente para: broncodilatador de curta ação (SABA/SAMA) + corticoide sistêmico (prednisolona 40mg/dia por 5 dias) + antibiótico (amoxicilina-clavulanato ou quinolona respiratória)."},
+
+{id:84,tema:"Pneumologia",
+enunciado:"Laura, 28 anos, feminino, solteira, operadora de Call Center, chega ao nosso ambulatório com sonolência, ronquidão, intolerância ao frio, pele seca e ganho de 05 kg em 6 meses, amenorreia há 07 meses. TSH 18 μUI/mL, T4 livre 0,6 ng/dL, tireoide aumentada e endurecida. Qual o diagnóstico mais provável?",
+alternativas:["Hipotireoidismo primário descompensado por tireoidite Hashimoto","Hipotireoidismo secundário","Obesidade associada a neoplasia da tireoide","Obesidade associada a neoplasia da tireoide Hipotireoidismo associado a anemia hemolítica"],
+correta:0,
+gabarito:"A: CORRETA. Clínica clássica de hipotireoidismo grave (8 sintomas clássicos presentes) + TSH muito elevado (18) + T4 baixo + tireoide aumentada e endurecida = Tireoidite de Hashimoto em fase hipotireóidea. É a causa mais comum de hipotireoidismo em mulheres jovens no Brasil. B: Incorreta. Hipotireoidismo secundário (central) raramente causa bócio (sem TSH para estimular). C/D: Incorretas. Neoplasia não explica todos os sintomas sistêmicos."},
+
+// ──────────────── GASTRO & INFECTO (12 questões) ────────────────
+{id:85,tema:"Gastro & Infecto",
+enunciado:"Mário tem 45 anos refere empachamento pós prandial e queimação epigástrica há mais de 06 meses, podemos afirmar que:",
+alternativas:["Ele deve realizar uma endoscopia digestiva alta.","O paciente pode receber um tratamento com inibidor de bomba de próton por oito semanas, recomendações de MEV e ser reavaliado.","Entrar com um pró-cinético como primeira escolha.","Os anti depressivos tricíclicos estão contra-indicados no controle dos sintomas."],
+correta:1,
+gabarito:"A: Incorreta. EDA não é obrigatória inicialmente em <45 anos sem sinais de alarme. B: CORRETA. Dispepsia funcional sem sinais de alarme em <45 anos → tratamento empírico: IBP (omeprazol) por 8 semanas + MEV (fracionamento das refeições, evitar alimentos gordurosos, café, álcool) + reavaliação. C: Incorreta. Pró-cinético pode ser alternativa, mas não é 1ª escolha isolada. D: Incorreta. ADT (amitriptilina) são usados na dispepsia funcional refratária como neuromoduladores — não são contraindicados."},
+
+{id:86,tema:"Gastro & Infecto",
+enunciado:"Paciente sexo feminino, 62 anos, procura atendimento com queixa de pirose há 10 anos. Relata que faz uso contínuo de Omeprazol, porém sem melhora do quadro, que piora nos períodos de maior estresse. A paciente relata também já ter feito tratamento para H. pylori cerca de 3 anos. Vem perdendo peso, cerca de 8 Kg em 3 meses. Em relação aos dados relatados acima, qual o principal exame para essa paciente?",
+alternativas:["Manometria e pHmetria esofágica","Endoscopia digestiva alta","Colonoscopia","Tomografia de abdome superior"],
+correta:1,
+gabarito:"A: Incorreta. Manometria avalia distúrbios motores, não é o exame prioritário aqui. B: CORRETA. SINAL DE ALARME: perda de 8kg em 3 meses em paciente com pirose refratária ao IBP. A EDA é mandatória para excluir: adenocarcinoma esofágico/gástrico, Esôfago de Barrett com displasia, úlcera péptica complicada. C: Incorreta. Colonoscopia avalia cólon — não a queixa em questão. D: Incorreta. TC de abdome é complementar, não o primeiro exame."},
+
+{id:87,tema:"Gastro & Infecto",
+enunciado:"Mulher, 47 anos, internada com diarreia severa e desidratação evoluiu no internamento sonolência e com perda de motricidade nos quatro membros. A Ressonância Nuclear Magnética de crânio mostrou uma desmielinização em topografia de tronco encefálico. Qual situação mais provavelmente precipitou este problema?",
+alternativas:["Correção lenta de uma hipercalemia","Piora do quadro de desidratação","Piora de uma hipomagnesemia","Correção rápida de uma hiponatremia","Acidente Vascular Cerebral (AVC) isquêmico hemisférico"],
+correta:3,
+gabarito:"A: Incorreta. Correção de hipercalemia não causa desmielinização. B: Incorreta. Desidratação per se não causa mielinólise pontina. C: Incorreta. Hipomagnesemia não causa este padrão. D: CORRETA. Síndrome de Desmielinização Osmótica (SDO) / Mielinólise Pontina Central é causada pela CORREÇÃO RÁPIDA da hiponatremia. Pacientes desidratados com diarreia desenvolvem hiponatremia. Correção deve ser ≤8-10 mEq/L nas primeiras 24h. Velocidade rápida → desmielinização osmótica no tronco cerebral. E: Incorreta. AVC causaria déficit focal, não desmielinização difusa do tronco."},
+
+{id:88,tema:"Gastro & Infecto",
+enunciado:"Com relação aos sinais de alarme na Dengue, é mais correto afirmar que:",
+alternativas:["Desde o início da doença o paciente já apresenta sinais de que não vai evoluir bem.","O paciente que não desenvolve sinais de alarme até 4-5o dias de doença certamente terá uma boa evolução.","Dor abdominal intensa, vômitos persistentes, elevação do hematócrito, hipotensão postural, letargia... são sinais de gravidade que precisam ser pesquisados apenas nos pacientes com a forma grave da doença.","A maioria dos sinais de alarme é resultante do aumento da permeabilidade vascular, podem surgir entre o 3-4o dias de doença e esta possibilidade deve ser avisada a todos os pacientes com Dengue."],
+correta:3,
+gabarito:"A: Incorreta. Os sinais de alarme surgem no período de defervescência (3-4º dia), não desde o início. B: Incorreta. Isso não é totalmente seguro — alguns pacientes evoluem para formas graves tardias. C: Incorreta. Todos os pacientes com dengue devem ser orientados sobre esses sinais — não apenas os graves. D: CORRETA. Os sinais de alarme ocorrem no 3-4º dia de doença (defervescência), quando há extravasamento plasmático por aumento da permeabilidade vascular: dor abdominal intensa, vômitos persistentes, acúmulo de líquidos, sangramento mucoso, letargia, hipotensão postural, hepatomegalia >2cm, aumento do hematócrito. TODOS devem ser orientados."},
+
+{id:89,tema:"Gastro & Infecto",
+enunciado:"Homem de 28 anos procura atendimento em pronto atendimento relatando que, há 18 horas, manteve relação sexual anal receptiva sem preservativo com parceiro ocasional de sorologia desconhecida. Encontra-se assintomático. Nega uso prévio de PrEP. Com base nesse cenário, qual é a conduta diagnóstica e terapêutica mais adequada?",
+alternativas:["Realizar teste rápido para HIV, iniciar profilaxia pós-exposição (PEP) imediatamente e agendar seguimento ambulatorial.","Orientar uso de preservativos e iniciar PrEP após 30 dias do contato de risco.","Solicitar carga viral para HIV e aguardar resultado antes de iniciar qualquer tratamento.","Solicitar sorologia para HIV e orientar retorno apenas se surgirem sintomas."],
+correta:0,
+gabarito:"A: CORRETA. Exposição de alto risco (relação anal receptiva sem preservativo) há 18 horas (dentro da janela de 72h) → indicação de PEP (Profilaxia Pós-Exposição). Conduta: realizar teste rápido para HIV (se positivo = não é PEP, é tratamento; se negativo = iniciar PEP imediatamente). PEP: 28 dias (tenofovir + lamivudina + dolutegravir). Agendar seguimento ambulatorial. B: Incorreta. PrEP é profilaxia PRÉ-exposição — não indicada após o contato. C: Incorreta. Carga viral não é detectável com 18h de infecção. D: Incorreta. Após 72h a PEP perde eficácia — aguardar sintomas é perigoso."},
+
+{id:90,tema:"Gastro & Infecto",
+enunciado:"Paciente de 45 anos com dor epigástrica em queimação há cerca de 4 meses, associada a plenitude pós-prandial e náuseas ocasionais. Piora após refeições volumosas; melhora parcial com antiácidos. Nega vômitos, hematêmese, melena, perda ponderal, disfagia. Não usa AINEs crônicos. Exame físico: discreta dor à palpação profunda do epigástrio. A conduta diagnóstica e terapêutica mais adequada é:",
+alternativas:["Iniciar procinético e observar resposta clínica antes de qualquer investigação.","Iniciar antibiótico empírico para erradicação de H. pylori sem necessidade de testes prévios.","Solicitar endoscopia digestiva alta de imediato e iniciar IBP.","Realizar teste para Helicobacter pylori e, se positivo, erradicar; se negativo, iniciar IBP empírico."],
+correta:3,
+gabarito:"A: Incorreta. Pró-cinético sem diagnóstico não é a conduta mais adequada. B: Incorreta. Antibiótico empírico sem testar H. pylori aumenta resistência desnecessariamente. C: Incorreta. EDA imediata não está indicada em <45 anos sem sinais de alarme. D: CORRETA. Estratégia 'test and treat' para H. pylori: em paciente <45-55 anos com dispepsia sem sinais de alarme → teste não invasivo (teste respiratório com ureia marcada C13, ou pesquisa de antígeno fecal) → se positivo, erradicar; se negativo, IBP empírico por 4-8 semanas."},
+
+{id:91,tema:"Gastro & Infecto",
+enunciado:"Paciente de 66 anos, feminino, com histórico de doença ulcerosa péptica, chega à emergência com quadro de hematêmese e fezes escurecidas com odor fétido há 6 horas. Paciente em bom estado geral, agitada e com sudorese intensa. PA=82×50mmHg; FC=126 bpm; FR=26 rpm. Hemoglobina = 10,8g. Sem outras alterações. Qual a conduta inicial mais correta?",
+alternativas:["Acesso venoso central, reposição volêmica com solução coloide, hemotransfusão (3U) e omeprazol oral.","Eletrocardiograma, pesquisa de H. Pylori e tratamento empírico.","Intervenção cirúrgica de urgência.","Acesso venoso periférico calibroso, ressuscitação volêmica com solução cristaloide e Omeprazol venoso em bolus.","Endoscopia Digestiva Alta imediata."],
+correta:3,
+gabarito:"A: Incorreta. Acesso VENOSO PERIFÉRICO calibroso é suficiente e mais rápido; solução coloide não é preferencial (cristaloide é 1ª linha); 3U de hemácias não é indicado com Hb 10,8. B: Incorreta. EDA não é 1ª medida; H. Pylori é investigação posterior. C: Incorreta. Cirurgia não é 1ª linha sem falha endoscópica. D: CORRETA. Hemorragia digestiva alta com instabilidade hemodinâmica: 1) Acesso venoso periférico calibroso (2 acessos); 2) Ressuscitação volêmica com cristaloide (SF 0,9%); 3) Omeprazol EV em bolus (80mg) seguido de infusão contínua; 4) Estabilizar e após: EDA diagnóstica e terapêutica. E: Incorreta. EDA deve aguardar estabilização hemodinâmica mínima."},
+
+{id:92,tema:"Gastro & Infecto",
+enunciado:"Homem, 56 anos, apresenta fadiga, aumento de volume abdominal e icterícia progressiva nos últimos 15 dias. Etilista há mais de 20 anos. Ao exame físico: ictérico, presença de aranhas vasculares no tórax e sinal do semicírculo de Skoda. AST: 105 U/L; ALT: 48 U/L; Gama-GT: 280 U/L; INR: 1,6. Investigação laboratorial descartou etiologias viral, autoimune, metabólica e tóxica por medicamento. Qual é a conduta inicial mais adequada?",
+alternativas:["Ultrassonografia de abdome para avaliação das vias biliares.","Elastografia hepática para avaliação de fibrose.","Dosagem sérica de alfafetoproteína para avaliação de neoplasia.","Endoscopia digestiva alta para avaliação de hipertensão portal."],
+correta:0,
+gabarito:"A: CORRETA. Padrão de colestase (bilirrubina direta elevada, FA/GGT altas) em etilista → USG abdominal é o PRIMEIRO exame para avaliar: dilatação de vias biliares (exclui obstrução extra-hepática), tamanho e textura hepática, ascite, esplenomegalia, sinais de hipertensão portal. Essencial para distinguir colestase intra-hepática (hepatite alcoólica grave) de extra-hepática (coledocolitíase). B: Incorreta. Elastografia é para fibrose crônica, não icterícia aguda. C: Incorreta. AFP é para rastreio de CHC. D: Incorreta. EDA avalia varizes (hipertensão portal), não é 1ª investigação da icterícia."},
+
+{id:93,tema:"Gastro & Infecto",
+enunciado:"Mulher de 38 anos, dor abdominal recorrente há 4 meses em hipogástrio, tipo cólica, associada a distensão abdominal e alteração do hábito intestinal. Períodos alternados de constipação e fezes amolecidas. Melhora parcial da dor após evacuação. Nega febre, emagrecimento, sangramento digestivo. Hemograma, PCR e função renal/hepática normais. Qual a hipótese diagnóstica mais provável e conduta inicial mais adequada?",
+alternativas:["Doença inflamatória intestinal; solicitar colonoscopia com biópsias.","Colelitíase; solicitar ultrassonografia de abdome total.","Endometriose intestinal; solicitar tomografia computadorizada de abdome com contraste.","Síndrome do intestino irritável; estabelecer diagnóstico clínico e solicitar exames apenas para exclusão de sinais de alarme."],
+correta:3,
+gabarito:"A: Incorreta. DII seria com hematoquesia, febre, perda de peso, PCR elevado. B: Incorreta. Colelitíase cursaria com dor no hipocôndrio D após refeições gordurosas. C: Incorreta. Endometriose intestinal tem ciclicidade menstrual, não é o padrão descrito. D: CORRETA. Critérios de Roma IV para SII: dor abdominal ≥1×/semana nos últimos 3 meses + início associado a evacuação + alteração na frequência e/ou consistência das fezes. Diagnóstico CLÍNICO por critérios. Exames de exclusão de alarme (hemograma, PCR) já foram feitos e são normais. Não há sinais de alarme."},
+
+{id:94,tema:"Gastro & Infecto",
+enunciado:"Joana, 32 anos, evoluiu com febre baixa, poliartralgia leve, conjuntivite e rash cutâneo máculo-papular. Assinale a suspeita diagnóstica mais provável.",
+alternativas:["Lúpus","Dengue","Chikungunya","Zika"],
+correta:3,
+gabarito:"A: Incorreta. Lúpus não cursa com essa forma aguda febril + conjuntivite. B: Incorreta. Dengue: febre alta, mialgia intensa, cefaleia retro-orbital — sem conjuntivite. C: Incorreta. Chikungunya: febre alta + ARTRALGIA INTENSA (incapacitante) + rash — artralgia aqui é leve. D: CORRETA. Tétrade diagnóstica do Zika: febre baixa/subfebril + rash máculo-papular pruriginoso + artralgia LEVE + conjuntivite não purulenta. Diferencia-se do Chikungunya pela intensidade da artralgia (leve no Zika vs incapacitante no Chikungunya) e pela conjuntivite."},
+
+{id:95,tema:"Gastro & Infecto",
+enunciado:"Paciente de 63 anos internado com isquemia de membros inferiores realizou angiotomografia de abdome que mostrou imagem de 4 cm em corpo de pâncreas além de múltiplos nódulos hepáticos altamente sugestivos de implantes metastáticos secundários e foi avaliado pelo oncologista no hospital de referência que achou a situação sem possibilidade de tratamento curativo. Qual conduta do médico assistente poderia ser considerada uma ortotanásia?",
+alternativas:["Dar alta para casa porque não se pode fazer mais nada.","Transferir o paciente para uma UTI e colocá-lo em ventilação mecânica.","Considerar um internamento domiciliar com suporte sintomático.","Manter o paciente internado para tratar todas as complicações agudas.","Recomendar à família uma segunda opinião pois ainda assim pode ser um quadro curável."],
+correta:2,
+gabarito:"A: Incorreta. Alta sem suporte é abandono. B: Incorreta. UTI e VM são distanásia (prolongamento artificial do morrer com sofrimento). C: CORRETA. Ortotanásia = morte no tempo certo, com dignidade, sem prolongamento artificial e sem antecipação. Cuidado paliativo domiciliar com suporte sintomático (controle de dor, conforto) é a conduta que respeita a morte natural e a dignidade do paciente sem cura. D: Incorreta. Tratar todas as complicações agudas em paciente terminal pode ser distanásia. E: Incorreta. Segunda opinião não muda o prognóstico descrito."},
+
+{id:96,tema:"Gastro & Infecto",
+enunciado:"Paciente sexo feminino, 45 anos de idade, portadora de transtorno depressivo e fibromialgia, faz uso frequente de AINEs. Deu entrada na emergência com queda de fezes escurecidas com odor fétido, evoluiu há 1 hora com hematêmese e PA=100×60 bpm, eupneica, saturação 88% em ar ambiente. Diante do caso, qual a conduta neste momento?",
+alternativas:["Estabilizar a paciente, iniciar IBP em dose plena, coletar exames, transfundir hemoderivados se necessário e contactar endoscopista para proceder EDA.","Estabilizar a paciente, iniciar IBP em dose plena, coletar exames, transfundir hemoderivados se necessário e contactar endoscopista para proceder EDA. Contactar endoscopista imediatamente e realizar pró-cinéticos para facilitar a realização da endoscopia digestiva alta.","Iniciar bloqueador H2, vasoconstritores esplâncnicos, pró-cinéticos e chamar endoscopista para realizar EDA.","15 min /semana","Solicitar endoscopia digestiva alta e colonoscopia de urgência."],
+correta:0,
+gabarito:"A: CORRETA. Hemorragia digestiva alta aguda com instabilidade (PA 100×60, SaO2 88%): 1) Ressuscitação hemodinâmica: 2 acessos venosos calibrosos, cristaloide em bolus, O2 suplementar; 2) IBP EV (omeprazol 80mg bolus + infusão contínua); 3) Coletar exames (Hb, coagulograma, tipagem); 4) Transfusão se Hb<8 ou instabilidade persistente; 5) EDA dentro de 24h (ou <12h em sangramento ativo). Pró-cinéticos (metoclopramida) facilitam a visualização na EDA mas são complementares. B: Resposta redundante. C: Incorreta. Vasoconstritores esplâncnicos são para varizes esofagianas; H2 é inferior ao IBP. D/E: Incorretas."},
+
+// ──────────────── HEMATOLOGIA (12 questões) ────────────────
+{id:97,tema:"Hematologia",
+enunciado:"O Sr. Everaldo tem 70 anos e está em investigação de anemia. O hemograma e o esfregaço revelaram anemia macrocítica com anisocitose e poiquilocitose, grandes eritrócitos ovais (macro-ovalócitos), neutrófilos hipersegmentados e reticulocitopenia. Qual o diagnóstico dessa anemia?",
+alternativas:["Anemia hemolítica","Anemia megaloblástica","Anemia ferropriva","Anemia aplástica","Anemia autoimune"],
+correta:1,
+gabarito:"A: Incorreta. Anemia hemolítica cursa com reticulocitose (resposta medular compensatória), não reticulocitopenia. B: CORRETA. A tríade clássica de Anemia Megaloblástica: VCM elevado (macrocitose) + neutrófilos hipersegmentados (≥5 lobos ou um segmento com 6+) + macro-ovalócitos no esfregaço + reticulocitopenia (eritropoiese ineficaz) + DHL muito elevada (hemólise intramedular). Causas: deficiência de B12 ou ácido fólico. C: Incorreta. Ferropriva é microcítica hipocrômica. D: Incorreta. Aplástica tem pancitopenia + hipocelularidade medular. E: Incorreta. Anemia autoimune (AHAI) cursa com reticulocitose e teste de Coombs positivo."},
+
+{id:98,tema:"Hematologia",
+enunciado:"Paciente 18 anos portador de anemia falciforme, apresenta poliartralgia intensa há 1 dia tendo feito uso de 4 comprimidos de dipirona e 2 de Tylex (codeína/paracetamol) sem resposta, deu entrada na emergência ainda com muita dor. Qual opção terapêutica deveria ser instituída junto com a hidratação vigorosa?",
+alternativas:["Morfina EV iniciando sempre em baixas doses","Tramadol EV com metoclopramida em pré medicação","Fentanil em forma de adesivos cutâneos","Paracetamol VO na dose de 4g/dia","Morfina EV sempre em dose maior que a equianalgésica"],
+correta:0,
+gabarito:"A: CORRETA. Crise vasooclusiva grave na anemia falciforme sem resposta a analgésicos não opioides → Morfina EV em dose adequada. A dose inicial deve ser titulada conforme resposta (0,05-0,1 mg/kg), com incrementos a cada 20-30 min se necessário. Evitar 'subdose' por medo — crise vasooclusiva é uma das dores mais intensas descritas. B: Incorreta. Tramadol tem potência insuficiente para crise vasooclusiva grave. C: Incorreta. Fentanil transdérmico não é para dor aguda (onset muito lento). D: Incorreta. Paracetamol VO já foi tentado (Tylex = paracetamol+codeína). E: Incorreta. Não deve iniciar acima da equianalgésica — deve titular."},
+
+{id:99,tema:"Hematologia",
+enunciado:"Homem, 55 anos, sem comorbidades. Anemia microcítica hipocrômica, ferritina 4 ng/mL. Nega sangramento visível. Não usa AINEs. Além de iniciar reposição de ferro, qual é a conduta prioritária?",
+alternativas:["Investigar sangramento oculto no trato gastrointestinal.","Solicitar eletroforese de hemoglobina.","Pesquisar anticorpos antinucleares.","Solicitar dosagem de vitamina B12."],
+correta:0,
+gabarito:"A: CORRETA. Homem ≥50 anos com anemia ferropriva sem causa evidente = investigação mandatória de sangramento oculto no TGI (câncer colorretal é a causa mais importante a excluir). Conduta: colonoscopia + EDA. O câncer colorretal pode se manifestar inicialmente apenas por anemia ferropriva assintomática. B: Incorreta. Eletroforese seria para talassemia (microcítica com ferritina normal). C: Incorreta. ANA não é investigação de anemia ferropriva. D: Incorreta. B12 causa anemia macrocítica (VCM alto), não microcítica."},
+
+{id:100,tema:"Hematologia",
+enunciado:"Mulher de 22 anos, fadiga há 3 meses. Hemoglobina 9,0g/dL; VCM 80fL; HCM 24; CHCM 28; plaquetas e leucócitos normais. Reticulócitos 100.000/mm³. Esfregaço sem alterações morfológicas. A investigação laboratorial subsequente mais indicada para essa paciente é:",
+alternativas:["Cinética de ferro e mielograma.","Mielograma, função renal e função tireoideana.","Cinética de ferro, dosagem de vitamina B12 e dosagem de ácido fólico.","Mielograma, função renal e função tireoideana."],
+correta:2,
+gabarito:"A: Incorreta. Mielograma é invasivo e não é 1ª linha. B/D: Incorretas. Mielograma não é 1ª linha em anemia isolada. C: CORRETA. Anemia normocítica/hipocrômica (VCM 80, CHCM 28) com reticulócitos normais (100.000/mm³) → anemia arregenerativa por carência nutricional. A investigação deve cobrir: Cinética do ferro (ferritina, ferro sérico, TIBC, saturação de transferrina — para ferropriva antes da microcitose) + B12 + Ácido fólico. CHCM baixo (28 vs VR 32-36) indica hemoglobinização deficiente → ferropriva ou talassemia menor."},
+
+{id:101,tema:"Hematologia",
+enunciado:"Homem, 63 anos, adinamia e 'cansaço' aos esforços há 3 meses. Parestesia de MMII há 2 meses. Antecedente de vitiligo. Hemoglobina 8,7g/dL; VCM 107; leucopenia discreta; plaquetas 98.000; DHL 12.900. Função renal normal. Diagnóstico etiológico mais provável:",
+alternativas:["Déficit de vitamina B12","Leucemia mieloide aguda","Anemia ferropriva, provavelmente secundária a perdas","Hipotireoidismo"],
+correta:0,
+gabarito:"A: CORRETA. Anemia megaloblástica por deficiência de B12 (anemia perniciosa): VCM 107 (macrocitose), pancitopenia leve (leucopenia + plaquetopenia), DHL muito elevada (12.900 = eritropoiese ineficaz/hemólise intramedular intensa), parestesia de MMII (síndrome combinada subaguda por desmielinização medular). Vitiligo = doença autoimune → anemia perniciosa autoimune (anti-FI). B: Incorreta. LMA teria blastos e comprometimento grave/agudo. C: Incorreta. Ferropriva é microcítica. D: Incorreta. Hipotireoidismo causa macrocitose leve, não DHL 12.900."},
+
+{id:102,tema:"Hematologia",
+enunciado:"Paciente, 58 anos, sexo feminino, vem para avaliação com queixas de dificuldades para perder peso. IMC 31. Dieta balanceada, sem exercícios físicos. Ao exame físico: bom estado geral. TSH: 12,8 µUI/ml (VN=0,35-4,94); T4 livre: 0,50 ng/dl (VN=0,70-1,48); Colesterol total: 280 mg/dl; LDL-C: 168 mg/dl; Triglicérides: 230 mg/dl; HbA1c: 6,2%; MAPA com cargas pressóricas normais. Qual seria a conduta mais adequada?",
+alternativas:["Iniciar reposição de levotiroxina e estatina.","Iniciar reposição de levotiroxina e metformina.","Iniciar reposição de levotiroxina e IECA.","Iniciar reposição de levotiroxina."],
+correta:3,
+gabarito:"A: Incorreta. Estatina pode ser necessária após normalização do TSH (hipotireoidismo causa dislipidemia secundária — primeiro tratar o hipotireoidismo). B: Incorreta. HbA1c 6,2% é pré-diabetes, mas metformina não está indicada sem diagnóstico de DM (e sim com DM ou pré-DM + alto risco). C: Incorreta. MAPA normal — sem indicação de IECA. D: CORRETA. A causa de tudo é o hipotireoidismo primário (TSH 12,8, T4 baixo): explica dislipidemia, dificuldade para perder peso, possível pré-diabetes. Tratar primeiramente com levotiroxina e reavaliação em 6-8 semanas — dislipidemia e outros achados podem normalizar."},
+
+{id:103,tema:"Hematologia",
+enunciado:"Paciente de 32 anos com diagnóstico de asma na infância, há duas semanas apresentou quadro gripal, persistiu com tosse seca principalmente na madrugada. Nega outras queixas. Qual a investigação mais adequada para permitir o diagnóstico e tratamento adequados?",
+alternativas:["TRM-TB e baciloscopia do escarro","Radiografia de tórax e espirometria com prova broncodilatadora","Radiografia de tórax, hemograma, VHS, Proteína C reativa","Radiografia de tórax e baciloscopias do escarro"],
+correta:1,
+gabarito:"A: Incorreta. Sem fatores de risco para TB (contato, imunossupressão). B: CORRETA. Tosse seca noturna persistente após viral em asmática → investigação da asma: espirometria com prova broncodilatadora (padrão-ouro para confirmar obstrução reversível, critério: CVF/VEF1 <70% + melhora >12% e 200mL após broncodilatador) + Rx de tórax (excluir pneumonia). C: Incorreta. VHS/PCR não têm valor na asma. D: Incorreta. Baciloscopia sem indicação."},
+
+{id:104,tema:"Hematologia",
+enunciado:"Paciente 33 anos internada com hemorragia após parto. Plaquetas = 12.000/mm³; INR = 1,2; TTPA = 1,1× controle; fibrinogênio = 80 mg/dL (VR >200). O diagnóstico mais provável é:",
+alternativas:["Púrpura trombocitopênica imune (PTI)","Coagulação intravascular disseminada (CIVD)","Doença de von Willebrand","Trombocitopenia gestacional"],
+correta:1,
+gabarito:"A: Incorreta. PTI cursa com plaquetopenia isolada, sem alteração do coagulograma. B: CORRETA. CIVD pós-parto: consumo de fatores de coagulação + plaquetas → plaquetopenia + hipofibrinogenemia (fibrinogênio <100 mg/dL é critério). INR e TTPA podem estar normais na fase inicial. Causas obstétricas de CIVD: descolamento placentário, embolia amniótica, síndrome HELLP, sepse. C: Incorreta. Doença de von Willebrand cursa com TTPA prolongado e tempo de sangramento aumentado. D: Incorreta. Trombocitopenia gestacional é leve (>70.000) e assintomática."},
+
+{id:105,tema:"Hematologia",
+enunciado:"Paciente, 70 anos, masculino, história prévia de infarto do miocárdio anterior extenso e IC congestiva CF III. ECG: BRE com QRS 140 ms; ecocardiograma: FE do VE de 28%. Em relação ao BRE com QRS ≥130ms e FE<35%, qual dispositivo estaria indicado para redução de mortalidade?",
+alternativas:["Cardioversor-desfibrilador implantável (CDI) apenas","Marcapasso convencional (VVI)","Terapia de ressincronização cardíaca (TRC) ± CDI","Monitorização ambulatorial com Holter"],
+correta:2,
+gabarito:"A: Incorreta. CDI isolado não trata a dissincronização ventricular. B: Incorreta. MP convencional piora a dissincronização. C: CORRETA. Terapia de Ressincronização Cardíaca (TRC) com ou sem CDI é indicada em: FE≤35% + BRE com QRS ≥130ms + CF II-III-IV em terapia médica otimizada. O TRC sincroniza a contração ventricular, melhora o débito cardíaco e reduz mortalidade. Associação com CDI adiciona proteção contra morte súbita. D: Incorreta. Holter é diagnóstico, não terapêutico."},
+
+{id:106,tema:"Hematologia",
+enunciado:"Mulher, 65 anos, negra, obesa, vem ao ambulatório de clínica com DM há 20 anos. HbA1c 8,8%; glicemia de jejum 289 mg/dL. HAS há 10 anos em uso de hidroclorotiazida 25mg/dia e losartana 100mg/dia de forma regular. PA: 180×85 mmHg. Edema MMII (+/4). Qual a melhor opção medicamentosa para controle da PA neste momento?",
+alternativas:["Aumentar a dose da hidroclorotiazida para 50mg/dia","Associar clonidina 0,100mg ao dia","Associar espironolactona 25mg/dia","Associar hidralazina 25mg de 12/12h"],
+correta:2,
+gabarito:"A: Incorreta. Hidroclorotiazida 50mg tem mais efeitos adversos (hipocalemia, hiperglicemia) sem benefício adicional significativo. B: Incorreta. Clonidina tem alta incidência de EA e não é preferencial. C: CORRETA. Paciente com HAS não controlada + DM + edema (HAR ou IC subclínica) em 2 drogas (BRA + tiazídico) → 3ª droga: BCC (anlodipino) seria o padrão, ou espironolactona como 3ª/4ª droga. Neste contexto, com edema e DM, espironolactona 25mg oferece: controle adicional da PA, antiproteinúrico, antialdosterônico. D: Incorreta. Hidralazina não é preferencial neste contexto sem IC."},
+
+{id:107,tema:"Hematologia",
+enunciado:"Paciente masculino, 59 anos, com diagnóstico de HAS há 1 ano. MRPA: média 152×89 mmHg. PA consultório: 164×91 mmHg. Usa Losartana 100mg/dia + Clortalidona 25mg/dia + Anlodipino 10mg/dia. Edema maleolar bilateral 2+/4+. Qual a melhor conduta?",
+alternativas:["Associar espironolactona 25mg/dia.","Associar furosemida 40mg/dia via oral.","Substituir a hidroclorotiazida por clortalidona 25mg/dia.","Associar atenolol 25mg 12/12h."],
+correta:0,
+gabarito:"A: CORRETA. Paciente com 3 drogas em dose plena (incluindo BRA + tiazídico + BCC) e MRPA ainda fora de meta = HAS Resistente. A 4ª droga de escolha é espironolactona 25mg/dia (Estudo PATHWAY-2 e diretrizes). O edema é efeito colateral do anlodipino (brando, contornável). B: Incorreta. Furosemida não é preferencial na HAR. C: Incorreta. Já usa clortalidona (não HCTZ). D: Incorreta. Betabloqueador não é 4ª opção preferencial."},
+
+{id:108,tema:"Hematologia",
+enunciado:"Paciente feminina, 29 anos, com lúpus eritematoso sistêmico clinicamente estável, apresenta hematúria, proteinúria de 3,7 g/dia e elevação da creatinina. O médico deveria:",
+alternativas:["Iniciar antibiótico","Realizar biópsia renal","Realizar corticoide empiricamente","Iniciar diurético"],
+correta:1,
+gabarito:"A: Incorreta. Não há evidência de infecção. B: CORRETA. LES + proteinúria >3,5g/dia (nefrótica) + hematúria + ↑creatinina = nefrite lúpica ativa. Biópsia renal obrigatória para: classificar histologicamente (Classe I-VI pela ISN/RPS), orientar o regime imunossupressor (Classe III/IV: ciclofosfamida ou micofenolato; Classe V: micofenolato; Classe I/II: apenas corticoide ou observação). C: Incorreta. Corticoide empírico sem biópsia pode mascarar a classe histológica e subestimar a agressividade. D: Incorreta. Diurético é paliativo, não define o tratamento."}
+];
+
+// ════════════════════════════════════════════════════
+// RESUMOS DATA
+// ════════════════════════════════════════════════════
+const RESUMOS = [
+ {id:"has",label:"HAS",tag:"#ef4444",cards:[
+  {color:"card-violet",icon:"🩺",title:"Diagnóstico & MRPA",content:[
+   {type:"table",headers:["Estágio","PAS","PAD"],rows:[["Normal","<130","<85"],["Elevada","130–139","85–89"],["HAS 1","140–159","90–99"],["HAS 2","160–179","100–109"],["HAS 3","≥180","≥110"]]},
+   {type:"badge",label:"MRPA correta",items:["3× manhã (antes café e medicação)","3× final da tarde (antes do jantar)","5 dias consecutivos","Descartar 1º dia → média"]},
+   {type:"alert",text:"MRPA ≥135×85 = HAS. Urgência = PA elevada SEM LOA. Emergência = PA elevada COM LOA aguda."}
+  ]},
+  {color:"card-blue",icon:"💊",title:"Tratamento",content:[
+   {type:"numbered",items:["1ª linha: IECA/BRA + BCC ou IECA/BRA + tiazídico","HAS Estágio 2: iniciar 2 drogas combinadas","HAS Resistente: adicionar espironolactona 25mg (4ª droga)","DRC + proteinúria: IECA ou BRA (nefroproteção)","Gestação: Metildopa, hidralazina, nifedipino"]},
+   {type:"alert",text:"CONTRAINDICADOS juntos: IECA + BRA (duplo bloqueio). BB: NÃO é 1ª linha sem indicação específica."}
+  ]},
+  {color:"card-amber",icon:"⚠️",title:"Causas Secundárias",content:[
+   {type:"table",headers:["Causa","Pista Clínica","Exame"],rows:[["SAHOS (mais comum)","Non-dipper, HAR","Polissonografia"],["Hiperaldo primário","Hipocalemia, HAR","Relação aldosterona/renina"],["Estenose artéria renal","Sopro abdominal, jovem","Angiotomografia/arteriografia"],["Feocromocitoma","HAS paroxística, cefaleia","Metanefrinas urinárias"]]},
+   {type:"alert",text:"SAHOS é a causa secundária MAIS PREVALENTE na HAS Resistente. Pesquisar em todos os pacientes com HAR."}
+  ]},
+  {color:"card-rose",icon:"🚨",title:"Emergência vs Urgência",content:[
+   {type:"badge",label:"Emergência Hipertensiva (LOA aguda)",items:["Encefalopatia hipertensiva","AVC/AIT","IAM/SCA","Dissecção aórtica","Edema agudo de pulmão","Eclâmpsia/pré-eclâmpsia grave"]},
+   {type:"badge",label:"Tratamento",items:["EH: Nitroprussiato EV, reduzir PAM 25% em 1h","UH: VO (captopril), redução gradual em 24-48h"]}
+  ]}
+ ]},
+ {id:"dm",label:"Diabetes",tag:"#f59e0b",cards:[
+  {color:"card-amber",icon:"🔬",title:"Diagnóstico",content:[
+   {type:"table",headers:["Critério","Normal","Pré-DM","DM"],rows:[["Jejum","<100","100–125","≥126"],["TOTG 2h","<140","140–199","≥200"],["HbA1c","<5,7%","5,7–6,4%","≥6,5%"],["Aleatória","—","—","≥200+sintomas"]]},
+   {type:"alert",text:"2 critérios positivos simultâneos dispensam repetição. DM1: jovem magro + poliúria + cetonúria = insulina imediata."}
+  ]},
+  {color:"card-blue",icon:"💊",title:"Tratamento DM2",content:[
+   {type:"numbered",items:["1ª linha: METFORMINA + MEV","DCV estabelecida: + iSGLT2 ou aGLP-1","IC/DRC: iSGLT2 preferencial (dapagliflozina)","Obeso sem DCV: aGLP-1 (semaglutida, liraglutida)","HbA1c ≥10% sintomático: insulinizar"]},
+   {type:"badge",label:"Ganho de peso (evitar em obesos)",items:["Sulfonilureias (2-5kg)","Insulinas (2-10kg)","Tiazolidinedionas (↑edema)"]}
+  ]},
+  {color:"card-emerald",icon:"🎯",title:"Rastreio de Complicações",content:[
+   {type:"table",headers:["Complicação","Exame","Frequência"],rows:[["Nefropatia","RAC urinária + TFG","Anual"],["Retinopatia","Fundo de olho","Anual"],["Neuropatia","Monofilamento 10g","Anual"],["Pé diabético","Pulsos + monofilamento","Anual"]]},
+   {type:"alert",text:"DM1: iniciar rastreio após 5 anos do diagnóstico. DM2: iniciar ao diagnóstico."}
+  ]},
+  {color:"card-rose",icon:"💉",title:"Insulinoterapia",content:[
+   {type:"table",headers:["Tipo","Início","Pico","Duração"],rows:[["Glargina (basal)","1-2h","Plano","20-24h"],["NPH (basal)","2-4h","6-10h","12-18h"],["Asparte/Lispro (bolus)","15min","1-2h","3-5h"],["Regular","30min","2-4h","6-8h"]]},
+   {type:"alert",text:"Iniciar com NPH noturna 0,1 UI/kg bedtime. DM1: basal-bolus obrigatório."}
+  ]}
+ ]},
+ {id:"ic",label:"Insuf. Cardíaca",tag:"#e11d48",cards:[
+  {color:"card-rose",icon:"❤️",title:"Classificação",content:[
+   {type:"table",headers:["Tipo","FE","Etiologia comum"],rows:[["ICFEr","<40%","IAM, miocardiopatia"],["ICFEi","40-49%","Intermediária"],["ICFEp","≥50%","HAS, DM, obesidade"]]},
+   {type:"table",headers:["NYHA","Sintomas"],rows:[["I","Assintomático"],["II","Esforços moderados"],["III","Esforços leves"],["IV","Repouso"]]}
+  ]},
+  {color:"card-violet",icon:"💊",title:"Tratamento ICFEr (Reduz mortalidade)",content:[
+   {type:"badge",label:"4 Pilares com evidência de mortalidade",items:["IECA ou ARNI (sacubitril/valsartana)","Betabloqueador (carvedilol, bisoprolol)","Antagonista aldosterona (espironolactona)","iSGLT2 (dapagliflozina, empagliflozina)"]},
+   {type:"badge",label:"Apenas sintomáticos (não reduzem mortalidade)",items:["Diurético de alça (furosemida)","Digoxina (↓hospitalização)","Ivabradina (FC>70, ritmo sinusal)"]},
+   {type:"alert",text:"CONTRAINDICADOS em ICFEr: Diltiazem, verapamil (BCC não-dihidropiridínicos). BCC na GESTAÇÃO com IC: PROIBIDOS IECA/BRA/espiro."}
+  ]},
+  {color:"card-blue",icon:"📊",title:"Framingham",content:[
+   {type:"badge",label:"Critérios MAIORES",items:["DPN","Distensão jugular","Crepitações","Cardiomegalia","EAP, B3, PVC>16cm"]},
+   {type:"badge",label:"Critérios MENORES",items:["Edema bilateral MMII","Tosse noturna","Dispneia a esforços","Hepatomegalia","Derrame pleural"]},
+   {type:"alert",text:"Diagnóstico: 2 maiores OU 1 maior + 2 menores."}
+  ]},
+  {color:"card-teal",icon:"🤰",title:"IC na Gravidez",content:[
+   {type:"badge",label:"SEGUROS na gestação",items:["Hidralazina","Nitrato","Digoxina","Furosemida (cautela)","Betabloqueador cardio-seletivo"]},
+   {type:"alert",text:"PROIBIDOS na gestação: IECA, BRA, espironolactona, sacubitril-valsartana, BCC de ação curta."}
+  ]}
+ ]},
+ {id:"dac",label:"DAC / SCA",tag:"#dc2626",cards:[
+  {color:"card-rose",icon:"💓",title:"Angina Estável",content:[
+   {type:"badge",label:"1ª Linha Anti-isquêmica",items:["Betabloqueador (1ª escolha)","BCC dihidropiridínico (anlodipino)","Nitrato de longa ação (sintomático)","Ivabradina (FC>70 + ritmo sinusal)","Trimetazidina (metabólico)"]},
+   {type:"alert",text:"Trimetazidina: inibe metabolismo de ácidos graxos (usa glicose = mais eficiente na isquemia). SEM efeito hemodinâmico."}
+  ]},
+  {color:"card-orange",icon:"🚨",title:"SCA",content:[
+   {type:"table",headers:["Tipo","ECG","Troponina","Conduta"],rows:[["IAMCSST","Supra ST","↑","Angioplastia <120min"],["IAMSST","Sem supra","↑","Estratificação de risco"],["AI","Sem supra","Normal","Clínico"]]},
+   {type:"badge",label:"Terapia universal SCA",items:["AAS + P2Y12 (ticagrelor/clopidogrel)","Anticoagulação (heparina)","Estatina ALTA potência (TODOS, independente LDL)","BB + IECA (FE<40% ou DM)"]},
+   {type:"alert",text:"BRE NOVO: NÃO é automático de IAM — dosar troponina antes de cateterismo."}
+  ]},
+  {color:"card-amber",icon:"📉",title:"Dislipidemia — Metas LDL",content:[
+   {type:"table",headers:["Risco","Meta LDL"],rows:[["Baixo","<130 mg/dL"],["Intermediário","<100 mg/dL"],["Alto","<70 mg/dL"],["Muito alto","<50 mg/dL ou ↓≥50%"]]},
+   {type:"badge",label:"Estatinas alta potência",items:["Atorvastatina 40-80mg","Rosuvastatina 20-40mg"]},
+   {type:"alert",text:"FLUVASTATINA: menor potência entre as estatinas. FIBRATO: NÃO reduz mortalidade CV — apenas TG."}
+  ]}
+ ]},
+ {id:"tireoid",label:"Tireoide",tag:"#059669",cards:[
+  {color:"card-teal",icon:"🐌",title:"Hipotireoidismo",content:[
+   {type:"table",headers:["Tipo","TSH","T4L"],rows:[["Primário manifesto","↑↑","↓"],["Subclínico","↑","Normal"],["Central","Normal/↓","↓"]]},
+   {type:"badge",label:"Sintomas clássicos",items:["Fadiga, sonolência, lentificação","Constipação, pele seca, queda capilar","Bradicardia, reflexo tendíneo lento","Hipotermia, ganho de peso","Menorragia, amenorreia"]},
+   {type:"alert",text:"Causa + comum: Hashimoto (anti-TPO+). Tratamento: levotiroxina — dose BAIXA em idosos/cardiopatas, titulação gradual."}
+  ]},
+  {color:"card-emerald",icon:"⚡",title:"Hipertireoidismo",content:[
+   {type:"table",headers:["Doença","Bócio","TRAb","Cintilografia"],rows:[["Graves","Difuso","+","Difusa"],["Plummer","Nodular","−","Nódulo quente"],["Hashitoxicose","Difuso","±","↑ difusa"]]},
+   {type:"badge",label:"Tratamento Graves",items:["Metimazol (antitireoidiano 1ª linha)","Propranolol (sintomas adrenérgicos)","Radioiodo (definitivo)","Cirurgia (bócio grande, compressão)"]},
+   {type:"alert",text:"Doença de Graves: TRAb é anticorpo PATOGNOMÔNICO. Tireoidite Hashimoto: anti-TPO + anti-Tireoglobulina."}
+  ]},
+  {color:"card-pink",icon:"🔍",title:"Abordagem do Nódulo",content:[
+   {type:"numbered",items:["TSH: se baixo → cintilografia (nódulo quente=benigno)","Se TSH normal/alto → USG tireoidiana","Características suspeitas: hipoecogênico, sólido, microcalcificações, margens irregulares, vascularização central","PAAF: nódulo ≥1cm suspeito ou ≥1,5cm indeterminado","Bethesda I-II: observar; III-IV: repetir ou cirurgia; V-VI: cirurgia"]},
+   {type:"alert",text:"Doença de Plummer = adenoma tóxico = nódulo QUENTE na cintilografia."}
+  ]},
+  {color:"card-indigo",icon:"🏥",title:"HAS Secundária — Tireoid",content:[
+   {type:"table",headers:["Condição","Padrão HAS"],rows:[["Hipotireoidismo","Diastólica (↓DC, vasoconstrição)"],["Hipertireoidismo","Sistólica (↑FC, ↑DC)"],["Hiperaldo primário","HAS+hipocalemia"],["SAHOS","HAR, non-dipper"]]},
+   {type:"alert",text:"SAHOS é a causa mais prevalente de HAS resistente. Hiperaldosteronismo primário: suspeitar com hipocalemia inexplicada."}
+  ]}
+ ]},
+ {id:"nefro",label:"Nefrologia",tag:"#3b82f6",cards:[
+  {color:"card-blue",icon:"🫘",title:"DRC — Classificação",content:[
+   {type:"table",headers:["Estágio","TFG","Albuminúria"],rows:[["G1","≥90 (com dano)","A1:<30 | A2:30-300 | A3:>300"],["G2","60-89",""],["G3a","45-59",""],["G3b","30-44",""],["G4","15-29",""],["G5","<15","(diálise)"]]},
+   {type:"alert",text:"DRC = TFG<60 OU marcador de dano renal por ≥3 meses. Anemia na DRC: deficiência de eritropoietina → EPO exógena."}
+  ]},
+  {color:"card-indigo",icon:"⚠️",title:"IRA — Tipos",content:[
+   {type:"table",headers:["Tipo","Causa","FENa","EAS"],rows:[["Pré-renal","Hipovolemia, sepse","<1%","Cilindros granulares"],["NTA isquêmica","Hipoperfusão persistente",">2%","Cilindros castanhos"],["NTA nefrotóxica","Contraste, aminoglicosídeos",">2%",""],["Pós-renal","Obstrução","Variável","Hematúria"]]},
+   {type:"alert",text:"AINE: bloqueia prostaglandinas vasodilatadoras → IRA pré-renal em idosos, DRC, ICC. NTA isquêmica é a + comum na UTI."}
+  ]},
+  {color:"card-teal",icon:"🧪",title:"Síndromes Renais",content:[
+   {type:"table",headers:["Síndrome","Proteinúria","Hematúria","Características"],rows:[["Nefrótica",">3,5g/dia","Ausente","Hipoalbuminemia, edema, hiperlipidemia"],["Nefrítica","<3,5g/dia","Dismórfica","HAS, oligúria, azotemia"]]},
+   {type:"alert",text:"LES + proteinúria>3g + hematúria = biópsia renal OBRIGATÓRIA para classificação histológica (ISN/RPS Classe I-VI)."}
+  ]},
+  {color:"card-violet",icon:"💊",title:"Anti-hipertensivo na DRC",content:[
+   {type:"badge",label:"DRC + Proteinúria ≥300mg/g",items:["IECA ou BRA: 1ª escolha (nefroproteção)","Meta PA: <130×80 mmHg em DRC","Adicionar BCC ou tiazídico se necessário","Evitar: duplo bloqueio IECA+BRA"]},
+   {type:"alert",text:"METFORMINA: contraindicada com TFG<30. iSGLT2: reduzem progressão da DRC mesmo sem DM (CREDENCE, DAPA-CKD)."}
+  ]}
+ ]},
+ {id:"pneumo",label:"Pneumologia",tag:"#0ea5e9",cards:[
+  {color:"card-blue",icon:"🌬️",title:"Asma — Controle",content:[
+   {type:"table",headers:["Controle","Critérios"],rows:[["Controlada","0 critérios nas últimas 4 semanas"],["Parcialmente controlada","1-2 critérios"],["Não controlada","≥3 critérios"]]},
+   {type:"badge",label:"Critérios de não controle",items:["Sintomas diurnos >2×/semana","Limitação de atividade","Sintomas/despertar noturno","Necessidade de SABA >2×/semana"]},
+   {type:"alert",text:"Peakflow ≥80% = controlada. <80% = necessidade de reavaliação. CI+LABA é o padrão do Step 3."}
+  ]},
+  {color:"card-sky",icon:"💨",title:"DPOC",content:[
+   {type:"badge",label:"Diagnóstico e Exacerbação",items:["Diagnóstico: VEF1/CVF<70% pós-BD","Exacerbação viral: ~50% (influenza, rhinovirus)","Exacerbação bacteriana: escarro purulento → AB","AB indicado: Amoxicilina-clavulanato ou quinolona respiratória","Corticoide sistêmico: prednisolona 40mg/5 dias"]},
+   {type:"alert",text:"Alfa-1 antitripsina: suspeitar em DPOC jovem (<45 anos), não tabagista, hiperinsuflação em bases pulmonares."}
+  ]},
+  {color:"card-emerald",icon:"🏥",title:"PAC — CURB-65",content:[
+   {type:"table",headers:["Letra","Critério","Ponto"],rows:[["C","Confusão mental","1"],["U","Ureia >43 mg/dL","1"],["R","FR ≥30 irpm","1"],["B","PAS<90 ou PAD<60","1"],["65","Idade ≥65 anos","1"]]},
+   {type:"badge",label:"Conduta por pontuação",items:["0-1: Ambulatorial (amoxicilina-clavulanato)","2: Internação","≥3: UTI (cefalosporina 3ª + macrolídeo)"]}
+  ]},
+  {color:"card-teal",icon:"🦠",title:"Tuberculose",content:[
+   {type:"badge",label:"Diagnóstico",items:["Rx tórax: padrão apical com cavidades","Baciloscopia (2 amostras) e TRM-TB","PPD: ≥5mm em imunossuprimidos; ≥10mm em geral","Cultura: padrão-ouro, demora 6-8 semanas"]},
+   {type:"alert",text:"TB latente (IGRA ou PPD positivo sem doença): Isoniazida 6-9 meses. TB ativa: RIPE por 6 meses."}
+  ]}
+ ]},
+ {id:"gastro",label:"Gastro & Infecto",tag:"#16a34a",cards:[
+  {color:"card-emerald",icon:"🔥",title:"DRGE & Dispepsia",content:[
+   {type:"badge",label:"Sinais de alarme (EDA obrigatória)",items:["Disfagia/odinofagia progressiva","Perda de peso >5% em 3 meses","Hematêmese/melena","Anemia ferropriva inexplicada","Massa abdominal palpável","Idade >45 anos com sintomas novos"]},
+   {type:"alert",text:"H. pylori: 'test and treat' em <45 anos sem alarme. DRGE sem alarme: IBP 8 semanas + MEV."}
+  ]},
+  {color:"card-teal",icon:"🫁",title:"Hepatologia",content:[
+   {type:"table",headers:["Padrão","Enzimas","Causa principal"],rows:[["Hepatocelular","AST/ALT↑↑, AST/ALT>2 = alcoólica","Viral, alcoólica, autoimune"],["Colestático","FA/GGT↑↑","Coledocolitíase, neoplasia"],["Misto","Tudo ↑","Cirrose, metástase"]]},
+   {type:"alert",text:"Colestase: 1º exame = USG abdominal. Dilatação biliar = extrahepática (CPRE). Sem dilatação = intra-hepática (biópsia)."}
+  ]},
+  {color:"card-green",icon:"🦟",title:"Arboviroses",content:[
+   {type:"table",headers:["Vírus","Diferencial"],rows:[["Dengue","Febre alta, mialgia, cefaleia retro-orbital, trombocitopenia"],["Zika","Febre BAIXA, rash, conjuntivite, artralgia LEVE"],["Chikungunya","Febre ALTA, artralgia INTENSA/incapacitante, rash"]]},
+   {type:"alert",text:"Sinais de alarme da Dengue surgem no 3-4º dia (defervescência): dor abdominal intensa, vômitos, ascite, sangramento mucoso, hepatomegalia, letargia."}
+  ]},
+  {color:"card-amber",icon:"🧬",title:"HIV — PEP & PrEP",content:[
+   {type:"numbered",items:["PEP: pós-exposição de risco → iniciar em até 72h","Esquema PEP: tenofovir + lamivudina + dolutegravir × 28 dias","Realizar teste rápido HIV antes de iniciar","PrEP: pré-exposição, em populações de alto risco","PrEP: tenofovir + entricitabina diariamente"]},
+   {type:"alert",text:"PEP após 72h: ineficaz. CD4 e carga viral não são detectáveis nas primeiras semanas da infecção aguda."}
+  ]}
+ ]},
+ {id:"hemato",label:"Hematologia",tag:"#db2777",cards:[
+  {color:"card-pink",icon:"🩸",title:"Anemias — Classificação",content:[
+   {type:"table",headers:["VCM","Tipo","Principais causas"],rows:[["<80 (microcítica)","Ferropriva, talassemia","Ferropriva: ferritina↓, ↑TIBC"],["80-100 (normocítica)","DRC, hemólise, aplasia","DRC: EPO↓; hemólise: reticulocitose"],[">100 (macrocítica)","B12, folato, hipotireoid.","B12: neuro; folato: sem neuro"]]},
+   {type:"alert",text:"DHL muito elevada (>600) + macrocitose + neutrófilos hipersegmentados = megaloblástica. Homem ≥50 com ferropriva: colonoscopia obrigatória."}
+  ]},
+  {color:"card-rose",icon:"💊",title:"Deficiência de B12",content:[
+   {type:"badge",label:"Causas",items:["Anemia perniciosa (anti-fator intrínseco)","Gastrectomia/cirurgia bariátrica","Vegetarianismo estrito","DRC avançada","Metformina prolongada (↓absorção B12)"]},
+   {type:"badge",label:"Hemograma B12",items:["VCM >100 (macrocitose)","Neutrófilos hipersegmentados","Macro-ovalócitos","Reticulocitopenia","DHL muito elevada"]},
+   {type:"alert",text:"Parestesia + anemia megaloblástica = Degeneração Combinada Subaguda da medula (B12). VITILIGO + megaloblástica = anemia perniciosa autoimune."}
+  ]},
+  {color:"card-violet",icon:"🔴",title:"Falciforme",content:[
+   {type:"badge",label:"Crise vasooclusiva — Tratamento",items:["Hidratação venosa vigorosa","Morfina EV titulada (opioide de escolha)","O2 suplementar se SaO2<95%","Ácido fólico diário","Hidroxiureia (profilaxia de crises)"]},
+   {type:"alert",text:"NUNCA tramadol como 1ª linha em crise grave. Morfina EV em dose adequada — não subdosar por medo."}
+  ]},
+  {color:"card-indigo",icon:"⚡",title:"CIVD & Coagulopatias",content:[
+   {type:"table",headers:["Doença","Plaquetas","TP/INR","TTPA","Fibrinogênio"],rows:[["CIVD","↓↓","↑","↑","↓↓"],["PTI","↓↓","Normal","Normal","Normal"],["Von Willebrand","Normal","Normal","↑","Normal"],["Hemofilia A","Normal","Normal","↑","Normal"]]},
+   {type:"alert",text:"CIVD pós-parto: hipofibrinogenemia <100mg/dL + plaquetopenia = diagnóstico. Repor: plasma fresco, crioprecipitado (fibrinogênio), plaquetas."}
+  ]}
+ ]}
+];
+
+// ════════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════════
+let currentUser = null;
+let userProgress = {}; // {qId: respostaIdx}
+let filtroTema = "Todos";
+
+// ════════════════════════════════════════════════════
+// AUTH / LOCAL STORAGE
+// ════════════════════════════════════════════════════
+function doLogin(){
+  const inp = document.getElementById('login-input');
+  const name = inp.value.trim();
+  if(!name){inp.style.borderColor='#e11d48';return;}
+  currentUser = name;
+  // load progress
+  const saved = localStorage.getItem('ci3_progress_' + name);
+  userProgress = saved ? JSON.parse(saved) : {};
+  document.getElementById('user-display').textContent = name;
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').classList.add('visible');
+  renderAll();
+}
+
+function doLogout(){
+  currentUser = null; userProgress = {}; filtroTema = "Todos";
+  document.getElementById('app').classList.remove('visible');
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('login-input').value = '';
+}
+
+function saveProgress(){
+  if(currentUser) localStorage.setItem('ci3_progress_' + currentUser, JSON.stringify(userProgress));
+}
+
+// ════════════════════════════════════════════════════
+// TABS
+// ════════════════════════════════════════════════════
+function showTab(tab, btn){
+  document.querySelectorAll('.nav-pill').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const simuladoEl = document.getElementById('tab-simulado');
+  const resumosEl = document.getElementById('tab-resumos');
+  if(tab==='simulado'){
+    simuladoEl.style.display='block';
+    resumosEl.style.display='none';
+  } else {
+    simuladoEl.style.display='none';
+    resumosEl.style.display='block';
+    renderResumosTabs();
+    renderResumoContent();
+  }
+}
+
+// ════════════════════════════════════════════════════
+// RENDER — METRICS
+// ════════════════════════════════════════════════════
+function renderMetrics(){
+  const total = QUESTOES.length;
+  const resp = Object.keys(userProgress).length;
+  const acertos = Object.entries(userProgress).filter(([id,val])=>{
+    const q = QUESTOES.find(q=>q.id===parseInt(id));
+    return q && val===q.correta;
+  }).length;
+  const aprov = resp>0 ? Math.round(acertos/resp*100):0;
+  const colors = ['#7c3aed','#2563eb','#059669','#d97706'];
+  const data = [
+    {label:'Total de Questões',value:total,sub:'no banco'},
+    {label:'Respondidas',value:resp,sub:`de ${total}`},
+    {label:'Acertos',value:acertos,sub:`de ${resp}`},
+    {label:'Aproveitamento',value:aprov+'%',sub:resp>0?`${acertos}/${resp}`:'—'}
+  ];
+  document.getElementById('metrics-area').innerHTML = data.map((d,i)=>`
+    <div class="metric-card" style="border-left:3px solid ${colors[i]}">
+      <div class="metric-label">${d.label}</div>
+      <div class="metric-value" style="color:${colors[i]}">${d.value}</div>
+      ${d.sub?`<div class="metric-sub">${d.sub}</div>`:''}
+    </div>
+  `).join('');
+}
+
+// ════════════════════════════════════════════════════
+// RENDER — TEMA CARDS
+// ════════════════════════════════════════════════════
+function getTemaStats(tema){
+  const qs = QUESTOES.filter(q=>q.tema===tema);
+  const resp = qs.filter(q=>userProgress[q.id]!==undefined);
+  const acert = resp.filter(q=>userProgress[q.id]===q.correta);
+  const pct = resp.length>0?Math.round(acert.length/resp.length*100):0;
+  return {total:qs.length, resp:resp.length, acertos:acert.length, pct};
+}
+
+function renderTemas(){
+  const temas = [...new Set(QUESTOES.map(q=>q.tema))];
+  const allStat = {
+    total:QUESTOES.length,
+    resp:Object.keys(userProgress).length,
+    acertos:Object.entries(userProgress).filter(([id,v])=>{const q=QUESTOES.find(q=>q.id===parseInt(id));return q&&v===q.correta;}).length,
+    pct:0
+  };
+  allStat.pct = allStat.resp>0?Math.round(allStat.acertos/allStat.resp*100):0;
+  
+  const allCards = [...temas, 'Todos'].map(tema=>{
+    const s = tema==='Todos'?allStat:getTemaStats(tema);
+    const pct = s.pct;
+    const barColor = pct>=80?'#4ade80':pct>=60?'#facc15':'#f87171';
+    const glow = pct>=80?`box-shadow:0 0 6px #4ade8066`:''
+    const active = filtroTema===tema;
+    return `
+      <div class="tema-card ${active?'active':''}" onclick="setFiltro('${tema}')">
+        <div class="tema-name">${tema}</div>
+        <div class="tema-count">${s.resp}/${s.total} respondidas</div>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" style="width:${s.resp>0?pct:0}%;background:${barColor};${glow}"></div>
+        </div>
+        ${s.resp>0?`<div class="tema-pct" style="color:${barColor}">${pct}%</div>`:''}
+      </div>
+    `;
+  }).join('');
+  document.getElementById('tema-grid').innerHTML = allCards;
+}
+
+function setFiltro(tema){
+  filtroTema = filtroTema===tema?'Todos':tema;
+  renderTemas();
+  renderQuestoes();
+  document.getElementById('questoes-title').textContent = filtroTema==='Todos'?'Todas as questões':filtroTema;
+}
+
+// ════════════════════════════════════════════════════
+// RENDER — QUESTOES
+// ════════════════════════════════════════════════════
+function renderQuestoes(){
+  const qs = filtroTema==='Todos'?QUESTOES:QUESTOES.filter(q=>q.tema===filtroTema);
+  document.getElementById('questoes-count').textContent = `${qs.length} questões`;
+  const letras = ['A','B','C','D','E'];
+  document.getElementById('questoes-area').innerHTML = qs.map((q,idx)=>{
+    const answered = userProgress[q.id]!==undefined;
+    const selected = userProgress[q.id];
+    const alts = q.alternativas.map((alt,i)=>{
+      let cls = '';
+      if(answered){
+        if(i===q.correta) cls='correta';
+        else if(i===selected && i!==q.correta) cls='errada';
+        else cls='neutra';
+      }
+      const disabled = answered?'disabled':'';
+      return `<button class="alt-btn ${cls}" onclick="responder(${q.id},${i})" ${disabled}>
+        <span class="alt-letra">${letras[i]||i}</span>
+        <span class="alt-text">${alt}</span>
+      </button>`;
+    }).join('');
+    const gabarito = answered?`
+      <div class="gabarito-box">
+        <div class="gabarito-label">💡 Gabarito Comentado</div>
+        <div class="gabarito-text">${q.gabarito}</div>
+      </div>`:'' ;
+    return `
+      <div class="questao-card" id="qcard-${q.id}">
+        <div class="questao-header">
+          <div class="questao-num">${idx+1}</div>
+          <div>
+            <div class="questao-tema-badge">${q.tema}</div>
+            <div class="questao-enunciado">${q.enunciado}</div>
+          </div>
+        </div>
+        <div class="alternativas">${alts}</div>
+        ${gabarito}
+      </div>
+    `;
+  }).join('');
+}
+
+function responder(qId, altIdx){
+  if(userProgress[qId]!==undefined) return;
+  userProgress[qId] = altIdx;
+  saveProgress();
+  renderMetrics();
+  renderTemas();
+  // Re-render just this card
+  const q = QUESTOES.find(q=>q.id===qId);
+  const qs = filtroTema==='Todos'?QUESTOES:QUESTOES.filter(q=>q.tema===filtroTema);
+  const idx = qs.findIndex(q=>q.id===qId);
+  const letras = ['A','B','C','D','E'];
+  const selected = altIdx;
+  const answered = true;
+  const alts = q.alternativas.map((alt,i)=>{
+    let cls = '';
+    if(i===q.correta) cls='correta';
+    else if(i===selected && i!==q.correta) cls='errada';
+    else cls='neutra';
+    return `<button class="alt-btn ${cls}" disabled>
+      <span class="alt-letra">${letras[i]||i}</span>
+      <span class="alt-text">${alt}</span>
+    </button>`;
+  }).join('');
+  const card = document.getElementById('qcard-'+qId);
+  if(card){
+    card.querySelector('.alternativas').innerHTML = alts;
+    const existing = card.querySelector('.gabarito-box');
+    if(existing) existing.remove();
+    card.insertAdjacentHTML('beforeend',`
+      <div class="gabarito-box">
+        <div class="gabarito-label">💡 Gabarito Comentado</div>
+        <div class="gabarito-text">${q.gabarito}</div>
+      </div>
+    `);
+  }
+}
+
+// ════════════════════════════════════════════════════
+// RENDER — RESUMOS
+// ════════════════════════════════════════════════════
+let resumoAtivo = RESUMOS[0].id;
+
+function renderResumosTabs(){
+  document.getElementById('resumos-tabs').innerHTML = RESUMOS.map(r=>`
+    <button class="resumo-tab ${r.id===resumoAtivo?'active':''}" onclick="setResumo('${r.id}')">${r.label}</button>
+  `).join('');
+}
+
+function setResumo(id){
+  resumoAtivo = id;
+  renderResumosTabs();
+  renderResumoContent();
+}
+
+function renderBlockContent(c){
+  if(c.type==='table') return `
+    <div style="overflow-x:auto;border-radius:8px;margin-top:8px">
+      <table class="resumo-table">
+        <thead><tr>${c.headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead>
+        <tbody>${c.rows.map(r=>`<tr>${r.map(cell=>`<td>${cell}</td>`).join('')}</tr>`).join('')}</tbody>
+      </table>
+    </div>`;
+  if(c.type==='badge') return `
+    ${c.label?`<div class="badge-section-label">${c.label}</div>`:''}
+    <div class="badge-wrap">${c.items.map(it=>`<span class="badge">${it}</span>`).join('')}</div>`;
+  if(c.type==='numbered') return `
+    <div class="numbered-list">${c.items.map((it,i)=>`<div class="numbered-item"><span class="num-circle">${i+1}</span><span>${it}</span></div>`).join('')}</div>`;
+  if(c.type==='alert') return `<div class="alert-box"><span>⚡</span><span>${c.text}</span></div>`;
+  return '';
+}
+
+function renderResumoContent(){
+  const r = RESUMOS.find(r=>r.id===resumoAtivo);
+  if(!r) return;
+  document.getElementById('resumos-content').innerHTML = `
+    <div class="resumo-heading">
+      <h2 class="resumo-heading-title font-display">${r.label}</h2>
+      <span class="resumo-heading-tag" style="background:${r.tag}22;color:${r.tag}">Lâmina de Revisão</span>
+    </div>
+    <div class="bento-grid">
+      ${r.cards.map(card=>`
+        <div class="bento-card ${card.color}">
+          <div class="bento-card-title">
+            <span class="bento-card-icon">${card.icon}</span>
+            <span>${card.title}</span>
+          </div>
+          ${card.content.map(renderBlockContent).join('')}
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+// ════════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════════
+function renderAll(){
+  renderMetrics();
+  renderTemas();
+  renderQuestoes();
+  document.getElementById('questoes-title').textContent = 'Todas as questões';
+  renderResumosTabs();
+  renderResumoContent();
+}
+
+// Initial state
+document.getElementById('tab-simulado').style.display = 'block';
+document.getElementById('tab-resumos').style.display = 'none';
+
+// Enter key login
+document.getElementById('login-input').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+</script>
+</body>
+</html>
