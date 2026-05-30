@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Resumos Médicos — Portal de Estudos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+
+<style>
+/* =====================================================
+   CSS VARIABLES & RESET
+===================================================== */
+:root {
+  --green-pastel: #d6e8d4;
+  --green-mid:    #b8d6b5;
+  --green-deep:   #7aaa77;
+  --green-text:   #2e5c2b;
+  --white:        #ffffff;
+  --off-white:    #f8faf7;
+  --card-shadow:  0 2px 18px rgba(46,92,43,0.08);
+  --card-hover:   0 6px 30px rgba(46,92,43,0.14);
+  --serif:        'Cormorant Garamond', Georgia, serif;
+  --sans:         'DM Sans', system-ui, sans-serif;
+  --radius:       14px;
+  --transition:   0.22s cubic-bezier(.4,0,.2,1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--sans);
+  background: var(--green-pastel);
+  min-height: 100vh;
+  color: var(--green-text);
+  transition: background var(--transition);
+}
+
+/* =====================================================
+   UTILITY
+===================================================== */
+.hidden { display: none !important; }
+
+/* =====================================================
+   SCREEN: LOGIN
+===================================================== */
+#screen-login {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: linear-gradient(135deg, #c8e0c5 0%, #deeedd 50%, #c4dbc1 100%);
+}
+
+.login-card {
+  background: var(--white);
+  border-radius: 20px;
+  padding: 52px 44px 44px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 8px 48px rgba(46,92,43,0.13);
+  text-align: center;
+}
+
+.login-logo {
+  font-family: var(--serif);
+  font-size: 2.2rem;
+  font-weight: 300;
+  color: var(--green-text);
+  letter-spacing: .02em;
+  margin-bottom: 4px;
+  line-height: 1.1;
+}
+
+.login-logo em {
+  font-style: italic;
+  color: var(--green-deep);
+}
+
+.login-subtitle {
+  font-size: .82rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--green-deep);
+  margin-bottom: 36px;
+  font-weight: 400;
+}
+
+.login-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 18px;
+  text-align: left;
+}
+
+.login-field label {
+  font-size: .78rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--green-deep);
+  font-weight: 500;
+}
+
+.login-field input {
+  padding: 12px 16px;
+  border: 1.5px solid var(--green-mid);
+  border-radius: 10px;
+  font-family: var(--sans);
+  font-size: .95rem;
+  color: var(--green-text);
+  background: var(--off-white);
+  outline: none;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.login-field input:focus {
+  border-color: var(--green-deep);
+  box-shadow: 0 0 0 3px rgba(122,170,119,.18);
+}
+
+.login-btn {
+  width: 100%;
+  margin-top: 10px;
+  padding: 13px;
+  background: var(--green-deep);
+  color: var(--white);
+  border: none;
+  border-radius: 10px;
+  font-family: var(--serif);
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: .04em;
+  cursor: pointer;
+  transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+  box-shadow: 0 2px 12px rgba(122,170,119,.25);
+}
+
+.login-btn:hover {
+  background: var(--green-text);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 18px rgba(46,92,43,.22);
+}
+
+.login-btn:active { transform: translateY(0); }
+
+#login-error {
+  margin-top: 14px;
+  font-size: .84rem;
+  color: #c0392b;
+  min-height: 20px;
+  transition: opacity .2s;
+}
+
+/* =====================================================
+   SCREEN: PORTAL
+===================================================== */
+#screen-portal {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--green-pastel);
+}
+
+/* TOP BAR */
+.portal-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 40px;
+  background: rgba(255,255,255,.7);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(184,214,181,.5);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.portal-brand {
+  font-family: var(--serif);
+  font-size: 1.45rem;
+  font-weight: 300;
+  letter-spacing: .02em;
+  color: var(--green-text);
+}
+
+.portal-brand em { font-style: italic; color: var(--green-deep); }
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.user-greeting {
+  font-size: .83rem;
+  color: var(--green-deep);
+  letter-spacing: .04em;
+}
+
+.btn-reset, .btn-logout {
+  padding: 7px 16px;
+  border-radius: 8px;
+  font-family: var(--sans);
+  font-size: .8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition);
+  border: none;
+  letter-spacing: .04em;
+}
+
+.btn-reset {
+  background: rgba(122,170,119,.15);
+  color: var(--green-deep);
+  border: 1.5px solid var(--green-mid);
+}
+
+.btn-reset:hover {
+  background: rgba(122,170,119,.3);
+  border-color: var(--green-deep);
+}
+
+.btn-logout {
+  background: transparent;
+  color: #888;
+  border: 1.5px solid #ddd;
+}
+
+.btn-logout:hover {
+  background: #f5f5f5;
+  color: #555;
+}
+
+/* PORTAL CONTENT */
+.portal-content {
+  flex: 1;
+  padding: 48px 40px 32px;
+  max-width: 1100px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.portal-heading {
+  font-family: var(--serif);
+  font-size: 2.4rem;
+  font-weight: 300;
+  letter-spacing: .01em;
+  color: var(--green-text);
+  margin-bottom: 8px;
+}
+
+.portal-heading em { font-style: italic; }
+
+.portal-desc {
+  font-size: .9rem;
+  color: var(--green-deep);
+  margin-bottom: 40px;
+  letter-spacing: .03em;
+}
+
+/* SUBJECT CARDS GRID */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 24px;
+}
+
+.subject-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 28px 24px 22px;
+  box-shadow: var(--card-shadow);
+  cursor: pointer;
+  transition: box-shadow var(--transition), transform var(--transition);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border: 1.5px solid transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.subject-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: var(--green-deep);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--transition);
+}
+
+.subject-card:hover {
+  box-shadow: var(--card-hover);
+  transform: translateY(-3px);
+  border-color: var(--green-mid);
+}
+
+.subject-card:hover::before { transform: scaleX(1); }
+
+.card-icon {
+  font-size: 1.9rem;
+  line-height: 1;
+}
+
+.card-title {
+  font-family: var(--serif);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--green-text);
+  line-height: 1.25;
+}
+
+.card-tag {
+  font-size: .73rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--green-deep);
+  font-weight: 500;
+}
+
+/* PROGRESS BAR */
+.card-progress-wrap {
+  margin-top: auto;
+}
+
+.card-progress-label {
+  font-size: .76rem;
+  color: #999;
+  margin-bottom: 5px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.progress-bar-bg {
+  height: 5px;
+  background: var(--green-pastel);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--green-mid), var(--green-deep));
+  border-radius: 99px;
+  transition: width .5s cubic-bezier(.4,0,.2,1);
+}
+
+/* =====================================================
+   PORTAL FOOTER
+===================================================== */
+.portal-footer {
+  text-align: center;
+  padding: 28px;
+  font-family: var(--serif);
+  font-size: .88rem;
+  font-style: italic;
+  color: var(--green-deep);
+  letter-spacing: .04em;
+  border-top: 1px solid rgba(184,214,181,.4);
+  margin-top: auto;
+}
+
+/* =====================================================
+   SCREEN: SUBJECT
+===================================================== */
+#screen-subject {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--off-white);
+}
+
+.subject-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 32px;
+  background: var(--white);
+  border-bottom: 1px solid var(--green-pastel);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.btn-back {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 18px;
+  background: var(--green-pastel);
+  border: 1.5px solid var(--green-mid);
+  border-radius: 9px;
+  font-family: var(--sans);
+  font-size: .85rem;
+  font-weight: 500;
+  color: var(--green-text);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.btn-back:hover {
+  background: var(--green-mid);
+  border-color: var(--green-deep);
+}
+
+.subject-topbar-title {
+  font-family: var(--serif);
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--green-text);
+}
+
+.subject-topbar-prog {
+  font-size: .8rem;
+  color: var(--green-deep);
+  letter-spacing: .04em;
+}
+
+/* SUBJECT BODY */
+.subject-body {
+  flex: 1;
+  padding: 36px 32px 60px;
+  max-width: 900px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* =====================================================
+   FLASH CARDS (shared component used in subjects)
+===================================================== */
+.section-heading {
+  font-family: var(--serif);
+  font-size: 1.7rem;
+  font-weight: 400;
+  color: var(--green-text);
+  margin: 32px 0 6px;
+  padding-bottom: 8px;
+  border-bottom: 1.5px solid var(--green-pastel);
+}
+
+.section-heading:first-child { margin-top: 0; }
+
+.section-intro {
+  font-size: .9rem;
+  color: #666;
+  margin-bottom: 20px;
+  line-height: 1.7;
+}
+
+.cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+/* Flip card */
+.flip-card {
+  perspective: 800px;
+  height: auto;
+  min-height: 90px;
+  cursor: pointer;
+}
+
+.flip-card-inner {
+  position: relative;
+  width: 100%;
+  min-height: 90px;
+  transition: transform .5s cubic-bezier(.4,0,.2,1);
+  transform-style: preserve-3d;
+}
+
+.flip-card.flipped .flip-card-inner { transform: rotateX(180deg); }
+
+.flip-card-front,
+.flip-card-back {
+  position: absolute;
+  width: 100%;
+  min-height: 90px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 10px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.flip-card-front {
+  background: var(--white);
+  border: 1.5px solid var(--green-pastel);
+  box-shadow: 0 1px 8px rgba(46,92,43,.06);
+}
+
+.flip-card-back {
+  background: var(--green-pastel);
+  border: 1.5px solid var(--green-mid);
+  transform: rotateX(180deg);
+}
+
+.flip-card.done .flip-card-front {
+  border-color: var(--green-mid);
+  background: #f0f8ef;
+}
+
+.flip-label {
+  font-size: .7rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--green-deep);
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+
+.flip-question {
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--green-text);
+  line-height: 1.4;
+}
+
+.flip-answer {
+  font-size: .9rem;
+  color: var(--green-text);
+  line-height: 1.6;
+}
+
+/* Card actions row */
+.card-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+  font-size: .75rem;
+  color: #aaa;
+}
+
+.btn-mark-done {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: .74rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition);
+  border: 1.5px solid var(--green-mid);
+  background: transparent;
+  color: var(--green-deep);
+  letter-spacing: .04em;
+}
+
+.btn-mark-done.done {
+  background: var(--green-deep);
+  color: var(--white);
+  border-color: var(--green-deep);
+}
+
+.btn-mark-done:hover:not(.done) { background: var(--green-pastel); }
+
+/* SUMMARY BOX */
+.summary-box {
+  background: var(--white);
+  border-radius: 12px;
+  padding: 22px 24px;
+  margin-bottom: 18px;
+  border-left: 4px solid var(--green-deep);
+  box-shadow: 0 1px 10px rgba(46,92,43,.06);
+}
+
+.summary-box h4 {
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--green-text);
+  margin-bottom: 8px;
+}
+
+.summary-box p, .summary-box li {
+  font-size: .88rem;
+  line-height: 1.7;
+  color: #555;
+}
+
+.summary-box ul { padding-left: 18px; }
+.summary-box li { margin-bottom: 4px; }
+
+/* TABLE */
+.study-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--white);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 1px 10px rgba(46,92,43,.06);
+  margin-bottom: 18px;
+  font-size: .87rem;
+}
+
+.study-table th {
+  background: var(--green-pastel);
+  color: var(--green-text);
+  font-weight: 600;
+  font-family: var(--serif);
+  font-size: .95rem;
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 2px solid var(--green-mid);
+}
+
+.study-table td {
+  padding: 11px 16px;
+  border-bottom: 1px solid #f0f0f0;
+  color: #555;
+  vertical-align: top;
+}
+
+.study-table tr:last-child td { border-bottom: none; }
+.study-table tr:hover td { background: #f8fcf8; }
+
+/* =====================================================
+   MODAL CONFIRM
+===================================================== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  backdrop-filter: blur(3px);
+}
+
+.modal-box {
+  background: var(--white);
+  border-radius: 16px;
+  padding: 36px 32px;
+  max-width: 360px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 12px 48px rgba(0,0,0,.18);
+  animation: popIn .2s cubic-bezier(.4,0,.2,1);
+}
+
+@keyframes popIn {
+  from { transform: scale(.9); opacity: 0; }
+  to   { transform: scale(1);  opacity: 1; }
+}
+
+.modal-box h3 {
+  font-family: var(--serif);
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--green-text);
+  margin-bottom: 10px;
+}
+
+.modal-box p {
+  font-size: .88rem;
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+.modal-actions { display: flex; gap: 10px; justify-content: center; }
+
+.modal-actions button {
+  padding: 10px 22px;
+  border-radius: 9px;
+  font-family: var(--sans);
+  font-size: .88rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition);
+  border: none;
+}
+
+.modal-cancel {
+  background: #f0f0f0;
+  color: #666;
+}
+
+.modal-cancel:hover { background: #e0e0e0; }
+
+.modal-confirm {
+  background: #c0392b;
+  color: #fff;
+}
+
+.modal-confirm:hover { background: #a93226; }
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+@media (max-width: 600px) {
+  .portal-content { padding: 28px 18px 20px; }
+  .portal-topbar  { padding: 14px 18px; }
+  .subject-body   { padding: 24px 16px 48px; }
+  .subject-topbar { padding: 12px 16px; }
+  .login-card     { padding: 36px 24px 28px; }
+  .portal-heading { font-size: 1.8rem; }
+}
+
+/* fade in screen */
+.screen-fade { animation: fadeIn .3s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+</style>
+</head>
+<body>
+
+<!-- =====================================================
+     SCREEN 1: LOGIN
+===================================================== -->
+<div id="screen-login">
+  <div class="login-card screen-fade">
+    <div class="login-logo">Resumos<br><em>Médicos</em></div>
+    <div class="login-subtitle">Portal de Estudos</div>
+
+    <div class="login-field">
+      <label for="inp-user">Usuário</label>
+      <input type="text" id="inp-user" placeholder="seu usuário" autocomplete="username" />
+    </div>
+    <div class="login-field">
+      <label for="inp-pass">Senha</label>
+      <input type="password" id="inp-pass" placeholder="••••••••" autocomplete="current-password" />
+    </div>
+    <button class="login-btn" onclick="doLogin()">Entrar</button>
+    <div id="login-error"></div>
+  </div>
+</div>
+
+<!-- =====================================================
+     SCREEN 2: PORTAL
+===================================================== -->
+<div id="screen-portal" class="hidden">
+  <header class="portal-topbar">
+    <div class="portal-brand">Resumos <em>Médicos</em></div>
+    <div class="topbar-right">
+      <span class="user-greeting" id="portal-greeting"></span>
+      <button class="btn-reset" onclick="confirmReset()">↺ Resetar Progresso</button>
+      <button class="btn-logout" onclick="doLogout()">Sair</button>
+    </div>
+  </header>
+
+  <main class="portal-content screen-fade">
+    <h1 class="portal-heading">Bom estudo,<br><em id="portal-name"></em>.</h1>
+    <p class="portal-desc">Escolha uma matéria para começar.</p>
+
+    <div class="cards-grid" id="cards-grid">
+      <!-- Cards are injected by JS -->
+    </div>
+  </main>
+
+  <footer class="portal-footer">Criado por @brendaasena_</footer>
+</div>
+
+<!-- =====================================================
+     SCREEN 3: SUBJECT VIEW
+===================================================== -->
+<div id="screen-subject" class="hidden">
+  <header class="subject-topbar">
+    <button class="btn-back" onclick="goBackToPortal()">← Voltar ao Menu</button>
+    <span class="subject-topbar-title" id="subject-title-bar"></span>
+    <span class="subject-topbar-prog" id="subject-prog-bar"></span>
+  </header>
+  <main class="subject-body screen-fade" id="subject-body">
+    <!-- Content injected by JS -->
+  </main>
+</div>
+
+<!-- MODAL CONFIRM RESET -->
+<div class="modal-overlay hidden" id="modal-reset">
+  <div class="modal-box">
+    <h3>Resetar progresso?</h3>
+    <p>Isso vai apagar todo o seu progresso em <strong>todas as matérias</strong>. Essa ação não pode ser desfeita.</p>
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="closeModal()">Cancelar</button>
+      <button class="modal-confirm" onclick="doReset()">Sim, resetar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =====================================================================
+   ██████╗  █████╗ ███╗   ██╗ ██████╗ ██████╗      ██████╗ ███████╗
+   ██╔══██╗██╔══██╗████╗  ██║██╔════╝██╔═══██╗     ██╔══██╗██╔════╝
+   ██████╔╝███████║██╔██╗ ██║██║     ██║   ██║     ██║  ██║█████╗
+   ██╔══██╗██╔══██║██║╚██╗██║██║     ██║   ██║     ██║  ██║██╔══╝
+   ██████╔╝██║  ██║██║ ╚████║╚██████╗╚██████╔╝     ██████╔╝███████╗
+   ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═════╝      ╚═════╝ ╚══════╝
+
+   BANCO DE DADOS LOCAL (simulando Google Sheets)
+   -----------------------------------------------
+   Para conectar ao Google Sheets futuramente:
+   1. Substitua USER_DB por uma chamada fetch() ao Google Sheets API (Apps Script)
+   2. Substitua getProgress() e saveProgress() por chamadas fetch() ao endpoint
+   3. Substitua validateLogin() por chamada fetch() verificando usuário/senha na planilha
+
+   ESTRUTURA DA PLANILHA SUGERIDA:
+   Aba "usuarios": | username | senha | nome |
+   Aba "progresso": | username | materia_id | cards_done (JSON) |
+===================================================================== */
+
+// ── USUÁRIOS DE EXEMPLO ── substitua por fetch() ao Google Sheets
+const USER_DB = [
+  { username: "brenda",    password: "med2025",  name: "Brenda"    },
+  { username: "ana",       password: "clinica1", name: "Ana"       },
+  { username: "marcos",    password: "ecg123",   name: "Marcos"    },
+  { username: "julia",     password: "farma456", name: "Júlia"     },
+];
+
+// ── ESTADO GLOBAL ──
+let currentUser = null; // objeto do usuário logado
+let currentSubjectId = null;
+
+/* =====================================================================
+   AUTH — substitua estas funções por chamadas à API do Google Sheets
+===================================================================== */
+
+/**
+ * validateLogin(username, password)
+ * Retorna objeto do usuário ou null.
+ * FUTURAMENTE: fetch POST ao Apps Script com {username, password}
+ */
+function validateLogin(username, password) {
+  return USER_DB.find(
+    u => u.username.toLowerCase() === username.toLowerCase() && u.password === password
+  ) || null;
+}
+
+/* =====================================================================
+   PROGRESSO — substitua por fetch() ao Google Sheets
+===================================================================== */
+
+/**
+ * getProgress(username)
+ * Retorna objeto { materia_id: Set([cardId, ...]) }
+ * FUTURAMENTE: fetch GET ao Apps Script com {username}
+ */
+function getProgress(username) {
+  const raw = localStorage.getItem(`progress_${username}`);
+  if (!raw) return {};
+  const parsed = JSON.parse(raw);
+  // convert arrays back to Sets
+  const result = {};
+  for (const [k, v] of Object.entries(parsed)) result[k] = new Set(v);
+  return result;
+}
+
+/**
+ * saveProgress(username, progressObj)
+ * progressObj = { materia_id: Set([cardId, ...]) }
+ * FUTURAMENTE: fetch POST ao Apps Script com {username, progressJSON}
+ */
+function saveProgress(username, progressObj) {
+  const serializable = {};
+  for (const [k, v] of Object.entries(progressObj)) serializable[k] = [...v];
+  localStorage.setItem(`progress_${username}`, JSON.stringify(serializable));
+}
+
+/**
+ * resetProgress(username)
+ * FUTURAMENTE: fetch DELETE/POST ao Apps Script com {username}
+ */
+function resetProgress(username) {
+  localStorage.removeItem(`progress_${username}`);
+}
+
+/* =====================================================================
+   DEFINIÇÃO DAS MATÉRIAS
+   Cada matéria tem: id, title, icon, tag, e um array de seções.
+   Cada seção tem: title, intro (opcional), cards (array de {id, q, a}).
+   
+   ⚠️  COLE O CONTEÚDO REAL DE CADA MATÉRIA DENTRO DO ARRAY sections[] ⚠️
+===================================================================== */
+const SUBJECTS = [
+  {
+    id: "clinica",
+    title: "Clínica Integrada III",
+    icon: "🏥",
+    tag: "Semiologia & Clínica",
+    sections: [
+      // ════════════════════════════════════════════════════════
+      // COLE AQUI o conteúdo da matéria Clínica Integrada III
+      // Siga o formato de exemplo abaixo:
+      // ════════════════════════════════════════════════════════
+      {
+        title: "Exemplo — Semiologia Cardiovascular",
+        intro: "Esta seção é um placeholder. Substitua pelo conteúdo real de Clínica Integrada III.",
+        cards: [
+          { id: "c1", q: "Quais são os focos de ausculta cardíaca?", a: "Mitral (5º EICE, LMC), Tricúspide (4º EICE, borda esternal esq.), Pulmonar (2º EICE, borda esternal esq.), Aórtico (2º EICE, borda esternal dir.)." },
+          { id: "c2", q: "Como diferenciar B1 de B2?", a: "B1 = fechamento das valvas mitral e tricúspide (início da sístole). B2 = fechamento das valvas aórtica e pulmonar (início da diástole). B1 é mais grave e longa; B2 mais aguda e curta." },
+          { id: "c3", q: "O que é hepatojugular positivo?", a: "Compressão do fígado por 10s eleva a pressão venosa jugular ≥ 4 cmH₂O. Indica insuficiência cardíaca direita ou pericardite constritiva." },
+        ]
+      },
+      {
+        title: "Exemplo — Exame do Aparelho Respiratório",
+        intro: "Placeholder — insira os flashcards reais.",
+        cards: [
+          { id: "c4", q: "Diferença entre frêmito toracovocal aumentado e diminuído?", a: "Aumentado: consolidação pulmonar (pneumonia). Diminuído: derrame pleural, pneumotórax, enfisema." },
+          { id: "c5", q: "O que é egofonia?", a: "Som nasal da voz quando percebida sobre derrame pleural — paciente fala 'E' e ausculta-se 'A'." },
+        ]
+      }
+    ]
+  },
+  {
+    id: "etica",
+    title: "Ética Médica",
+    icon: "⚖️",
+    tag: "Deontologia & Bioética",
+    sections: [
+      // ════════════════════════════════════════════════════════
+      // COLE AQUI o conteúdo real de Ética Médica
+      // (o arquivo etica_medica_platform.html foi enviado;
+      //  copie os flashcards/questões para cá)
+      // ════════════════════════════════════════════════════════
+      {
+        title: "Exemplo — Princípios Bioéticos",
+        intro: "Placeholder — substitua pelo conteúdo real de Ética Médica.",
+        cards: [
+          { id: "e1", q: "Quais são os 4 princípios da bioética principialista?", a: "Autonomia, Beneficência, Não-maleficência e Justiça (Beauchamp & Childress)." },
+          { id: "e2", q: "O que é eutanásia passiva?", a: "Suspensão ou limitação de tratamentos que prolongariam a vida artificialmente, permitindo a morte natural. Difere da ortotanásia pela intenção e contexto legal." },
+          { id: "e3", q: "O que diz o artigo 1º do Código de Ética Médica?", a: "A medicina é uma profissão a serviço da saúde do ser humano e da coletividade e será exercida sem discriminação de qualquer natureza." },
+        ]
+      },
+      {
+        title: "Exemplo — Sigilo Médico",
+        intro: "Placeholder.",
+        cards: [
+          { id: "e4", q: "Em quais situações o sigilo médico pode ser quebrado?", a: "Justa causa (risco à saúde pública), dever legal (notificação compulsória) ou autorização expressa do paciente." },
+        ]
+      }
+    ]
+  },
+  {
+    id: "farma",
+    title: "Farmacologia Aplicada",
+    icon: "💊",
+    tag: "Farmacologia & Terapêutica",
+    sections: [
+      // ════════════════════════════════════════════════════════
+      // COLE AQUI o conteúdo real de Farmacologia Aplicada
+      // (o arquivo farmacologia_plataforma_EBMSP.html foi enviado)
+      // ════════════════════════════════════════════════════════
+      {
+        title: "Exemplo — Farmacocinética",
+        intro: "Placeholder — substitua pelo conteúdo real de Farmacologia Aplicada.",
+        cards: [
+          { id: "f1", q: "O que é biodisponibilidade?", a: "Fração do fármaco administrado que atinge a circulação sistêmica na forma inalterada. Para IV = 100%." },
+          { id: "f2", q: "O que é efeito de primeira passagem?", a: "Metabolismo hepático (e intestinal) que reduz a biodisponibilidade de fármacos administrados por via oral antes de atingirem a circulação sistêmica." },
+          { id: "f3", q: "Como calcular o volume de distribuição (Vd)?", a: "Vd = Dose / Concentração plasmática inicial. Vd alto → fármaco distribui-se amplamente nos tecidos." },
+        ]
+      },
+      {
+        title: "Exemplo — Antibióticos",
+        intro: "Placeholder.",
+        cards: [
+          { id: "f4", q: "Mecanismo de ação das betalactâminas?", a: "Inibição da síntese da parede celular bacteriana por ligação às PBPs (Penicillin-Binding Proteins), impedindo a transpeptidação do peptideoglicano." },
+          { id: "f5", q: "Diferença entre bactericida e bacteriostático?", a: "Bactericida: mata bactérias (penicilinas, cefalosporinas, aminoglicosídeos). Bacteriostático: inibe crescimento (tetraciclinas, macrolídeos, sulfonamidas)." },
+        ]
+      }
+    ]
+  },
+  {
+    id: "ecg",
+    title: "ECG — Eletrocardiografia",
+    icon: "📈",
+    tag: "Cardiologia & Diagnóstico",
+    sections: [
+      // ════════════════════════════════════════════════════════
+      // COLE AQUI o conteúdo real de ECG
+      // (o arquivo ecg-bahiana.html foi enviado)
+      // ════════════════════════════════════════════════════════
+      {
+        title: "Exemplo — Bases do ECG",
+        intro: "Placeholder — substitua pelo conteúdo real de ECG.",
+        cards: [
+          { id: "g1", q: "Como calcular a frequência cardíaca no ECG?", a: "Método dos 300: divida 300 pelo número de quadrados grandes entre dois picos R. (Ex.: 3 quadrados = 100 bpm). Para ritmo irregular: conte os complexos em 6 segundos × 10." },
+          { id: "g2", q: "O que representa a onda P?", a: "Despolarização atrial. Normal: duração < 120 ms, amplitude < 2,5 mm em DII, positiva em DI, DII e aVF." },
+          { id: "g3", q: "O que é o intervalo PR?", a: "Tempo de condução atrioventricular (nó AV). Normal: 120–200 ms. Aumentado = BAV 1º grau." },
+        ]
+      },
+      {
+        title: "Exemplo — Arritmias",
+        intro: "Placeholder.",
+        cards: [
+          { id: "g4", q: "Critérios diagnósticos de fibrilação atrial no ECG?", a: "Ausência de ondas P definidas, linha de base irregular (ondas f), intervalos RR totalmente irregulares." },
+          { id: "g5", q: "O que é bloqueio de ramo direito completo?", a: "QRS ≥ 120 ms, padrão rSR' em V1 (orelha de coelho), onda S ampla em V5-V6 e DI." },
+        ]
+      }
+    ]
+  }
+];
+
+/* =====================================================================
+   HELPERS
+===================================================================== */
+function getSubjectById(id) {
+  return SUBJECTS.find(s => s.id === id);
+}
+
+function countSubjectCards(subject) {
+  return subject.sections.reduce((sum, sec) => sum + sec.cards.length, 0);
+}
+
+function getDoneCount(subjectId) {
+  const prog = getProgress(currentUser.username);
+  return prog[subjectId] ? prog[subjectId].size : 0;
+}
+
+function getPercent(subjectId) {
+  const total = countSubjectCards(getSubjectById(subjectId));
+  if (!total) return 0;
+  return Math.round((getDoneCount(subjectId) / total) * 100);
+}
+
+/* =====================================================================
+   LOGIN FLOW
+===================================================================== */
+function doLogin() {
+  const username = document.getElementById('inp-user').value.trim();
+  const password = document.getElementById('inp-pass').value;
+  const errEl = document.getElementById('login-error');
+
+  const user = validateLogin(username, password);
+  if (!user) {
+    errEl.textContent = 'Usuário ou senha incorretos.';
+    return;
+  }
+
+  errEl.textContent = '';
+  currentUser = user;
+  showPortal();
+}
+
+// Allow Enter key on login
+document.getElementById('inp-pass').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doLogin();
+});
+document.getElementById('inp-user').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doLogin();
+});
+
+function doLogout() {
+  currentUser = null;
+  currentSubjectId = null;
+  document.getElementById('inp-user').value = '';
+  document.getElementById('inp-pass').value = '';
+  show('screen-login');
+}
+
+/* =====================================================================
+   SCREEN MANAGEMENT
+===================================================================== */
+function show(id) {
+  ['screen-login', 'screen-portal', 'screen-subject'].forEach(s => {
+    const el = document.getElementById(s);
+    el.classList.toggle('hidden', s !== id);
+    if (s === id) el.classList.add('screen-fade');
+  });
+}
+
+/* =====================================================================
+   PORTAL
+===================================================================== */
+function showPortal() {
+  document.getElementById('portal-greeting').textContent = `Olá, ${currentUser.name}`;
+  document.getElementById('portal-name').textContent = currentUser.name;
+  renderCards();
+  show('screen-portal');
+}
+
+function renderCards() {
+  const grid = document.getElementById('cards-grid');
+  grid.innerHTML = '';
+
+  SUBJECTS.forEach(subject => {
+    const pct = getPercent(subject.id);
+    const total = countSubjectCards(subject);
+    const done = getDoneCount(subject.id);
+
+    const card = document.createElement('div');
+    card.className = 'subject-card';
+    card.onclick = () => openSubject(subject.id);
+    card.innerHTML = `
+      <div class="card-icon">${subject.icon}</div>
+      <div class="card-title">${subject.title}</div>
+      <div class="card-tag">${subject.tag}</div>
+      <div class="card-progress-wrap">
+        <div class="card-progress-label">
+          <span>${pct}% concluído</span>
+          <span>${done}/${total} cards</span>
+        </div>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" style="width:${pct}%"></div>
+        </div>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+/* =====================================================================
+   SUBJECT VIEW
+===================================================================== */
+function openSubject(id) {
+  currentSubjectId = id;
+  const subject = getSubjectById(id);
+  document.getElementById('subject-title-bar').textContent = subject.title;
+  renderSubjectBody(subject);
+  updateSubjectProgBar();
+  show('screen-subject');
+}
+
+function renderSubjectBody(subject) {
+  const body = document.getElementById('subject-body');
+  const prog = getProgress(currentUser.username);
+  const doneSet = prog[subject.id] || new Set();
+
+  let html = '';
+  subject.sections.forEach(section => {
+    html += `<h2 class="section-heading">${section.title}</h2>`;
+    if (section.intro) html += `<p class="section-intro">${section.intro}</p>`;
+    html += `<div class="cards-list">`;
+
+    section.cards.forEach(card => {
+      const done = doneSet.has(card.id);
+      html += `
+        <div class="flip-card ${done ? 'done' : ''}" id="fc-${card.id}" onclick="flipCard('${card.id}', event)">
+          <div class="flip-card-inner">
+            <div class="flip-card-front">
+              <div class="flip-label">Pergunta</div>
+              <div class="flip-question">${card.q}</div>
+            </div>
+            <div class="flip-card-back">
+              <div class="flip-label">Resposta</div>
+              <div class="flip-answer">${card.a}</div>
+            </div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <span>Clique para virar</span>
+          <button class="btn-mark-done ${done ? 'done' : ''}"
+            id="btn-${card.id}"
+            onclick="toggleDone('${card.id}', event)">
+            ${done ? '✓ Revisado' : 'Marcar como revisado'}
+          </button>
+        </div>
+      `;
+    });
+
+    html += `</div>`;
+  });
+
+  body.innerHTML = html;
+}
+
+function flipCard(cardId, event) {
+  // don't flip when clicking the button
+  if (event.target.closest('.card-actions')) return;
+  const fc = document.getElementById(`fc-${cardId}`);
+  fc.classList.toggle('flipped');
+}
+
+function toggleDone(cardId, event) {
+  event.stopPropagation();
+  const prog = getProgress(currentUser.username);
+  if (!prog[currentSubjectId]) prog[currentSubjectId] = new Set();
+  const set = prog[currentSubjectId];
+
+  if (set.has(cardId)) {
+    set.delete(cardId);
+  } else {
+    set.add(cardId);
+  }
+
+  saveProgress(currentUser.username, prog);
+
+  // Update UI
+  const fc = document.getElementById(`fc-${cardId}`);
+  const btn = document.getElementById(`btn-${cardId}`);
+  const isDone = set.has(cardId);
+
+  fc.classList.toggle('done', isDone);
+  btn.classList.toggle('done', isDone);
+  btn.textContent = isDone ? '✓ Revisado' : 'Marcar como revisado';
+
+  updateSubjectProgBar();
+}
+
+function updateSubjectProgBar() {
+  const pct = getPercent(currentSubjectId);
+  const total = countSubjectCards(getSubjectById(currentSubjectId));
+  const done = getDoneCount(currentSubjectId);
+  document.getElementById('subject-prog-bar').textContent = `${done}/${total} revisados (${pct}%)`;
+}
+
+function goBackToPortal() {
+  currentSubjectId = null;
+  renderCards(); // refresh progress
+  show('screen-portal');
+}
+
+/* =====================================================================
+   RESET PROGRESS
+===================================================================== */
+function confirmReset() {
+  document.getElementById('modal-reset').classList.remove('hidden');
+}
+
+function closeModal() {
+  document.getElementById('modal-reset').classList.add('hidden');
+}
+
+function doReset() {
+  resetProgress(currentUser.username);
+  closeModal();
+  renderCards();
+}
+
+// Close modal on overlay click
+document.getElementById('modal-reset').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+// ── INIT ──
+show('screen-login');
+</script>
+</body>
+</html>
