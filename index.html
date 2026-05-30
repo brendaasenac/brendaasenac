@@ -5,90 +5,130 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meus Resumos Médicos</title>
     <style>
+        /* Estilos Globais e Fundo Pastel */
         body {
+            /* Fontezinha de lei: limpa e moderna */
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f8fafc;
+            background-color: #e6f5ea; /* Tonzinho Verde Pastel */
             color: #1e293b;
             margin: 0;
             padding: 40px 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
+            min-height: 100vh; /* Garante que o footer fique embaixo */
         }
+
         .container {
-            max-width: 600px;
+            flex: 1; /* Faz o conteúdo ocupar o espaço e empurrar o footer */
+            max-width: 700px;
             width: 100%;
             text-align: center;
+            padding-bottom: 60px; /* Espaço para o footer */
         }
+
         h1 {
             color: #0f172a;
-            font-size: 2rem;
-            margin-bottom: 8px;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
         }
+
         p {
             color: #64748b;
-            margin-bottom: 40px;
+            margin-bottom: 50px;
+            font-size: 1.1rem;
         }
+
+        /* Estilo do Grid e dos Cards */
         .grid {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
         }
+
         .card {
             background: white;
-            padding: 20px;
-            border-radius: 12px;
+            padding: 25px;
+            border-radius: 16px;
             text-decoration: none;
             color: inherit;
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            flex-direction: column;
+            align-items: flex-start; /* Alinha o conteúdo à esquerda */
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
             border: 1px solid #e2e8f0;
-            transition: transform 0.2s, border-color 0.2s;
+            transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
         }
+
         .card:hover {
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -2px rgba(0,0,0,0.05);
             border-color: #cbd5e1;
         }
+
         .card-title {
-            font-weight: 600;
-            font-size: 1.1rem;
+            font-weight: 700;
+            font-size: 1.25rem;
             color: #334155;
+            margin-bottom: 8px;
         }
+
+        .card-desc {
+            color: #64748b;
+            font-size: 0.95rem;
+            margin-bottom: 16px;
+            text-align: left;
+        }
+
+        /* Estilo dos Badges */
         .badge {
-            background-color: #f1f5f9;
-            color: #475569;
-            padding: 4px 12px;
+            background-color: #cfe2f3; /* Azul clarinho médico */
+            color: #004085;
+            padding: 5px 14px;
             border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 500;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Estilo do Footer 'Criado por...' */
+        footer {
+            width: 100%;
+            text-align: center;
+            padding: 20px 0;
+            border-top: 1px solid #d1e9db; /* Linha sutil no verde pastel */
+            color: #64748b;
+            font-size: 0.9rem;
+            position: relative;
+            bottom: 0;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>Resumos Clínicos</h1>
-        <p>Selecione um dos temas abaixo para revisar os cartões e diretrizes.</p>
+        <h1>Resumos Médicos Integrados</h1>
+        <p>Selecione um tema para acessar os cartões de revisão e diretrizes atualizadas.</p>
         
         <div class="grid">
-            <a href="index.html" class="card">
-                <span class="card-title">Hipertensão Arterial (HAS)</span>
-                <span class="badge">Clínica Médica</span>
+            <a href="clinicaIII.html" class="card">
+                <span class="card-title">Clínica Integrada III</span>
+                <p class="card-desc">HAS, Diabetes e Insuficiência Cardíaca. Revisão completa de diagnósticos e condutas clínicas.</p>
+                <span class="badge">Has & Resumos Clínica</span>
             </a>
 
-            <a href="diabetes.html" class="card">
-                <span class="card-title">Diabetes Mellitus (DM2)</span>
-                <span class="badge">Endocrinologia</span>
-            </a>
-
-            <a href="cardiologia.html" class="card">
-                <span class="card-title">Insuficiência Cardíaca (IC)</span>
-                <span class="badge">Cardiologia</span>
+            <a href="etica_medica.html" class="card">
+                <span class="card-title">Ética Médica</span>
+                <p class="card-desc">Principais diretrizes do CRM, dilemas éticos e legislação aplicada à prática médica.</p>
+                <span class="badge">Diretrizes do CRM</span>
             </a>
         </div>
     </div>
+
+    <footer>
+        Criado por Brenda Senac
+    </footer>
 
 </body>
 </html>
