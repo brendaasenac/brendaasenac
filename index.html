@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meus Resumos Médicos</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+        h1 {
+            color: #0f172a;
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+        p {
+            color: #64748b;
+            margin-bottom: 40px;
+        }
+        .grid {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+            border-color: #cbd5e1;
+        }
+        .card-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #334155;
+        }
+        .badge {
+            background-color: #f1f5f9;
+            color: #475569;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Resumos Clínicos</h1>
+        <p>Selecione um dos temas abaixo para revisar os cartões e diretrizes.</p>
+        
+        <div class="grid">
+            <a href="index.html" class="card">
+                <span class="card-title">Hipertensão Arterial (HAS)</span>
+                <span class="badge">Clínica Médica</span>
+            </a>
+
+            <a href="diabetes.html" class="card">
+                <span class="card-title">Diabetes Mellitus (DM2)</span>
+                <span class="badge">Endocrinologia</span>
+            </a>
+
+            <a href="cardiologia.html" class="card">
+                <span class="card-title">Insuficiência Cardíaca (IC)</span>
+                <span class="badge">Cardiologia</span>
+            </a>
+        </div>
+    </div>
+
+</body>
+</html>
