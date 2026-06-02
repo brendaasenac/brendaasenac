@@ -1,0 +1,2178 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Farmacologia & Terapêutica — Medicina EBMSP 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════════════════════
+   DESIGN TOKENS — Paleta Solar (laranja, âmbar, creme)
+   Sem qualquer tom roxo em toda a interface.
+   ══════════════════════════════════════════════════════════ */
+:root{
+  --cream:#FAF8F4; --white:#FFFFFF;
+  --amber:#FDF2E2; --amber-d:#A86E10;
+  --orange:#FDF0E6; --orange-d:#C05828;
+  --peach:#F7EDE4; --peach-d:#9A5E30;
+  --butter:#FBF5DC; --butter-d:#8A7010;
+  --sage:#E8F2EC; --sage-d:#3E7A5A;
+  --sky:#E8F2FA; --sky-d:#2E6898;
+  --terra:#FDF0EC; --terra-d:#B84028;
+  --rose:#FEF0F0; --rose-d:#B83838;
+  --gold:#FEF8E8; --gold-d:#9A7808;
+  --primary:#D4622A; --primary-dk:#B44E1E; --primary-lt:#FEF0E8;
+  --text:#28221E; --muted:#6E6058; --light:#A89888;
+  --border:rgba(90,65,50,0.11);
+  --r:14px; --rs:9px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);font-size:15px;line-height:1.7;min-height:100vh;display:flex;flex-direction:column}
+
+/* ── LOGIN ─────────────────────────────────────────────── */
+#loginScreen{
+  min-height:100vh;
+  background:linear-gradient(145deg,#FBF4E0 0%,#FDF0E6 45%,#F8EAE0 75%,#FAF8F4 100%);
+  display:flex;align-items:center;justify-content:center;padding:24px;
+}
+.lc{background:white;border:1px solid var(--border);border-radius:22px;padding:52px 44px;max-width:420px;width:100%;box-shadow:0 24px 64px rgba(180,80,30,.11)}
+.lc-kicker{font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--primary);margin-bottom:8px}
+.lc h1{font-family:'Lora',serif;font-style:italic;font-size:26px;color:var(--text);margin-bottom:4px}
+.lc-sub{font-size:13px;color:var(--muted);margin-bottom:32px}
+.fg{margin-bottom:18px}
+.fg label{display:block;font-size:11.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+.fg input{width:100%;padding:12px 16px;border:1.5px solid var(--border);border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:14.5px;color:var(--text);background:var(--cream);outline:none;transition:border-color .2s}
+.fg input:focus{border-color:var(--primary)}
+.btn-login{width:100%;padding:13px;background:var(--primary);color:white;border:none;border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:.03em}
+.btn-login:hover{background:var(--primary-dk);transform:translateY(-1px);box-shadow:0 8px 24px rgba(180,80,30,.22)}
+.login-err{color:var(--terra-d);font-size:13px;margin-top:10px;display:none}
+
+/* ── APP SHELL ─────────────────────────────────────────── */
+#app{display:none;flex-direction:column;min-height:100vh}
+
+/* Header */
+.app-hdr{
+  background:linear-gradient(145deg,#FBF4E0 0%,#FDF0E6 45%,#F8EAE0 80%,#FAF8F4 100%);
+  padding:44px 24px 34px;text-align:center;border-bottom:1px solid var(--border);position:relative;overflow:hidden;
+}
+.app-hdr::before{content:'';position:absolute;width:420px;height:420px;top:-130px;right:-80px;border-radius:50%;background:radial-gradient(circle,rgba(210,100,40,.07) 0%,transparent 70%)}
+.app-hdr::after{content:'';position:absolute;width:280px;height:280px;bottom:-80px;left:-50px;border-radius:50%;background:radial-gradient(circle,rgba(190,140,30,.06) 0%,transparent 70%)}
+.hdr-kicker{font-size:10.5px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--primary);margin-bottom:10px;position:relative}
+.hdr-title{font-family:'Lora',serif;font-style:italic;font-size:clamp(22px,4vw,36px);font-weight:600;color:var(--text);margin-bottom:6px;position:relative}
+.hdr-sub{font-size:13.5px;color:var(--muted);margin-bottom:22px;position:relative}
+.user-pill{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.75);backdrop-filter:blur(4px);border:1px solid rgba(180,80,30,.16);border-radius:30px;padding:5px 14px 5px 8px;font-size:12.5px;color:var(--muted);position:relative}
+.udot{width:26px;height:26px;border-radius:50%;background:var(--primary-lt);border:1.5px solid rgba(180,80,30,.25);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--primary)}
+
+/* Tab nav */
+.tab-nav{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;padding:18px 24px;background:rgba(250,248,244,.97);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.tab-btn{padding:8px 24px;border-radius:30px;border:1.5px solid var(--border);background:white;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;transition:all .2s}
+.tab-btn:hover{border-color:var(--primary);color:var(--primary)}
+.tab-btn.active{background:var(--primary);color:white;border-color:var(--primary);box-shadow:0 4px 14px rgba(180,80,30,.2)}
+
+/* ── METRICS ───────────────────────────────────────────── */
+.metrics-wrap{padding:20px 24px;background:var(--cream)}
+.metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;max-width:980px;margin:0 auto}
+@media(max-width:680px){.metrics-grid{grid-template-columns:repeat(2,1fr)}}
+.mc{background:white;border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;text-align:center}
+.mc-num{font-family:'Lora',serif;font-size:30px;font-weight:600;line-height:1.1;margin-bottom:4px}
+.mc-lbl{font-size:11px;color:var(--muted);font-weight:500;letter-spacing:.04em;text-transform:uppercase}
+
+/* ── SIMULADO ──────────────────────────────────────────── */
+.sim-wrap{max-width:980px;margin:0 auto;padding:24px}
+.blocos-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:28px}
+@media(max-width:680px){.blocos-grid{grid-template-columns:1fr}}
+.bloco-card{background:white;border:1.5px solid var(--border);border-radius:var(--r);padding:18px 20px;cursor:pointer;transition:all .2s;overflow:hidden}
+.bloco-card:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(180,80,30,.09);border-color:rgba(180,80,30,.22)}
+.bloco-card.active{border-color:var(--primary)}
+.bloco-num{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.bloco-title{font-family:'Lora',serif;font-size:15px;font-weight:600;margin-bottom:10px}
+.bloco-count{font-size:12px;color:var(--muted);margin-bottom:8px}
+.prog-w{height:5px;background:var(--border);border-radius:4px;overflow:hidden}
+.prog-f{height:100%;border-radius:4px;transition:width .5s ease}
+
+/* ── QUESTION PANEL ────────────────────────────────────── */
+.qpanel{background:white;border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+
+/* Timer */
+.timer-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 18px;border-bottom:1px solid var(--border);background:var(--cream)}
+.timer-disp{font-size:22px;font-weight:700;letter-spacing:.08em;color:var(--text);font-variant-numeric:tabular-nums}
+.timer-btns{display:flex;gap:8px}
+.tbtn{padding:5px 14px;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:12.5px;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:500;color:var(--muted);transition:all .2s}
+.tbtn:hover{border-color:var(--primary);color:var(--primary)}
+.tbtn.red{border-color:var(--terra-d);color:var(--terra-d)}
+.tbtn.red:hover{background:var(--terra)}
+
+/* Carousel */
+.qcarousel{display:flex;gap:6px;flex-wrap:wrap;padding:14px 18px;border-bottom:1px solid var(--border);background:var(--cream)}
+.qdot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;cursor:pointer;border:1.5px solid var(--border);background:white;color:var(--muted);transition:all .2s;flex-shrink:0}
+.qdot:hover{border-color:var(--primary);color:var(--primary)}
+.qdot.current{background:var(--primary);color:white;border-color:var(--primary)}
+.qdot.correct{background:#ECFDF5;color:#059669;border-color:#6EE7B7}
+.qdot.wrong{background:#FFF1F2;color:#BE123C;border-color:#FDA4AF}
+
+/* Difficulty badge */
+.dbadge{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;padding:3px 11px;border-radius:20px;border:1px solid;margin-bottom:12px}
+.df{background:#F0FDF4;color:#15803D;border-color:#BBF7D0}
+.dm{background:#FFFBEB;color:#B45309;border-color:#FDE68A}
+.dd{background:#FFF1F2;color:#BE123C;border-color:#FECDD3}
+
+/* Body */
+.qbody{padding:22px 22px 0}
+.qmeta{font-size:11px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.qtext{font-size:14.5px;line-height:1.78;color:var(--text);margin-bottom:18px}
+.qimg-w{text-align:center;margin-bottom:18px}
+.qimg-w img{max-width:100%;border-radius:var(--rs);border:1px solid var(--border);cursor:zoom-in;transition:transform .2s}
+.qimg-w img:hover{transform:scale(1.01)}
+
+/* Alternativas */
+.alts-w{padding:0 22px}
+.alt-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px}
+.alt-btn{flex:1;display:flex;align-items:flex-start;gap:10px;padding:11px 14px;border:1.5px solid var(--border);border-radius:var(--rs);background:white;cursor:pointer;text-align:left;font-family:'DM Sans',sans-serif;font-size:13.5px;color:var(--text);transition:all .2s;width:100%}
+.alt-btn:hover:not(:disabled){border-color:var(--primary);background:var(--primary-lt)}
+.alt-btn.selected{border-color:var(--primary);background:var(--primary-lt)}
+.alt-btn.correct{border-color:#10B981;background:#F0FDF4}
+.alt-btn.wrong{border-color:#F43F5E;background:#FFF1F2}
+.alt-btn.elim{opacity:.35;text-decoration:line-through;pointer-events:none}
+.alt-btn:disabled{cursor:default}
+.alt-letter{width:22px;height:22px;border-radius:50%;background:var(--cream);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;color:var(--muted)}
+.sci-btn{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--border);background:white;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;align-self:center;transition:all .2s;color:var(--muted)}
+.sci-btn:hover{border-color:var(--terra-d);background:var(--terra)}
+
+/* Actions */
+.qactions{padding:18px 22px;display:flex;gap:10px;flex-wrap:wrap}
+.btn-resp{padding:11px 30px;background:var(--primary);color:white;border:none;border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s}
+.btn-resp:disabled{background:var(--light);cursor:not-allowed}
+.btn-resp:not(:disabled):hover{background:var(--primary-dk);box-shadow:0 4px 14px rgba(180,80,30,.22)}
+.btn-next{padding:11px 30px;background:var(--sage-d);color:white;border:none;border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all .2s;display:none}
+.btn-next:hover{background:#2f6047}
+
+/* Gabarito */
+.gab-panel{margin:0 22px 22px;border:1px solid var(--border);border-radius:var(--rs);overflow:hidden;display:none}
+.gab-head{background:var(--amber);padding:10px 16px;font-size:12px;font-weight:700;color:var(--amber-d);letter-spacing:.05em;text-transform:uppercase;border-bottom:1px solid rgba(168,110,16,.15)}
+.gab-body{padding:14px 16px;font-size:13.5px;line-height:1.72;color:var(--muted)}
+
+/* Gallery */
+.gal-sec{padding:20px 24px;max-width:980px;margin:0 auto}
+.gal-lbl{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.gal-grid{display:flex;gap:10px;flex-wrap:wrap}
+.gal-thumb{width:72px;height:72px;border-radius:var(--rs);overflow:hidden;cursor:zoom-in;border:2.5px solid #10B981;transition:transform .2s}
+.gal-thumb:hover{transform:scale(1.06)}
+.gal-thumb img{width:100%;height:100%;object-fit:cover}
+.gal-thumb.tw{border-color:#F43F5E}
+
+/* ── MODALS ────────────────────────────────────────────── */
+#imgModal{position:fixed;inset:0;background:rgba(0,0,0,.93);z-index:1000;display:none;align-items:center;justify-content:center;cursor:zoom-out}
+#imgModal.show{display:flex}
+#imgModal img{max-width:92vw;max-height:88vh;border-radius:8px}
+
+.pause-ov{position:fixed;inset:0;background:rgba(28,18,14,.88);backdrop-filter:blur(4px);z-index:500;display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px}
+.pause-ov.show{display:flex}
+.pause-ov h2{color:white;font-family:'Lora',serif;font-size:28px;font-style:italic}
+.pause-ov p{color:rgba(255,255,255,.55);font-size:14px}
+.btn-cont{padding:12px 32px;background:var(--primary);color:white;border:none;border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px}
+.btn-cont:hover{background:var(--primary-dk)}
+
+#reportModal{position:fixed;inset:0;background:rgba(28,18,14,.7);backdrop-filter:blur(6px);z-index:600;display:none;align-items:center;justify-content:center;padding:24px}
+#reportModal.show{display:flex}
+.rep-card{background:white;border-radius:20px;max-width:500px;width:100%;padding:40px;text-align:center;box-shadow:0 24px 64px rgba(0,0,0,.2)}
+.rep-card h2{font-family:'Lora',serif;font-size:26px;margin-bottom:6px}
+.rep-card p{color:var(--muted);font-size:14px;margin-bottom:24px}
+.rep-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:24px}
+.rs-box{background:var(--cream);border-radius:var(--rs);padding:16px}
+.rs-n{font-family:'Lora',serif;font-size:30px;font-weight:600}
+.rs-l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-top:2px}
+.btn-close{padding:12px 32px;background:var(--primary);color:white;border:none;border-radius:var(--rs);font-size:14px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif}
+
+/* ── RESUMOS BENTO ─────────────────────────────────────── */
+.res-wrap{max-width:1020px;margin:0 auto;padding:24px}
+.res-nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px}
+.rtab{padding:8px 18px;border-radius:30px;border:1.5px solid var(--border);background:white;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;transition:all .2s}
+.rtab:hover{border-color:var(--primary);color:var(--primary)}
+.rtab.active{background:var(--primary);color:white;border-color:var(--primary)}
+
+/* Bento grid */
+.bento{display:grid;gap:14px;margin-bottom:14px}
+.b1{grid-template-columns:1fr}
+.b2{grid-template-columns:1fr 1fr}
+.b3{grid-template-columns:2fr 1fr}
+.b3r{grid-template-columns:1fr 2fr}
+@media(max-width:720px){.b2,.b3,.b3r{grid-template-columns:1fr}}
+
+.bc{border-radius:var(--r);padding:20px 22px;border:1px solid transparent}
+.bc h3{font-family:'Lora',serif;font-size:16px;font-weight:600;margin-bottom:10px}
+.bc h4{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;margin-bottom:6px;margin-top:10px;letter-spacing:.02em}
+.bc p{font-size:13.5px;color:var(--muted);line-height:1.72}
+.bc ul{padding-left:18px}
+.bc li{font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:5px}
+
+/* Card colour schemes */
+.ba{background:var(--amber);border-color:rgba(168,110,16,.2)}    .ba h3{color:var(--amber-d)}
+.bo{background:var(--orange);border-color:rgba(192,88,40,.2)}    .bo h3{color:var(--orange-d)}
+.bp{background:var(--peach);border-color:rgba(154,94,48,.2)}     .bp h3{color:var(--peach-d)}
+.bs{background:var(--sage);border-color:rgba(62,122,90,.2)}      .bs h3{color:var(--sage-d)}
+.bk{background:var(--sky);border-color:rgba(46,104,152,.2)}      .bk h3{color:var(--sky-d)}
+.bt{background:var(--terra);border-color:rgba(184,64,40,.2)}     .bt h3{color:var(--terra-d)}
+.br{background:var(--rose);border-color:rgba(184,56,56,.2)}      .br h3{color:var(--rose-d)}
+.bg{background:var(--gold);border-color:rgba(154,120,8,.2)}      .bg h3{color:var(--gold-d)}
+.bw{background:white;border-color:var(--border)}                 .bw h3{color:var(--text)}
+.bcr{background:var(--cream);border-color:var(--border)}         .bcr h3{color:var(--text)}
+
+/* Alert strips */
+.as{padding:9px 14px;border-radius:var(--rs);font-size:12.5px;line-height:1.6;margin:8px 0;border-left:3px solid}
+.aw{background:var(--butter);border-color:var(--butter-d);color:#7A6010}
+.ad{background:var(--terra);border-color:var(--terra-d);color:#8A2818}
+.ai{background:var(--sky);border-color:var(--sky-d);color:#1E5888}
+.ao{background:#F0FDF4;border-color:#10B981;color:#065F46}
+
+/* Mini-table */
+.mt{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:8px}
+.mt th{text-align:left;padding:6px 9px;font-weight:600;font-size:11px;color:var(--muted);border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:.04em}
+.mt td{padding:7px 9px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:top}
+.mt tr:last-child td{border-bottom:none}
+.mt tr:hover td{background:rgba(0,0,0,.015)}
+.mt td strong{font-weight:600;color:var(--primary)}
+
+/* Pills / tags */
+.tp{display:inline-block;font-size:11.5px;padding:2px 10px;border-radius:20px;margin:2px;font-weight:500}
+.ta{background:var(--amber);color:var(--amber-d)}
+.to{background:var(--orange);color:var(--orange-d)}
+.ts{background:var(--sage);color:var(--sage-d)}
+.tk{background:var(--sky);color:var(--sky-d)}
+.tt{background:var(--terra);color:var(--terra-d)}
+.tg{background:#F0FDF4;color:#065F46}
+.tr{background:var(--rose);color:var(--rose-d)}
+.tbu{background:var(--butter);color:var(--butter-d)}
+
+/* Flow steps */
+.flow{display:flex;flex-direction:column;gap:4px;margin:8px 0}
+.fs{display:flex;gap:10px;align-items:flex-start;padding:8px 12px;border-radius:var(--rs)}
+.fd{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.ft{font-size:13px;color:var(--muted);line-height:1.55;padding-top:3px}
+
+/* Two-col mini */
+.twocol{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
+@media(max-width:540px){.twocol{grid-template-columns:1fr}}
+.inset{background:rgba(255,255,255,.6);border-radius:var(--rs);padding:13px}
+
+/* Section title */
+.sec-h{font-family:'Lora',serif;font-size:22px;font-weight:600;margin-bottom:6px}
+.sec-sub{font-size:13.5px;color:var(--muted);margin-bottom:22px}
+
+/* Footer */
+.app-foot{text-align:center;padding:22px;font-size:12px;color:var(--light);border-top:1px solid var(--border);margin-top:auto}
+
+@media(max-width:600px){
+  .lc{padding:32px 22px}
+  .app-hdr{padding:28px 16px 22px}
+  .sim-wrap,.res-wrap{padding:16px}
+  .qbody{padding:16px 16px 0}
+  .alts-w{padding:0 16px}
+  .qactions{padding:14px 16px}
+  .gab-panel{margin:0 16px 16px}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════ LOGIN ══════════════════════════════ -->
+<div id="loginScreen">
+  <div class="lc">
+    <p class="lc-kicker">Medicina EBMSP</p>
+    <h1>Farmacologia &amp; Terapêutica</h1>
+    <p class="lc-sub">Plataforma de estudos · Turma Bahiana 2026</p>
+    <div class="fg">
+      <label>Nome / Matrícula</label>
+      <input type="text" id="loginName" placeholder="Ex: Maria Silva" autocomplete="name">
+    </div>
+    <div class="fg">
+      <label>Senha da Turma</label>
+      <input type="password" id="loginPass" placeholder="••••••••••" autocomplete="current-password">
+    </div>
+    <button class="btn-login" onclick="doLogin()">Entrar na Plataforma →</button>
+    <p class="login-err" id="loginErr">Senha incorreta. Verifique e tente novamente.</p>
+  </div>
+</div>
+
+<!-- ══════════════════ APP ════════════════════════════════ -->
+<div id="app">
+
+  <!-- Header -->
+  <div class="app-hdr">
+    <p class="hdr-kicker">Medicina EBMSP</p>
+    <h1 class="hdr-title">Farmacologia &amp; Terapêutica Aplicada</h1>
+    <p class="hdr-sub">Guia de Estudos 2026</p>
+    <div class="user-pill">
+      <div class="udot" id="udot">M</div>
+      <span id="uname">Usuário</span>
+      <span style="color:var(--border);margin:0 6px">·</span>
+      <span style="color:var(--terra-d);cursor:pointer;font-size:12px" onclick="doLogout()">Sair</span>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab('simulado',this)">📝 Simulado</button>
+    <button class="tab-btn"        onclick="switchTab('resumos',this)">📚 Resumos</button>
+  </div>
+
+  <!-- ══ TAB SIMULADO ═════════════════════════════════════ -->
+  <div id="tabSimulado">
+    <div class="metrics-wrap">
+      <div class="metrics-grid">
+        <div class="mc" style="background:var(--amber)">
+          <div class="mc-num" style="color:var(--amber-d)" id="mTotal">0</div>
+          <div class="mc-lbl">Total</div>
+        </div>
+        <div class="mc" style="background:var(--orange)">
+          <div class="mc-num" style="color:var(--orange-d)" id="mResp">0</div>
+          <div class="mc-lbl">Respondidas</div>
+        </div>
+        <div class="mc" style="background:#F0FDF4">
+          <div class="mc-num" style="color:#059669" id="mAcertos">0</div>
+          <div class="mc-lbl">Acertos</div>
+        </div>
+        <div class="mc" style="background:var(--peach)">
+          <div class="mc-num" style="color:var(--peach-d)" id="mAprov">—</div>
+          <div class="mc-lbl">Aproveitamento</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sim-wrap">
+      <div class="blocos-grid" id="blocosGrid"></div>
+
+      <div id="qViewer" style="display:none">
+        <div class="qpanel">
+          <div class="timer-bar">
+            <div class="timer-disp" id="timerDisp">00:00:00</div>
+            <div class="timer-btns">
+              <button class="tbtn" id="btnPause" onclick="togglePause()">⏸ Pausar</button>
+              <button class="tbtn red" onclick="finalizarProva()">🏁 Finalizar</button>
+            </div>
+          </div>
+          <div class="qcarousel" id="qCarousel"></div>
+          <div class="qbody">
+            <p class="qmeta" id="qMeta"></p>
+            <div id="diffBadge"></div>
+            <p class="qtext" id="qText"></p>
+            <div class="qimg-w" id="qImgW" style="display:none">
+              <img id="qImg" src="" alt="" onclick="openModal(this.src)">
+            </div>
+          </div>
+          <div class="alts-w" id="altsW"></div>
+          <div class="qactions">
+            <button class="btn-resp" id="btnResp" disabled onclick="responder()">Responder</button>
+            <button class="btn-next" id="btnNext" onclick="proximaQ()">Próxima →</button>
+          </div>
+          <div class="gab-panel" id="gabPanel">
+            <div class="gab-head">📋 Gabarito Comentado</div>
+            <div class="gab-body" id="gabBody"></div>
+          </div>
+        </div>
+        <div class="gal-sec" id="galSec" style="display:none">
+          <p class="gal-lbl">📷 Imagens das questões respondidas</p>
+          <div class="gal-grid" id="galGrid"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TAB RESUMOS ══════════════════════════════════════ -->
+  <div id="tabResumos" style="display:none">
+    <div class="res-wrap">
+      <div class="res-nav">
+        <button class="rtab active" onclick="switchResumo(0,this)">🦠 Tópico 1 — ATB, Resistência &amp; ITUs</button>
+        <button class="rtab" onclick="switchResumo(1,this)">💊 Tópico 2 — Quinolonas &amp; Salvação</button>
+        <button class="rtab" onclick="switchResumo(2,this)">💧 Tópico 3 — Hidroeletrolítico &amp; NPT</button>
+        <button class="rtab" onclick="switchResumo(3,this)">🫀 Tópico 4 — K⁺, Dor &amp; Obesidade</button>
+        <button class="rtab" onclick="switchResumo(4,this)">🔬 Tópico 5 — TARV &amp; HIV</button>
+      </div>
+      <div id="resumoContent"></div>
+    </div>
+  </div>
+
+  <footer class="app-foot">Criado por <strong>@brendaasena_</strong> · Bahiana EBMSP 28.2</footer>
+</div>
+
+<!-- overlays -->
+<div class="pause-ov" id="pauseOv">
+  <h2>⏸ Simulado Pausado</h2>
+  <p>Tela bloqueada para evitar trapaças.</p>
+  <button class="btn-cont" onclick="togglePause()">▶ Continuar</button>
+</div>
+<div id="imgModal" onclick="closeModal()"><img id="modalImg" src="" alt=""></div>
+<div id="reportModal">
+  <div class="rep-card">
+    <h2>🎓 Relatório Final</h2>
+    <p id="repDesc"></p>
+    <div class="rep-stats" id="repStats"></div>
+    <button class="btn-close" onclick="document.getElementById('reportModal').classList.remove('show')">Fechar</button>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════
+// API — insira a URL do SheetDB aqui
+// ════════════════════════════════════════════════════════
+const API_URL = "SUA_URL_DA_API_AQUI";
+
+// ════════════════════════════════════════════════════════
+// AUTH
+// ════════════════════════════════════════════════════════
+const SENHA = "bahiana2026";
+let currentUser = null;
+
+function doLogin(){
+  const name = document.getElementById('loginName').value.trim();
+  const pass = document.getElementById('loginPass').value.trim();
+  if(!name){ alert('Digite seu nome ou matrícula.'); return; }
+  if(pass !== SENHA){ document.getElementById('loginErr').style.display='block'; return; }
+  currentUser = name;
+  document.getElementById('loginErr').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+  document.getElementById('uname').textContent = name;
+  document.getElementById('udot').textContent = name.charAt(0).toUpperCase();
+  loadProgressFromAPI().then(() => initApp());
+}
+['loginPass','loginName'].forEach(id =>
+  document.getElementById(id).addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); })
+);
+function doLogout(){
+  if(!confirm('Deseja sair?')) return;
+  stopTimer(); currentUser = null;
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+}
+
+// ════════════════════════════════════════════════════════
+// SYNC — SheetDB / Stein
+// ════════════════════════════════════════════════════════
+async function syncToAPI(qId, status){
+  if(!API_URL || API_URL === 'SUA_URL_DA_API_AQUI') return;
+  try {
+    await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        usuario: currentUser, questao_id: qId,
+        status, tempo_seg: timerSec,
+        timestamp: new Date().toISOString()
+      })
+    });
+  } catch(e){ console.warn('Sync failed:', e); }
+}
+async function loadProgressFromAPI(){
+  if(!API_URL || API_URL === 'SUA_URL_DA_API_AQUI') return;
+  try {
+    const res = await fetch(`${API_URL}?usuario=${encodeURIComponent(currentUser)}`);
+    const data = await res.json();
+    if(Array.isArray(data)) data.forEach(row => {
+      if(row.usuario === currentUser && row.questao_id && row.status){
+        const k = row.questao_id;
+        if(!userProgress[k]) userProgress[k] = {};
+        if(row.status.startsWith('elim:')){
+          if(!userProgress[k].eliminated) userProgress[k].eliminated = [];
+          const l = row.status.split(':')[1];
+          if(!userProgress[k].eliminated.includes(l)) userProgress[k].eliminated.push(l);
+        } else { userProgress[k].status = row.status; }
+      }
+    });
+  } catch(e){ console.warn('Load failed:', e); }
+}
+
+// ════════════════════════════════════════════════════════
+// BANCO DE QUESTOES
+// ════════════════════════════════════════════════════════
+const questionsDatabase = [
+
+// ━━ BLOCO 1 — Clinica Medica & Terapeutica (Q1-Q20) ━━━━
+{
+  id:'q01', bloco:1, num:1, dificuldade:'Médio', imagem:'',
+  enunciado:`Homem, 59 anos, em uso de hidroclorotiazida, enalapril e anlodipino em doses plenas, com pressão arterial (PA) de consultório = 164 x 92 mmHg. Exame físico: ictus propulsivo; ritmo cardíaco regular em 3T com B4; MAPA 24 horas = 134 x 82; PA vigília = 134 x 76 mmHg; PA sono = 134 x 84 mmHg. Potássio sérico = 4,2 meq/L. Assinale a alternativa correta quanto às condutas diagnóstica e terapêutica:`,
+  alternativas:[
+    {letra:'A', texto:'Manter o esquema terapêutico e investigar hipertensão secundária.'},
+    {letra:'B', texto:'Iniciar espironolactona e investigar apneia obstrutiva do sono.'},
+    {letra:'C', texto:'Suspender hidroclorotiazida e iniciar dose noturna de simpaticolítico de ação central.'},
+    {letra:'D', texto:'Iniciar dose noturna de betabloqueador, visando à melhora do comportamento pressórico no sono.'}
+  ],
+  correta:'B',
+  explanation:`<strong>A (Incorreta):</strong> A MAPA mostra PA controlada (134x82 em 24h). A PA de consultório elevada provavelmente reflete hipertensão do avental branco ou efeito pressórico matinal. Não há critério para investigar hipertensão secundária neste momento.<br><br><strong>B (CORRETA):</strong> A MAPA revela padrão <em>non-dipper</em> (PA sono ≥ PA vigília), classicamente associado à Apneia Obstrutiva do Sono (AOS). O achado de B4 e ictus propulsivo sugere hipertrofia ventricular esquerda. A espironolactona é o 4º agente indicado em HAS resistente/non-dipper, e a investigação com polissonografia está indicada pois AOS cursa com hiperaldosteronismo secundário.<br><br><strong>C (Incorreta):</strong> A PA noturna está controlada (134x84). Simpaticolítico central não trata a causa do padrão non-dipper (AOS).<br><br><strong>D (Incorreta):</strong> Betabloqueador noturno não corrige o padrão non-dipper. Não é a abordagem fisiopatológica correta para este caso.`
+},
+{
+  id:'q02', bloco:1, num:2, dificuldade:'Fácil', imagem:'',
+  enunciado:`Com relação aos sinais de alarme na Dengue, é mais correto afirmar que:`,
+  alternativas:[
+    {letra:'A', texto:'A maioria dos sinais de alarme é resultante do aumento da permeabilidade vascular, podem surgir entre o 3-4º dia de doença e esta possibilidade deve ser avisada a todos os pacientes com Dengue.'},
+    {letra:'B', texto:'Desde o início da doença o paciente já apresenta sinais de que não vai evoluir bem.'},
+    {letra:'C', texto:'O paciente que não desenvolve sinais de alarme até 4-5º dia certamente terá boa evolução.'},
+    {letra:'D', texto:'Dor abdominal intensa, vômitos persistentes, elevação do hematócrito e hipotensão postural são sinais que precisam ser pesquisados apenas nos pacientes com a forma grave.'}
+  ],
+  correta:'A',
+  explanation:`<strong>A (CORRETA):</strong> Os sinais de alarme surgem na fase crítica (3º-4º dia), na defervescência, por extravasamento plasmático causado pelo aumento da permeabilidade vascular. Todos os pacientes devem ser alertados: dor abdominal intensa, vômitos persistentes, sangramento de mucosas, hematócrito elevado ≥20%, hipotensão postural, letargia/irritabilidade.<br><br><strong>B (Incorreta):</strong> Os sinais de alarme NÃO estão presentes desde o início — surgem especificamente na fase de defervescência.<br><br><strong>C (Incorreta):</strong> A ausência de sinais até o 4-5º dia não garante boa evolução; a vigilância deve ser mantida durante todo o período crítico.<br><br><strong>D (Incorreta):</strong> Esses sinais devem ser pesquisados em TODOS os pacientes com Dengue para identificar precocemente quem pode evoluir para forma grave.`
+},
+{
+  id:'q03', bloco:1, num:3, dificuldade:'Médio', imagem:'',
+  enunciado:`Michael, 17 anos, tem diagnóstico recente de hipertensão severa e no exame de abdome ausculta-se um sopro. Qual o exame mais indicado neste caso?`,
+  alternativas:[
+    {letra:'A', texto:'Dosagem de T3 e TSH.'},
+    {letra:'B', texto:'Arteriografia renal.'},
+    {letra:'C', texto:'Dosagem de metanefrinas na urina.'},
+    {letra:'D', texto:'Dosagem de aldosterona.'}
+  ],
+  correta:'B',
+  explanation:`<strong>A (Incorreta):</strong> Hipotireoidismo eleva PA diastólica, mas não causa sopro abdominal. Não é a principal suspeita aqui.<br><br><strong>B (CORRETA):</strong> Jovem com HAS grave + sopro abdominal = estenose de artéria renal até prova em contrário. Em jovens, a causa mais comum é displasia fibromuscular. A arteriografia renal (ou angio-RNM/angio-TC como alternativas menos invasivas) confirma o diagnóstico de estenose renovascular.<br><br><strong>C (Incorreta):</strong> Metanefrinas urinárias investigam feocromocitoma, que se apresenta com HAS paroxística + tríade (cefaleia, palpitação, sudorese), sem sopro abdominal.<br><br><strong>D (Incorreta):</strong> Hiperaldosteronismo primário causa HAS + hipocalemia, sem produzir sopro abdominal.`
+},
+{
+  id:'q04', bloco:1, num:4, dificuldade:'Fácil', imagem:'',
+  enunciado:`Paciente 50 anos, masculino, auxiliar de almoxarifado, com dor lombar há 3 dias que piora com movimento. Sinal de Lasègue negativo. Tônus muscular aumentado em região paravertebral esquerda. Qual das opções abaixo poderia ser usada para analgesia específica neste caso associada a um analgésico simples?`,
+  alternativas:[
+    {letra:'A', texto:'Prednisona.'},
+    {letra:'B', texto:'Carisoprodol.'},
+    {letra:'C', texto:'Escopolamina.'},
+    {letra:'D', texto:'Sumatriptano.'}
+  ],
+  correta:'B',
+  explanation:`<strong>A (Incorreta):</strong> Corticosteroides não têm indicação em lombalgia mecânica aguda não complicada sem componente inflamatório sistêmico.<br><br><strong>B (CORRETA):</strong> Carisoprodol é relaxante muscular de ação central indicado exatamente para lombalgia com espasmo/contração muscular paravertebral. O espasmo é a chave do caso. Usar associado a analgésico simples (dipirona ou paracetamol) por 3-7 dias.<br><br><strong>C (Incorreta):</strong> Escopolamina é anticolinérgico para cólicas viscerais (intestinais, ureterais) — sem ação no espasmo muscular esquelético.<br><br><strong>D (Incorreta):</strong> Sumatriptano é triptano para tratamento agudo de enxaqueca. Não tem indicação em lombalgia.`
+},
+{
+  id:'q05', bloco:1, num:5, dificuldade:'Difícil', imagem:'',
+  enunciado:`Paciente do sexo masculino, 18 anos, vai ao médico para acompanhamento de asma. Peakflow = 400 L/min (80% do melhor valor). Em uso de budesonida 400mcg 12/12h e salbutamol inalado 2 a 3 vezes ao dia. Boa aderência. Desperta 2 a 3 vezes por semana com tosse aliviada com salbutamol. Qual a melhor conduta?`,
+  alternativas:[
+    {letra:'A', texto:'Prescrever Claritromicina 250mg duas vezes ao dia.'},
+    {letra:'B', texto:'Iniciar Prednisona 20mg/dia associado a bamifilina 300mg via oral à noite.'},
+    {letra:'C', texto:'Prescrever Prednisona 40mg por dia durante sete dias.'},
+    {letra:'D', texto:'Iniciar Prednisona 40mg/dia reduzindo para 20 e 10mg a cada dois dias até uma semana.'},
+    {letra:'E', texto:'Adicionar um β-agonista de longa ação como formoterol ao tratamento com budesonida.'}
+  ],
+  correta:'E',
+  explanation:`<strong>A (Incorreta):</strong> Claritromicina não tem indicação no controle da asma persistente moderada. Macrolídeos crônicos são reservados para fenótipos específicos em protocolos especializados.<br><br><strong>B (Incorreta):</strong> Prednisona não é indicada para manutenção nesta fase. Bamifilina (metilxantina) não é step-up padrão pelas diretrizes GINA 2024.<br><br><strong>C e D (Incorretas):</strong> Ciclos de corticoide sistêmico são para exacerbações agudas graves. Peakflow de 80% e sintomas noturnos 2-3x/semana caracterizam asma parcialmente controlada — não crise grave.<br><br><strong>E (CORRETA):</strong> Pela GINA, asma parcialmente controlada em uso de CSI em dose média com boa aderência → Step Up com adição de LABA (β2-agonista de longa ação) como formoterol ou salmeterol. A associação CSI + LABA reduz sintomas noturnos, necessidade de SABA e melhora o controle.`
+},
+{
+  id:'q06', bloco:1, num:6, dificuldade:'Médio', imagem:'',
+  enunciado:`Paciente 70 anos, portador de carcinoma de pequenas células do pulmão avançado. Evolui com melhora da dor, mas com intensa agitação. Foi pactuado com a família aumento de sedação. Quais opções abaixo poderiam ser usadas para este objetivo?`,
+  alternativas:[
+    {letra:'A', texto:'Tramadol / metilfenidato.'},
+    {letra:'B', texto:'Escopolamina / codeína.'},
+    {letra:'C', texto:'Haloperidol / amitriptilina.'},
+    {letra:'D', texto:'Clorpromazina / midazolam.'}
+  ],
+  correta:'D',
+  explanation:`<strong>A (Incorreta):</strong> Tramadol é analgésico — dor já está controlada. Metilfenidato é estimulante do SNC: absolutamente contraindicado em agitação.<br><br><strong>B (Incorreta):</strong> Escopolamina é anticolinérgico para sialorréia/secreções. Codeína é analgésico/antitussígeno. Nenhum dos dois tem ação sedativa adequada para agitação intensa terminal.<br><br><strong>C (Incorreta):</strong> Haloperidol pode ter papel em delirium leve-moderado. Amitriptilina é adjuvante para dor neuropática, não sedativo de escolha em agitação terminal intensa.<br><br><strong>D (CORRETA):</strong> Sedação paliativa para agitação refratária/terminal: Clorpromazina (fenotiazínico com sedação potente) e/ou Midazolam (benzodiazepínico de ação rápida, padrão-ouro para sedação paliativa). Esta combinação é o protocolo aceito em oncologia paliativa.`
+},
+{
+  id:'q07', bloco:1, num:7, dificuldade:'Fácil', imagem:'',
+  enunciado:`Mário tem 45 anos, refere empachamento pós-prandial e queimação epigástrica. Ele terá sinais de alarme se apresentar:`,
+  alternativas:[
+    {letra:'A', texto:'Perda de peso, disfagia, odinofagia.'},
+    {letra:'B', texto:'Linfadenopatia, massa palpável, ganho de peso.'},
+    {letra:'C', texto:'Hipertensão, disfagia progressiva, vômitos persistentes.'},
+    {letra:'D', texto:'Leucocitose, perda de peso, anemia.'}
+  ],
+  correta:'A',
+  explanation:`<strong>A (CORRETA):</strong> Sinais de alarme em dispepsia que indicam endoscopia imediata: perda de peso não intencional, disfagia (dificuldade de deglutir), odinofagia (dor ao deglutir), vômitos persistentes, sangramento (melena/hematêmese), anemia, massa palpável e histórico familiar de câncer gástrico.<br><br><strong>B (Incorreta):</strong> Ganho de peso não é sinal de alarme. A combinação apresentada mistura achados corretos e incorretos.<br><br><strong>C (Incorreta):</strong> Hipertensão não é sinal de alarme dispéptico. Disfagia progressiva + vômitos seriam alarme isoladamente, mas a presença da HAS invalida a alternativa.<br><br><strong>D (Incorreta):</strong> Leucocitose não é sinal de alarme dispéptico clássico. Anemia e perda de peso isolados seriam, mas a combinação está incorreta.`
+},
+{
+  id:'q08', bloco:1, num:8, dificuldade:'Médio', imagem:'',
+  enunciado:`Mateus, 50 anos, masculino, branco, obeso. HAS controlada. Portador de angina relacionada aos esforços de aparecimento há 1 ano. Com relação ao tratamento, marque a melhor alternativa:`,
+  alternativas:[
+    {letra:'A', texto:'Beta-bloqueador e Bloqueador de canal de cálcio são a melhor opção para o caso.'},
+    {letra:'B', texto:'Nitrato e diurético são a melhor opção para o caso.'},
+    {letra:'C', texto:'IECA e BRA em sinergismo são a melhor opção para o caso.'},
+    {letra:'D', texto:'Diurético e IECA são as melhores opções para o caso.'}
+  ],
+  correta:'A',
+  explanation:`<strong>A (CORRETA):</strong> Para angina estável crônica com HAS: betabloqueador (BB) + bloqueador de canal de cálcio (BCC) é a combinação preferencial. BB reduz FC e consumo de O2 miocárdico; BCC (anlodipino) reduz pós-carga e tem vasodilatação coronariana adicional. Associação sinérgica recomendada pelas diretrizes ESC/SBC.<br><br><strong>B (Incorreta):</strong> Nitratos têm papel no alívio agudo da angina, mas não como esquema principal sem BB. Diurético não é anti-anginoso.<br><br><strong>C (Incorreta):</strong> A associação IECA + BRA (duplo bloqueio do SRAA) é contraindicada — aumenta risco de hipercalemia, hipotensão e disfunção renal sem benefício adicional comprovado.<br><br><strong>D (Incorreta):</strong> Diurético + IECA controla a HAS mas sem ação anti-anginosa específica para angina de esforço.`
+},
+{
+  id:'q09', bloco:1, num:9, dificuldade:'Difícil', imagem:'',
+  enunciado:`PAT, 48 anos, masculino, HAS, rinite e asma. Queixa de pigarro frequente e tosse há 2 meses com dificuldade para expectorar. Uso de losartana 50mg/dia, beclometasona 200mcg 12/12h e salbutamol 100mcg 8/8h sem melhora da tosse. FC=79bpm, PA=170x90mmHg, FR=18ipm. AR: sibilos esparsos. Marque a alternativa correta:`,
+  alternativas:[
+    {letra:'A', texto:'O paciente está em crise de asma e tem indicação do uso de corticoide sistêmico.'},
+    {letra:'B', texto:'O uso do antimicrobiano está indicado mesmo na ausência de febre.'},
+    {letra:'C', texto:'A pressão arterial constitui uma emergência hipertensiva.'},
+    {letra:'D', texto:'A losartana deve ser trocada por um IECA para melhor controle da PA.'}
+  ],
+  correta:'A',
+  explanation:`<strong>A (CORRETA):</strong> Exacerbação de asma: sibilos esparsos + tosse refratária ao SABA 8/8h. Corticoide sistêmico (prednisona 40-60mg/dia por 5-7 dias) está indicado para controlar a inflamação das vias aéreas. A PA de 170x90 sem sintomas de lesão de órgão-alvo = urgência hipertensiva (não emergência), tratar via oral em 24-48h.<br><br><strong>B (Incorreta):</strong> Tosse com sibilos é de origem asmática. Sem febre, sem crepitações — não há indicadores de pneumonia bacteriana. Antibiótico não é indicado.<br><br><strong>C (Incorreta):</strong> PA 170x90 SEM sintomas de lesão aguda de órgão-alvo = urgência hipertensiva, não emergência. Não requer tratamento IV imediato.<br><br><strong>D (Incorreta):</strong> Losartana (BRA) é excelente para HAS + asma. IECAs estão relativamente contraindicados na asma pois podem induzir/piorar tosse seca por bradicinina — trocar por IECA pioraria o quadro.`
+},
+{
+  id:'q10', bloco:1, num:10, dificuldade:'Fácil', imagem:'',
+  enunciado:`Mário tem 45 anos, refere empachamento pós-prandial e queimação epigástrica há mais de 6 meses. Podemos afirmar que:`,
+  alternativas:[
+    {letra:'A', texto:'Ele deve realizar uma endoscopia digestiva alta obrigatoriamente.'},
+    {letra:'B', texto:'O paciente pode receber um tratamento com inibidor de bomba de próton por oito semanas, recomendações de MEV e ser reavaliado.'},
+    {letra:'C', texto:'Entrar com um pró-cinético como primeira escolha.'},
+    {letra:'D', texto:'Os antidepressivos tricíclicos estão contraindicados no controle dos sintomas.'}
+  ],
+  correta:'B',
+  explanation:`<strong>A (Incorreta):</strong> EDA é indicada quando há sinais de alarme ou pacientes mais velhos com sintomas novos. Na ausência de alarme, a conduta inicial é tratamento empírico, não EDA obrigatória.<br><br><strong>B (CORRETA):</strong> Dispepsia sem sinais de alarme (≥6 meses): IBP (omeprazol, pantoprazol) por 4-8 semanas + MEV (fracionamento das refeições, evitar irritantes, perda de peso, suspender AINEs) + reavaliação. Testar/tratar H. pylori também é recomendado. Se refratário → EDA.<br><br><strong>C (Incorreta):</strong> Pró-cinético (domperidona) pode ser adjuvante em dispepsia funcional com empachamento, mas não é primeira escolha isolada sem IBP.<br><br><strong>D (Incorreta):</strong> Antidepressivos tricíclicos em doses baixas (amitriptilina 10-25mg/noite) têm papel estabelecido em dispepsia funcional refratária — NÃO estão contraindicados.`
+},
+
+// Q11-Q20
+{
+  id:'q11', bloco:1, num:11, dificuldade:'Médio', imagem:'',
+  enunciado:`Paciente 60 anos, diabético, com diarreia intensa há 2 dias. Ao exame: desidratado, levemente hipotenso, glicemia 200 mg/dL, sódio 120 mEq/L (VN 135-145), potássio normal. Qual a opção de reidratação para este paciente?`,
+  alternativas:[
+    {letra:'A', texto:'Terapia de reidratação oral.'},
+    {letra:'B', texto:'Solução salina hipotônica venosa.'},
+    {letra:'C', texto:'Solução salina isotônica venosa.'},
+    {letra:'D', texto:'Solução salina hipertônica venosa.'}
+  ],
+  correta:'C',
+  explanation:`<strong>A (Incorreta):</strong> Paciente levemente hipotenso com desidratação significativa necessita de volume venoso para restauração pressórica rápida.<br><br><strong>B (Incorreta):</strong> Solução hipotônica (SF 0,45% ou SG5%) pioraria a hiponatremia, adicionando mais água livre em relação ao sódio. Contraindicada neste cenário.<br><br><strong>C (CORRETA):</strong> Hiponatremia hipovolêmica (perda de sal e água pelas fezes) + hipotensão: tratar com SF 0,9% isotônico. O sódio se corrige gradualmente conforme o rim reequilibra. Correção máxima: 8-10 mEq/24h para evitar mielinólise pontina.<br><br><strong>D (Incorreta):</strong> Solução hipertônica (NaCl 3%) é reservada para hiponatremia sintomática grave com convulsão — não para hiponatremia assintomática com depleção de volume.`
+},
+{
+  id:'q12', bloco:1, num:12, dificuldade:'Difícil', imagem:'',
+  enunciado:`Mulher, 24 anos, parda, apresenta palpitações, queda de cabelo, dispneia, ansiedade, perda de peso com polifagia, diarreia há 10 meses. PA=180x100mmHg, PR=112bpm, IMC=17kg/m², edema palpebral bilateral, proptose, retração palpebral, bócio difuso volumoso e mixedema pré-tibial. Assinale a alternativa correta:`,
+  alternativas:[
+    {letra:'A', texto:'A paciente apresenta doença de Plummer.'},
+    {letra:'B', texto:'O TRAb, TSH e T4 livre são exames de escolha para confirmação do caso acima.'},
+    {letra:'C', texto:'Hipertireoidismo secundário a uma tireoidite subaguda.'},
+    {letra:'D', texto:'Metimazol é uma droga contraindicada para o caso.'}
+  ],
+  correta:'B',
+  explanation:`<strong>A (Incorreta):</strong> Doença de Plummer = bócio multinodular tóxico, acomete tipicamente pacientes mais velhos, sem oftalmopatia nem mixedema pré-tibial. O quadro descrito é clássico de Doença de Graves (hipertireoidismo autoimune).<br><br><strong>B (CORRETA):</strong> Doença de Graves é confirmada por: TSH suprimido + T4 livre elevado + TRAb positivo (anticorpo anti-receptor de TSH — patognomonico da Graves). Esses três exames compõem a investigação de escolha.<br><br><strong>C (Incorreta):</strong> Tireoidite subaguda (De Quervain) cursa com dor cervical intensa, febre, VSH elevado, bócio doloroso — sem oftalmopatia nem mixedema pré-tibial.<br><br><strong>D (Incorreta):</strong> Metimazol (tionamida) É o tratamento de escolha do hipertireoidismo por Graves — INDICADO, não contraindicado. Propiltiouracil é alternativa especialmente no 1º trimestre da gravidez.`
+},
+{
+  id:'q13', bloco:1, num:13, dificuldade:'Médio', imagem:'',
+  enunciado:`Cristina, 60 anos, hipertensa, diabética, apresentando quadro de Insuficiência Cardíaca. Marque a alternativa mais adequada sobre seu tratamento:`,
+  alternativas:[
+    {letra:'A', texto:'Devemos utilizar diurético de alça, betabloqueador e nitrato.'},
+    {letra:'B', texto:'Devemos utilizar espironolactona, IECA ou BRA e Betabloqueador cardio-seletivo.'},
+    {letra:'C', texto:'Não devemos utilizar bloqueador de canal de cálcio.'},
+    {letra:'D', texto:'Não devemos utilizar espironolactona nem hidroclorotiazida.'}
+  ],
+  correta:'B',
+  explanation:`<strong>A (Incorreta):</strong> Furosemida é usada sintomaticamente para congestão, mas nitrato não é pilar modificador de doença na ICC. Betabloqueador sem IECA/BRA está incompleto.<br><br><strong>B (CORRETA):</strong> Esquema padrão da ICFEr (IC com fração de ejeção reduzida): IECA ou BRA + Betabloqueador cardiosseletivo (carvedilol, metoprolol, bisoprolol) + Antagonista mineralocorticoide (espironolactona). Todos reduzem mortalidade. Em diabéticos, iSGLT2 são adicionados independentemente do DM2.<br><br><strong>C (Parcialmente incorreta):</strong> BCC dihidropiridínicos (anlodipino, felodipino) podem ser usados com cautela para controle de HAS na ICC. Os não-dihidropiridínicos (verapamil, diltiazem) são contraindicados na ICFEr.<br><br><strong>D (Incorreta):</strong> Espironolactona tem mortalidade reduzida comprovada na ICC (estudo RALES) — é pilar do tratamento e não deve ser evitada.`
+},
+{
+  id:'q14', bloco:1, num:14, dificuldade:'Médio', imagem:'',
+  enunciado:`Edson tem 45 anos, negro, é hipertenso e teve 2 infartos. Vem apresentando dispneia aos esforços habituais, edema de membros inferiores, tosse seca. Apresenta crépitos à ausculta e hepatomegalia. Assinale a alternativa correta:`,
+  alternativas:[
+    {letra:'A', texto:'Tem 2 critérios maiores e 3 critérios menores, portanto, provável ICC.'},
+    {letra:'B', texto:'Sem terceira ou quarta bulha, não se pode fechar o diagnóstico de ICC.'},
+    {letra:'C', texto:'Tem 1 critério maior e pelo menos 2 critérios menores, portanto, provável ICC.'},
+    {letra:'D', texto:'Não há critério suficiente para Insuficiência cardíaca (ICC).'}
+  ],
+  correta:'C',
+  explanation:`<strong>Critérios de Framingham:</strong> Diagnóstico = 2 maiores OU 1 maior + 2 menores.<br><strong>Critérios MAIORES:</strong> DPN, ortopneia, DVJ, crépitos pulmonares, cardiomegalia, EAP, B3, refluxo hepatojugular.<br><strong>Critérios MENORES:</strong> Edema bilateral MMII, tosse noturna, dispneia aos esforços, hepatomegalia, derrame pleural, taquicardia >120bpm.<br><br><strong>Análise do Edson:</strong> MAIOR: Crépitos (1). MENORES: Edema de MMII (1) + dispneia aos esforços (2) + tosse seca (3) + hepatomegalia (4).<br><br><strong>C (CORRETA):</strong> 1 critério maior + pelo menos 2 menores = diagnóstico provável de ICC pelos critérios de Framingham.<br><br><strong>A (Incorreta):</strong> Não há 2 critérios maiores identificados claramente — crépitos = 1 maior apenas.<br><br><strong>B (Incorreta):</strong> B3 é critério maior mas sua ausência não impede diagnóstico pelos critérios de Framingham.<br><br><strong>D (Incorreta):</strong> Há critérios suficientes conforme análise acima.`
+},
+{
+  id:'q15', bloco:1, num:15, dificuldade:'Fácil', imagem:'',
+  enunciado:`Qual a frequência de atividade física moderada mínima recomendada pela OMS?`,
+  alternativas:[
+    {letra:'A', texto:'200 min/semana.'},
+    {letra:'B', texto:'150 min/semana.'},
+    {letra:'C', texto:'120 min/semana.'},
+    {letra:'D', texto:'100 min/semana.'}
+  ],
+  correta:'B',
+  explanation:`<strong>B (CORRETA):</strong> A OMS recomenda para adultos (18-64 anos): mínimo de 150-300 minutos de atividade aeróbica de intensidade MODERADA por semana, ou 75-150 minutos de intensidade vigorosa, ou combinação equivalente. Adicionar fortalecimento muscular ≥2 dias/semana para benefícios adicionais.<br><br><strong>A (Incorreta):</strong> 200 min está acima do mínimo recomendado — não é o limite inferior.<br><br><strong>C e D (Incorretas):</strong> 120 e 100 min/semana estão abaixo do mínimo recomendado pela OMS para benefícios de saúde comprovados.`
+},
+{
+  id:'q16', bloco:1, num:16, dificuldade:'Difícil', imagem:'',
+  enunciado:`J.P.S., 68 anos, masculino, DM2 há 10 anos, HAS há 18 anos. CA=128cm, IMC=40,4kg/m². Em uso de glimepirida 8mg/dia e metformina 2550mg/dia. HbA1C=12%, com poliúria, polidipsia e perda de 6kg em 4 meses. PA=170x88mmHg, edema de MMII, hipocromia de mucosas, redução de acuidade visual. Marque a alternativa correta:`,
+  alternativas:[
+    {letra:'A', texto:'A lesão renal mais comum em diabéticos é a tubulopatia do tipo IV.'},
+    {letra:'B', texto:'As tiazolidinedionas são as drogas de escolha em pacientes com resistência insulínica e complicações cardiovasculares.'},
+    {letra:'C', texto:'Insulina noturna deverá ser introduzida para melhor controle dos níveis glicêmicos.'},
+    {letra:'D', texto:'Pacientes com creatinina >2,0mg/dL podem usar metformina em doses mais baixas.'}
+  ],
+  correta:'C',
+  explanation:`<strong>A (Incorreta):</strong> A lesão renal mais comum em diabéticos é a glomerulopatia diabética (nefropatia diabética glomerular), com microalbuminúria progressando para proteinúria macroscópica.<br><br><strong>B (Incorreta):</strong> Tiazolidinedionas têm contraindicação relativa em ICC (retenção hídrica) e uso controverso em DCV estabelecida. Paciente com edema de MMII — não são drogas de escolha.<br><br><strong>C (CORRETA):</strong> HbA1C de 12% com sintomas (poliúria, polidipsia, perda de peso) e doses máximas de hipoglicemiantes orais = falência de célula beta → insulinização indicada. Introdução de insulina basal noturna (NPH ou análogo de ação longa) ao esquema oral é a conduta padrão.<br><br><strong>D (Incorreta):</strong> Metformina é contraindicada quando TFG <30 ml/min/1,73m². Em idoso de 68 anos com creatinina >2,0mg/dL, a TFG estará certamente reduzida. Afirmação incorreta sem calcular TFG.`
+},
+{
+  id:'q17', bloco:1, num:17, dificuldade:'Fácil', imagem:'',
+  enunciado:`Mário tem 40 anos, refere empachamento pós-prandial e queimação epigástrica há mais de 6 meses. Podemos afirmar que:`,
+  alternativas:[
+    {letra:'A', texto:'Trata-se de um caso de dispepsia e que cerca de 75% têm uma causa funcional.'},
+    {letra:'B', texto:'O quadro é típico de colelitíase sintomática.'},
+    {letra:'C', texto:'Trata-se de um caso de dispepsia e que cerca de 75% têm uma causa orgânica.'},
+    {letra:'D', texto:'Trata-se de um caso de dispepsia e que cerca de 25% têm uma causa funcional.'}
+  ],
+  correta:'A',
+  explanation:`<strong>A (CORRETA):</strong> Dispepsia (empachamento + queimação ≥3 meses em 6 meses): 70-75% dos casos investigados são FUNCIONAIS (sem causa estrutural à endoscopia) e apenas 25-30% têm causa orgânica (úlcera péptica, H. pylori, câncer gástrico). Proporção clássica ensinada em medicina.<br><br><strong>B (Incorreta):</strong> Colelitíase sintomática clássica cursa com cólica biliar em hipocôndrio direito após refeições gordurosas, irradiando para dorso. O empachamento e queimação epigástrica isolados não são típicos.<br><br><strong>C (Incorreta):</strong> Inverte a proporção — na realidade 75% são FUNCIONAIS, não orgânicas.<br><br><strong>D (Incorreta):</strong> 25% de causa funcional é o inverso da realidade epidemiológica.`
+},
+{
+  id:'q18', bloco:1, num:18, dificuldade:'Difícil', imagem:'',
+  enunciado:`LAQ, 42 anos, feminino, HAS, enxaqueca, rinite e ansiedade. Histórico de asma na infância. Pigarro frequente e tosse seca há 2 meses. Em uso de losartana 50mg/dia e propranolol 40mg/dia. FC=59bpm, PA=150x90mmHg, FR=14ipm. AR: murmúrio vesicular bem distribuído e sem ruídos adventícios. Marque a alternativa correta:`,
+  alternativas:[
+    {letra:'A', texto:'A investigação da tosse não é necessária, uma vez que não levou a procurar serviço de emergência.'},
+    {letra:'B', texto:'A pressão arterial pode estar aumentada por causa da tosse persistente e não necessita de ajuste.'},
+    {letra:'C', texto:'A pressão arterial está elevada e necessita ajuste da medicação, considerando a necessidade de retirada do betabloqueador devido ao histórico de asma.'},
+    {letra:'D', texto:'A losartana deve ser substituída por captopril para melhor controle da PA e da tosse.'}
+  ],
+  correta:'C',
+  explanation:`<strong>A (Incorreta):</strong> Tosse seca persistente em paciente usando propranolol com histórico de asma requer investigação e ajuste — o propranolol é a causa mais provável e é contraindicado.<br><br><strong>B (Incorreta):</strong> A PA de 150x90 está efetivamente elevada (HAS Grau 1 não controlada). Tosse não causa HAS persistente — a medicação inadequada é o problema.<br><br><strong>C (CORRETA):</strong> Propranolol é betabloqueador NÃO SELETIVO — contraindicado em asma/DPOC (pode causar broncoespasmo e piorar tosse). Em paciente com histórico de asma + tosse: RETIRAR PROPRANOLOL e substituir por outra classe anti-hipertensiva. A PA de 150x90 também precisa de ajuste. Losartana (BRA) é preferível e pode ser mantida — não causa tosse.<br><br><strong>D (Incorreta):</strong> Captopril (IECA) é a CAUSA MAIS COMUM de tosse medicamentosa. Substituir losartana (BRA) por captopril PIORARIA a queixa de tosse.`
+},
+{
+  id:'q19', bloco:1, num:19, dificuldade:'Fácil', imagem:'',
+  enunciado:`Arnaldo, 60 anos, masculino, HAS em uso de Bloqueador de Canal de Cálcio e Hidroclorotiazida. Na consulta, queixa de edema +/IV de membros inferiores. Hipocalemia K+ = 3,0 mEq/L. PA controlada. Assinale a alternativa mais adequada:`,
+  alternativas:[
+    {letra:'A', texto:'O principal efeito adverso dos BCC é a tosse.'},
+    {letra:'B', texto:'Deve-se suspender os medicamentos usados.'},
+    {letra:'C', texto:'Deve-se trocar as drogas em uso.'},
+    {letra:'D', texto:'São efeitos colaterais brandos e contornáveis.'}
+  ],
+  correta:'D',
+  explanation:`<strong>A (Incorreta):</strong> Tosse seca é efeito adverso dos IECAs, não dos BCC. O principal efeito adverso dos BCC dihidropiridínicos (anlodipino) é o edema periférico — como no caso.<br><br><strong>B (Incorreta):</strong> Suspender medicamentos com PA controlada e efeitos brandos seria inadequado e colocaria o paciente em risco cardiovascular.<br><br><strong>C (Incorreta):</strong> Trocar pode ser necessário em alguns casos, mas não é a primeira conduta quando efeitos são brandos e PA está controlada.<br><br><strong>D (CORRETA):</strong> Edema maleolar pelo BCC (vasodilatação arteriolar) e hipocalemia discreta (K+ 3,0) pela hidroclorotiazida são efeitos conhecidos, brandos e manejáveis. O edema pode melhorar com IECA/BRA associado. A hipocalemia é contornável com suplementação de K+ oral ou ajuste de dieta. Com PA controlada, manejar os efeitos adversos sem suspender os medicamentos.`
+},
+{
+  id:'q20', bloco:1, num:20, dificuldade:'Médio', imagem:'',
+  enunciado:`M.S.A., 63 anos, feminino, hipertensa, obesa, diabética, dislipidêmica. Uso de losartana 50mg 12/12h, anlodipino 5mg 2x/dia, hidroclorotiazida 25mg/dia, metformina 850mg 3x/dia, sinvastatina 40mg/dia. Sem histórico de IC ou nefropatia. PA=160x100mmHg. Qual a melhor opção medicamentosa para melhor controle da PA?`,
+  alternativas:[
+    {letra:'A', texto:'Aumentar a dose da Hidroclorotiazida para 50mg/dia.'},
+    {letra:'B', texto:'Associar Clonidina 0,100mg 1 vez ao dia.'},
+    {letra:'C', texto:'Associar Espironolactona 25mg/dia.'},
+    {letra:'D', texto:'Associar Hidralazina 25mg de 12/12h.'}
+  ],
+  correta:'C',
+  explanation:`<strong>A (Incorreta):</strong> A dose máxima eficaz da hidroclorotiazida é 25mg/dia. Doses maiores aumentam efeitos adversos (hipocalemia, hiperglicemia, hiperuricemia) sem benefício hipotensor proporcional adicional.<br><br><strong>B (Incorreta):</strong> Clonidina (simpaticolítico central) tem efeito rebote na retirada súbita e é considerada agente de segunda/terceira linha. Não é a primeira escolha como 4º agente.<br><br><strong>C (CORRETA):</strong> Paciente em tripla terapia (BRA + BCC + Tiazídico) com PA não controlada = HAS resistente. O 4º agente de escolha pelas diretrizes (ESH/SBC/PATHWAY-2) é a espironolactona 25-50mg/dia — antagonista mineralocorticoide. Trata o excesso de aldosterona (frequente na HAS resistente), não causa hipocalemia e tem evidências robustas de eficácia.<br><br><strong>D (Incorreta):</strong> Hidralazina (vasodilatador direto) causa taquicardia reflexa e retenção hidrossalina. Reservada para situações específicas (HAS na gravidez). Não é 4º agente de escolha nas diretrizes atuais.`
+},
+
+// ━━ BLOCO 2 — Antibioticoterapia & ITU (Q21-Q34) ━━━━━━━
+{
+  id:'q21', bloco:2, num:1, dificuldade:'Fácil', imagem:'',
+  enunciado:`Mulher, 28 anos, hígida, com disúria e polaciúria há 2 dias. Afebril, sem dor lombar. EAS: leucocitúria maciça, nitritos positivos. Qual o tratamento de primeira escolha para cistite não complicada?`,
+  alternativas:[
+    {letra:'A', texto:'Ceftriaxone 1g IV por 7 dias.'},
+    {letra:'B', texto:'Nitrofurantoína 100mg VO 6/6h por 5-7 dias.'},
+    {letra:'C', texto:'Ciprofloxacino 500mg VO 12/12h por 7 dias.'},
+    {letra:'D', texto:'Vancomicina 1g IV 12/12h.'},
+    {letra:'E', texto:'Amoxicilina 500mg VO 8/8h por 10 dias.'}
+  ],
+  correta:'B',
+  explanation:`<strong>A (Incorreta):</strong> Ceftriaxone IV é para pielonefrite grave ou urossepse. Cistite não complicada não requer ATB IV.<br><br><strong>B (CORRETA):</strong> Nitrofurantoína é o fármaco de 1ª linha para cistite não complicada — concentra-se exclusivamente na urina. ATENÇÃO: não penetra parênquima renal nem prostático. Contraindicada com ClCr &lt;30 ml/min e no 3º trimestre da gravidez.<br><br><strong>C (Incorreta):</strong> Ciprofloxacino tem ótimo espectro urinário, mas seu uso indiscriminado em cistite simples favorece resistência. Reservar para casos refratários ou pielonefrite.<br><br><strong>D (Incorreta):</strong> Vancomicina é para Gram-positivos resistentes (MRSA). Cistite é causada por Gram-negativos.<br><br><strong>E (Incorreta):</strong> Amoxicilina tem resistência crescente (&gt;40% das E. coli) e não é fármaco de escolha nas diretrizes atuais.`
+},
+{
+  id:'q22', bloco:2, num:2, dificuldade:'Médio', imagem:'',
+  enunciado:`Homem, 55 anos, diabético, internado com febre 39,2°C, calafrios, dor lombar bilateral e disúria há 4 dias. CVAT bilateral +++. EAS: leucocitúria ++, nitritos +. Hemocultura solicitada. Qual antibioticoterapia empírica é mais adequada para pielonefrite complicada?`,
+  alternativas:[
+    {letra:'A', texto:'Nitrofurantoína 100mg VO 6/6h por 7 dias.'},
+    {letra:'B', texto:'Fosfomicina 3g VO dose única.'},
+    {letra:'C', texto:'Ceftriaxone 2g IV 24/24h.'},
+    {letra:'D', texto:'Azitromicina 500mg VO por 3 dias.'},
+    {letra:'E', texto:'Metronidazol 500mg VO 8/8h.'}
+  ],
+  correta:'C',
+  explanation:`<strong>A (Incorreta — PEGADINHA):</strong> Nitrofurantoína NÃO penetra no parênquima renal. Usá-la em pielonefrite = falha terapêutica garantida. Questão mais cobrada sobre ITU.<br><br><strong>B (Incorreta — PEGADINHA):</strong> Fosfomicina em dose única serve apenas para cistite não complicada. Também não penetra parênquima renal.<br><br><strong>C (CORRETA):</strong> Ceftriaxone IV é o agente de escolha para pielonefrite complicada em diabéticos com indicação de internação. Excelente cobertura para Enterobacteriáceas. Ajustar conforme urocultura.<br><br><strong>D (Incorreta):</strong> Azitromicina cobre atípicos — sem espectro para Gram-negativos causadores de pielonefrite.<br><br><strong>E (Incorreta):</strong> Metronidazol cobre anaeróbios e Trichomonas — sem atividade para enterobactérias da pielonefrite.`
+},
+{
+  id:'q23', bloco:2, num:3, dificuldade:'Médio', imagem:'',
+  enunciado:`Homem, 62 anos, com dor perineal, disúria, febre 38,8°C e jato urinário diminuído há 10 dias. TR: próstata edemaciada, dolorosa, quente. Urocultura: E. coli sensível a quinolonas. Qual o tratamento e duração corretos para prostatite bacteriana aguda?`,
+  alternativas:[
+    {letra:'A', texto:'Nitrofurantoína 100mg VO por 7 dias.'},
+    {letra:'B', texto:'Ciprofloxacino 500mg VO 12/12h por 4-6 semanas.'},
+    {letra:'C', texto:'Amoxicilina 500mg VO por 3 dias.'},
+    {letra:'D', texto:'Ceftriaxone 2g IV dose única.'},
+    {letra:'E', texto:'Fosfomicina 3g VO semanal por 3 semanas.'}
+  ],
+  correta:'B',
+  explanation:`<strong>A (Incorreta):</strong> Nitrofurantoína não penetra no parênquima prostático. Esta é a pegadinha tripla: falha em cistite → pielonefrite → prostatite.<br><br><strong>B (CORRETA):</strong> Quinolonas (Ciprofloxacino ou Levofloxacino) são os fármacos de escolha para prostatite — penetram excelentemente no tecido prostático. Duração mínima de 4 semanas (idealmente 6 semanas) para erradicar focos prostáticos e evitar cronificação.<br><br><strong>C (Incorreta):</strong> Amoxicilina tem espectro inadequado e cobertura prostática insuficiente. Duração de 3 dias é absurda para prostatite.<br><br><strong>D (Incorreta):</strong> Dose única jamais erradica foco prostático. A barreira hematoeprostática exige terapia prolongada.<br><br><strong>E (Incorreta):</strong> Fosfomicina semanal foi estudada para ITU recorrente feminina — sem base para prostatite bacteriana aguda.`
+},
+{
+  id:'q24', bloco:2, num:4, dificuldade:'Difícil', imagem:'',
+  enunciado:`Paciente em UTI com pneumonia associada a ventilador. Cultura isola Acinetobacter baumannii multirresistente (resistente a todos os betalactâmicos, aminoglicosídeos e fluoroquinolonas). Qual a terapêutica de resgate?`,
+  alternativas:[
+    {letra:'A', texto:'Meropenem 2g IV 8/8h em monoterapia.'},
+    {letra:'B', texto:'Vancomicina 1g IV 12/12h.'},
+    {letra:'C', texto:'Polimixina B associada a Meropenem em altas doses.'},
+    {letra:'D', texto:'Amoxicilina-Clavulanato IV em dose máxima.'},
+    {letra:'E', texto:'Azitromicina 500mg IV por 7 dias.'}
+  ],
+  correta:'C',
+  explanation:`<strong>A (Incorreta):</strong> Acinetobacter XDR já é resistente aos carbapenêmicos. Monoterapia insuficiente.<br><br><strong>B (Incorreta):</strong> Vancomicina cobre APENAS Gram-positivos. Sem ação alguma sobre Acinetobacter (Gram-negativo).<br><br><strong>C (CORRETA):</strong> Polimixinas (B ou E/Colistina) são os únicos agentes com atividade consistente contra Gram-negativos não-fermentadores XDR. São extremamente nefrotóxicas e neurotóxicas — uso apenas em salvação. Combinação com carbapenêmico em infusão estendida reduz emergência de resistência.<br><br><strong>D (Incorreta):</strong> Clavulanato inibe betalactamases plasmidiais simples, mas é ineficaz contra resistências intrínsecas e carbapenemases de Acinetobacter XDR.<br><br><strong>E (Incorreta):</strong> Azitromicina não tem espectro para Gram-negativos não-fermentadores resistentes.`
+},
+{
+  id:'q25', bloco:2, num:5, dificuldade:'Médio', imagem:'',
+  enunciado:`Paciente em pós-operatório de hemicolectomia, em uso de Ceftriaxone + Metronidazol há 8 dias, desenvolve diarreia profusa fétida com dor abdominal cólica. Colonoscopia: pseudomembranas esbranquiçadas. Qual conduta e precaução de isolamento?`,
+  alternativas:[
+    {letra:'A', texto:'Continuar antibioticoterapia e adicionar Loperamida.'},
+    {letra:'B', texto:'Suspender ATB, iniciar Vancomicina oral e isolamento de contato.'},
+    {letra:'C', texto:'Iniciar Ciprofloxacino IV e isolamento respiratório.'},
+    {letra:'D', texto:'Adicionar Fluconazol e isolamento de contato.'},
+    {letra:'E', texto:'Suspender apenas Metronidazol e manter Ceftriaxone.'}
+  ],
+  correta:'B',
+  explanation:`<strong>A (Incorreta):</strong> Loperamida está CONTRAINDICADA na CDI — retarda o trânsito e favorece megacólon tóxico. Manter o ATB causador perpetua o quadro.<br><br><strong>B (CORRETA):</strong> CDI exige: 1) Suspender ATB causador; 2) Vancomicina oral 125mg 6/6h por 10 dias ou Fidaxomicina; 3) Isolamento de CONTATO — esporos de C. difficile resistem ao álcool gel! Usar água e sabão, luvas e avental.<br><br><strong>C (Incorreta):</strong> Ciprofloxacino não trata CDI. Isolamento respiratório é inadequado — transmissão é fecal-oral por esporos.<br><br><strong>D (Incorreta):</strong> Fluconazol cobre fungos. CDI é bacteriana (Clostridioides difficile).<br><br><strong>E (Incorreta):</strong> Manter qualquer ATB de amplo espectro perpetua a disbiose intestinal favorável ao C. difficile.`
+},
+{
+  id:'q26', bloco:2, num:6, dificuldade:'Difícil', imagem:'',
+  enunciado:`Urocultura de paciente com sepse urinária isola Klebsiella pneumoniae produtora de ESBL, resistente a penicilinas e cefalosporinas, sensível a carbapenêmicos. Por que Amoxicilina-Clavulanato falha e qual o antibiótico correto?`,
+  alternativas:[
+    {letra:'A', texto:'Amoxicilina-Clavulanato funciona pois o Clavulanato inibe a ESBL diretamente.'},
+    {letra:'B', texto:'Ceftriaxone 2g IV supera a ESBL in vivo.'},
+    {letra:'C', texto:'Meropenem 1g IV 8/8h — padrão-ouro para ESBL.'},
+    {letra:'D', texto:'Ertapenem 1g IV — cobre ESBL e Pseudomonas.'},
+    {letra:'E', texto:'Polimixina B — esquema de salvação para qualquer ESBL.'}
+  ],
+  correta:'C',
+  explanation:`<strong>A (Incorreta — conceito fundamental):</strong> ESBL é variante mutada de betalactamase que escapa dos inibidores clássicos (Clavulanato) em concentrações clínicas. Clavulanato é INEFICAZ para ESBLs in vivo — falha terapêutica em infecções graves.<br><br><strong>B (Incorreta):</strong> Cefalosporinas (inclusive 3ª geração) são hidrolisadas pela ESBL — são substrato do próprio mecanismo de resistência.<br><br><strong>C (CORRETA):</strong> Carbapenêmicos (Meropenem, Imipenem) são resistentes às ESBLs. São o padrão-ouro para infecções graves por ESBL.<br><br><strong>D (Incorreta — PEGADINHA crítica):</strong> Ertapenem NÃO cobre Pseudomonas aeruginosa nem Acinetobacter baumannii. Único carbapenêmico sem essa cobertura.<br><br><strong>E (Incorreta):</strong> Polimixinas são de salvação para KPC/MBL resistentes a carbapenêmicos — não para ESBL sensível a carbapenêmicos.`
+},
+{
+  id:'q27', bloco:2, num:7, dificuldade:'Médio', imagem:'',
+  enunciado:`Por que Amoxicilina-Clavulanato falha no tratamento de infecções por MRSA e qual deve ser o antibiótico correto?`,
+  alternativas:[
+    {letra:'A', texto:'Clavulanato inibe as betalactamases do MRSA em altas doses.'},
+    {letra:'B', texto:'Cefepime (4ª geração) cobre MRSA eficazmente.'},
+    {letra:'C', texto:'A resistência do MRSA é pelo gene mecA (PBP2a alterada), não por betalactamase — usar Vancomicina.'},
+    {letra:'D', texto:'Usar Azitromicina que cobre todos os Gram-positivos resistentes.'},
+    {letra:'E', texto:'Meropenem cobre todos os Gram-positivos resistentes incluindo MRSA.'}
+  ],
+  correta:'C',
+  explanation:`<strong>A (Incorreta — erro conceitual clássico):</strong> Clavulanato inibe betalactamases enzimáticas (TEM, SHV). A resistência do MRSA NÃO é por betalactamase — é estrutural (PBP alterada), portanto inibidores de betalactamase são totalmente ineficazes.<br><br><strong>B (Incorreta):</strong> Cefalosporinas de 4ª geração também não cobrem MRSA (exceto Ceftarolina, 5ª geração). O gene mecA altera a PBP — todos os betalactâmicos falham.<br><br><strong>C (CORRETA):</strong> MRSA tem gene mecA → PBP2a com baixíssima afinidade por todos os betalactâmicos — mecanismo ESTRUTURAL. Tratamento: Vancomicina (1ª linha), Teicoplanina, Linezolida, Daptomicina, Ceftarolina.<br><br><strong>D (Incorreta):</strong> Azitromicina não tem indicação para bacteremia por MRSA.<br><br><strong>E (Incorreta):</strong> Meropenem não cobre MRSA — todos os betalactâmicos falham no MRSA independentemente da classe.`
+},
+{
+  id:'q28', bloco:2, num:8, dificuldade:'Médio', imagem:'',
+  enunciado:`Gestante de 20 semanas com cistite não complicada por E. coli sensível. Qual das opções abaixo é CONTRAINDICADA neste caso?`,
+  alternativas:[
+    {letra:'A', texto:'Cefalexina 500mg VO 6/6h por 7 dias.'},
+    {letra:'B', texto:'Nitrofurantoína 100mg VO 6/6h por 5 dias (antes do 3º trimestre).'},
+    {letra:'C', texto:'Amoxicilina-Clavulanato 875mg VO 12/12h por 5 dias.'},
+    {letra:'D', texto:'Ciprofloxacino 500mg VO 12/12h por 7 dias.'},
+    {letra:'E', texto:'Fosfomicina 3g VO dose única.'}
+  ],
+  correta:'D',
+  explanation:`<strong>A (Permitida):</strong> Cefalosporinas de 1ª geração são seguras na gravidez — categoria B da FDA.<br><br><strong>B (Permitida com restrição):</strong> Nitrofurantoína usada no 1º e 2º trimestres, mas EVITADA no 3º trimestre (risco de hemólise neonatal).<br><br><strong>C (Permitida):</strong> Amoxicilina-Clavulanato é categoria B, segura na gravidez quando indicada.<br><br><strong>D (CORRETA — CONTRAINDICADA):</strong> Quinolonas (Ciprofloxacino, Levofloxacino) são CONTRAINDICADAS na gravidez — causam artropatia em cartilagens em desenvolvimento (comprovado em modelos animais). Evitar em gestantes e crianças.<br><br><strong>E (Permitida):</strong> Fosfomicina em dose única tem segurança razoável e é aprovada em protocolos europeus para cistite em gestantes.`
+},
+{
+  id:'q29', bloco:2, num:9, dificuldade:'Difícil', imagem:'',
+  enunciado:`Paciente em UTI recebe Polimixina B IV para Pseudomonas aeruginosa XDR. Qual monitorização é MANDATÓRIA durante o tratamento?`,
+  alternativas:[
+    {letra:'A', texto:'Função hepática (TGO/TGP) e bilirrubinas diárias.'},
+    {letra:'B', texto:'Função renal (creatinina, ureia) e avaliação neurológica diariamente.'},
+    {letra:'C', texto:'Glicemia capilar e hemoglobina glicada.'},
+    {letra:'D', texto:'Hormônios tireoidianos semanalmente.'},
+    {letra:'E', texto:'INR e contagem de plaquetas.'}
+  ],
+  correta:'B',
+  explanation:`<strong>A (Incorreta):</strong> Hepatotoxicidade não é a principal toxicidade das polimixinas.<br><br><strong>B (CORRETA):</strong> Polimixinas são extremamente nefrotóxicas (necrose tubular aguda em até 60% dos pacientes) e neurotóxicas (parestesias, bloqueio neuromuscular). Monitorização diária de creatinina e ureia é obrigatória, além de avaliação neurológica. Polimixina B não requer ajuste renal (não excretada renalmente); Colistina sim.<br><br><strong>C (Incorreta):</strong> Glicemia não é monitorização específica de toxicidade das polimixinas.<br><br><strong>D (Incorreta):</strong> Hormônios tireoidianos não são afetados pelas polimixinas.<br><br><strong>E (Incorreta):</strong> Coagulopatia não é toxicidade principal das polimixinas.`
+},
+{
+  id:'q30', bloco:2, num:10, dificuldade:'Médio', imagem:'',
+  enunciado:`Mulher, 24 anos, com gonorreia (N. gonorrhoeae) + Chlamydia trachomatis concomitante confirmadas. Qual esquema trata adequadamente ambos os patógenos?`,
+  alternativas:[
+    {letra:'A', texto:'Penicilina G cristalina IV + Amoxicilina VO.'},
+    {letra:'B', texto:'Ceftriaxone 500mg IM dose única + Azitromicina 1g VO dose única.'},
+    {letra:'C', texto:'Metronidazol VO + Fluconazol VO.'},
+    {letra:'D', texto:'Nitrofurantoína + Cefalexina VO por 7 dias.'},
+    {letra:'E', texto:'Ciprofloxacino VO por 3 dias.'}
+  ],
+  correta:'B',
+  explanation:`<strong>A (Incorreta):</strong> N. gonorrhoeae tem ampla resistência à penicilina. Amoxicilina não cobre Chlamydia (intracelular obrigatório).<br><br><strong>B (CORRETA):</strong> Esquema duplo padrão: Ceftriaxone 500mg IM (cefalosporina 3ª geração) cobre N. gonorrhoeae + Azitromicina 1g VO dose única cobre Chlamydia trachomatis (bactéria atípica intracelular que exige macrolídeo ou tetraciclina). Associação mandatória pela alta frequência de coinfecção.<br><br><strong>C (Incorreta):</strong> Metronidazol cobre anaeróbios e Trichomonas. Fluconazol cobre Candida. Nenhum trata gonorreia ou clamídia.<br><br><strong>D (Incorreta):</strong> Nitrofurantoína e Cefalexina não têm espectro adequado nem atividade intracelular para Chlamydia.<br><br><strong>E (Incorreta):</strong> Ciprofloxacino tem resistência crescente para N. gonorrhoeae (&gt;30%) e NÃO cobre Chlamydia intracelular adequadamente.`
+},
+{
+  id:'q31', bloco:2, num:11, dificuldade:'Médio', imagem:'',
+  enunciado:`Sobre os alvos ribossômicos dos antibióticos, assinale a associação CORRETA:`,
+  alternativas:[
+    {letra:'A', texto:'30S: Macrolídeos, Cloranfenicol e Lincosamidas.'},
+    {letra:'B', texto:'50S: Aminoglicosídeos e Tetraciclinas.'},
+    {letra:'C', texto:'30S: Aminoglicosídeos e Tetraciclinas / 50S: Macrolídeos, Cloranfenicol, Lincosamidas e Linezolida.'},
+    {letra:'D', texto:'Quinolonas inibem o ribossomo 70S completo.'},
+    {letra:'E', texto:'Vancomicina inibe a subunidade 50S do ribossomo.'}
+  ],
+  correta:'C',
+  explanation:`<strong>A (Incorreta):</strong> Macrolídeos e Lincosamidas inibem a 50S, não a 30S.<br><br><strong>B (Incorreta):</strong> Aminoglicosídeos inibem a 30S, não a 50S.<br><br><strong>C (CORRETA):</strong> Mapa ribossômico: 30S → Aminoglicosídeos (misreading do mRNA, bactericidas concentração-dependentes) e Tetraciclinas (bloqueiam tRNA-aminoacil, bacteriostáticas). 50S → Macrolídeos (inibem translocação), Cloranfenicol (inibe peptidil-transferase), Lincosamidas (clindamicina — mesmo sítio dos macrolídeos), Linezolida (inibe complexo de iniciação 70S — mecanismo único).<br><br><strong>D (Incorreta):</strong> Quinolonas inibem DNA-girase (topoisomerase II) e topoisomerase IV — não atuam no ribossomo.<br><br><strong>E (Incorreta):</strong> Vancomicina inibe síntese da parede celular (liga-se ao D-Ala-D-Ala do peptidioglicano) — não age no ribossomo.`
+},
+{
+  id:'q32', bloco:2, num:12, dificuldade:'Difícil', imagem:'',
+  enunciado:`Paciente em UTI com sepse por Klebsiella pneumoniae KPC-produtora (carbapenemase KPC), resistente a todos os carbapenêmicos. Qual a melhor opção terapêutica?`,
+  alternativas:[
+    {letra:'A', texto:'Meropenem em altas doses em monoterapia.'},
+    {letra:'B', texto:'Polimixina B associada a Meropenem em altas doses, ou Ceftazidima-Avibactam.'},
+    {letra:'C', texto:'Vancomicina IV em altas doses.'},
+    {letra:'D', texto:'Amoxicilina-Clavulanato IV em dose máxima.'},
+    {letra:'E', texto:'Azitromicina IV + Gentamicina.'}
+  ],
+  correta:'B',
+  explanation:`<strong>A (Incorreta):</strong> Meropenem em infusão estendida pode ter algum benefício farmacodinâmico, mas monoterapia tem alta taxa de falha para KPC com CIM elevado.<br><br><strong>B (CORRETA):</strong> Dois esquemas para KPC: 1) Polimixina B/Colistina + Meropenem em altas doses (sinergismo); 2) Ceftazidima-Avibactam — Avibactam é inibidor com atividade anti-KPC (serina-betalactamase). ATENÇÃO: Ceftazidima-Avibactam NÃO cobre metalo-betalactamases (NDM, VIM, IMP). Para NDM: associar Aztreonam.<br><br><strong>C (Incorreta):</strong> Vancomicina cobre apenas Gram-positivos. Klebsiella é Gram-negativo.<br><br><strong>D (Incorreta):</strong> Clavulanato não inibe KPC (carbapenemase classe A) nem metalo-betalactamases.<br><br><strong>E (Incorreta):</strong> Azitromicina sem espectro para enterobactérias MDR. Esquema insuficiente para KPC.`
+},
+{
+  id:'q33', bloco:2, num:13, dificuldade:'Médio', imagem:'',
+  enunciado:`Adulto jovem, 26 anos, com pneumonia atípica: febre baixa gradual, tosse seca persistente, mialgias, infiltrado intersticial ao RX. Sem resposta a penicilina. Qual o agente mais provável e tratamento?`,
+  alternativas:[
+    {letra:'A', texto:'Streptococcus pneumoniae — Amoxicilina 1g VO 8/8h.'},
+    {letra:'B', texto:'Klebsiella pneumoniae — Meropenem IV.'},
+    {letra:'C', texto:'Mycoplasma pneumoniae — Azitromicina 500mg VO por 5 dias.'},
+    {letra:'D', texto:'Pseudomonas aeruginosa — Piperacilina-Tazobactam IV.'},
+    {letra:'E', texto:'Legionella pneumophila — Vancomicina IV.'}
+  ],
+  correta:'C',
+  explanation:`<strong>A (Incorreta):</strong> Pneumococo causa pneumonia lobar clássica e responde à penicilina. Apresentação atípica com falha à penicilina descarta este agente.<br><br><strong>B (Incorreta):</strong> Klebsiella causa pneumonia grave em alcoolistas/imunossuprimidos com escarro "geleia de groselha". Não é este cenário.<br><br><strong>C (CORRETA):</strong> Pneumonia atípica em adulto jovem = Mycoplasma pneumoniae (mais comum). Não possui parede celular de peptidioglicano → betalactâmicos falham. Tratamento: Macrolídeos (Azitromicina 1ª linha), Doxiciclina ou Quinolonas respiratórias.<br><br><strong>D (Incorreta):</strong> Pseudomonas ocorre em imunossuprimidos graves ou bronquiectasias.<br><br><strong>E (Incorreta):</strong> Legionella também é atípica e responde a macrolídeos/quinolonas, mas Vancomicina não tem ação. Legionella causa quadro mais grave com hiponatremia e diarreia.`
+},
+{
+  id:'q34', bloco:2, num:14, dificuldade:'Difícil', imagem:'',
+  enunciado:`Qual mecanismo de resistência bacteriana está associado à afirmação FALSA abaixo?`,
+  alternativas:[
+    {letra:'A', texto:'Resistência a aminoglicosídeos: enzimas acetiltransferases e fosfotransferases inativam o fármaco.'},
+    {letra:'B', texto:'Resistência a quinolonas: mutação nas topoisomerases GyrA e ParC reduz afinidade da quinolona.'},
+    {letra:'C', texto:'Resistência a vancomicina (VRE): modificação do alvo D-Ala-D-Ala para D-Ala-D-Lac reduz afinidade 1000x.'},
+    {letra:'D', texto:'Resistência a betalactâmicos: SEMPRE mediada por betalactamases — não existe resistência por outros mecanismos.'},
+    {letra:'E', texto:'Bombas de efluxo (MexAB-OprM): podem conferir resistência simultânea a múltiplas classes.'}
+  ],
+  correta:'D',
+  explanation:`<strong>A (Verdadeira):</strong> Enzimas modificadoras de aminoglicosídeos (acetiltransferases, fosfotransferases, nucleotidiltransferases) inativam o fármaco — correto.<br><br><strong>B (Verdadeira):</strong> Mutações em gyrA (DNA girase) e parC (topoisomerase IV) reduzem afinidade das quinolonas — correto.<br><br><strong>C (Verdadeira):</strong> Genes van substituem D-Ala-D-Ala por D-Ala-D-Lac, reduzindo afinidade da vancomicina 1000x — correto.<br><br><strong>D (FALSA — resposta correta):</strong> Resistência a betalactâmicos pode ocorrer por: 1) Betalactamases (hidrolisam o anel); 2) Alteração de PBPs (MRSA — gene mecA); 3) Porinas reduzidas (menos entrada do fármaco); 4) Bombas de efluxo. Afirmar que "SEMPRE por betalactamases" é incorreto.<br><br><strong>E (Verdadeira):</strong> Bombas de efluxo de amplo espectro (MexAB-OprM em Pseudomonas) expulsam múltiplas classes — principal mecanismo de multirresistência — correto.`
+},
+
+// ━━ BLOCO 3 — Quinolonas & Resistência (Q35-Q44) ━━━━━━━
+{
+  id:'q35', bloco:3, num:1, dificuldade:'Médio', imagem:'',
+  enunciado:`Homem, 65 anos, DPOC, em uso de Ciprofloxacino por ITU, volta ao PS 3 dias depois com piora de tosse, escarro purulento e febre. RX: consolidação em lobo inferior direito. Por que o Ciprofloxacino falhou e qual a conduta?`,
+  alternativas:[
+    {letra:'A', texto:'Ciprofloxacino é suficiente — apenas ajustar dose e aguardar mais tempo.'},
+    {letra:'B', texto:'Pneumonia comunitária: Ciprofloxacino falhou por fraco espectro anti-pneumocócico — indicar Levofloxacino.'},
+    {letra:'C', texto:'Tuberculose pulmonar — iniciar RIPE.'},
+    {letra:'D', texto:'Embolia pulmonar — realizar angioTC.'},
+    {letra:'E', texto:'Ciprofloxacino cobre Pneumococo — dobrar a dose.'}
+  ],
+  correta:'B',
+  explanation:`<strong>A e E (Incorretas):</strong> Ciprofloxacino tem cobertura FRACA para Streptococcus pneumoniae. Ajustar dose não resolve o problema de espectro.<br><br><strong>B (CORRETA):</strong> Distinção essencial: Ciprofloxacino = excelente para Gram-negativos (E. coli, Pseudomonas), fraco anti-pneumocócico. Levofloxacino e Moxifloxacino = "quinolonas respiratórias" — excelente cobertura para Gram-positivos (especialmente Pneumococo) e atípicos. Indicadas para PAC em DPOC, idosos e falha a betalactâmicos.<br><br><strong>C (Incorreta):</strong> TB tem apresentação subaguda/crônica com estigmas clínicos diferentes. Não se apresenta como piora aguda em contexto de ITU.<br><br><strong>D (Incorreta):</strong> Embolia pulmonar raramente causa febre e escarro purulento com consolidação lobar.`
+},
+{
+  id:'q36', bloco:3, num:2, dificuldade:'Médio', imagem:'',
+  enunciado:`Atleta de 28 anos em uso de Levofloxacino desenvolve dor súbita e inchaço no tendão de Aquiles ao correr. Qual a conduta correta?`,
+  alternativas:[
+    {letra:'A', texto:'Reduzir a dose de Levofloxacino e continuar o tratamento.'},
+    {letra:'B', texto:'Adicionar anti-inflamatório e continuar a quinolona.'},
+    {letra:'C', texto:'Suspender imediatamente o Levofloxacino, investigar tendinite/ruptura por imagem e trocar o ATB.'},
+    {letra:'D', texto:'Continuar Levofloxacino — este efeito não está relacionado à quinolona.'},
+    {letra:'E', texto:'Iniciar fisioterapia imediata e manter antibiótico.'}
+  ],
+  correta:'C',
+  explanation:`<strong>A (Incorreta):</strong> Reduzir dose não elimina o risco — o efeito tóxico sobre tenócitos é idiossincrático. Deve suspender.<br><br><strong>B (Incorreta):</strong> AINE pode mascarar sintomas de ruptura iminente. Continuar a quinolona aumenta o risco de ruptura completa.<br><br><strong>C (CORRETA):</strong> Tendinite e ruptura de tendão (especialmente Aquiles) é efeito adverso class effect das fluoroquinolonas — Black Box Warning FDA. Risco aumentado em: homens &gt;60 anos, corticosteroides, atletas, DRC. Conduta: SUSPENDER imediatamente, imobilizar, investigar por USG ou RMN. Trocar para betalactâmico ou macrolídeo conforme o patógeno.<br><br><strong>D (Incorreta):</strong> Falso — tendinite por quinolona é efeito bem documentado com alertas regulatórios.<br><br><strong>E (Incorreta):</strong> Fisioterapia na fase aguda de possível ruptura pode piorar o quadro. O ATB deve ser suspenso primeiro.`
+},
+{
+  id:'q37', bloco:3, num:3, dificuldade:'Difícil', imagem:'',
+  enunciado:`Paciente de 72 anos em uso de Levofloxacino apresenta confusão, agitação e delirium no 3º dia. ECG mostra QTc = 520ms. Qual a conduta?`,
+  alternativas:[
+    {letra:'A', texto:'Aumentar dose de Levofloxacino para melhor penetração cerebral.'},
+    {letra:'B', texto:'Adicionar Haloperidol para o delirium e manter Levofloxacino.'},
+    {letra:'C', texto:'Suspender Levofloxacino — toxicidade neurológica e QTc longo — trocar ATB e monitorar ECG.'},
+    {letra:'D', texto:'Iniciar antiepiléptico para o delirium e manter Levofloxacino.'},
+    {letra:'E', texto:'Delirium em idoso é esperado em internação — manter conduta atual.'}
+  ],
+  correta:'C',
+  explanation:`<strong>A (Incorreta):</strong> Aumentar dose agrava toxicidade SNC e cardíaca.<br><br><strong>B (Incorreta — PERIGO):</strong> Haloperidol TAMBÉM prolonga o QT — associar dois agentes prolongadores é potencialmente fatal (risco de Torsades de Pointes com QTc já em 520ms).<br><br><strong>C (CORRETA):</strong> Quinolonas causam dois efeitos graves em idosos: 1) Delirium/psicose (antagonismo GABA-A + ativação NMDA — especialmente Levofloxacino); 2) Prolongamento do QTc (risco de arritmia grave se QTc &gt;500ms). Conduta: SUSPENDER a quinolona e trocar o ATB.<br><br><strong>D (Incorreta):</strong> Antiepiléptico trata convulsões, não delirium por toxicidade farmacológica. Não resolve o problema.<br><br><strong>E (Incorreta):</strong> Delirium em idoso nunca deve ser normalizado sem investigação causal — aqui a causa é farmacológica e completamente reversível.`
+},
+{
+  id:'q38', bloco:3, num:4, dificuldade:'Fácil', imagem:'',
+  enunciado:`Paciente HIV+, CD4 = 45 células/mm³, com febre, tosse seca e dispneia progressiva há 2 semanas. LDH elevado. RX: infiltrado intersticial difuso bilateral. Diagnóstico mais provável e tratamento?`,
+  alternativas:[
+    {letra:'A', texto:'Pneumonia bacteriana por Pneumococo — Amoxicilina-Clavulanato VO.'},
+    {letra:'B', texto:'Pneumocystis jirovecii (PCP) — Sulfametoxazol-Trimetoprim em altas doses.'},
+    {letra:'C', texto:'Tuberculose primária — iniciar RIPE.'},
+    {letra:'D', texto:'Pneumonia atípica por Mycoplasma — Azitromicina VO.'},
+    {letra:'E', texto:'Legionella — Levofloxacino IV.'}
+  ],
+  correta:'B',
+  explanation:`<strong>A (Incorreta):</strong> Pneumonia bacteriana tem início mais agudo, leucocitose marcante e responde rapidamente a betalactâmicos. LDH elevado não é marcador.<br><br><strong>B (CORRETA):</strong> Pneumocistose (PCP) é a infecção oportunista mais comum em AIDS com CD4 &lt;200. Tríade: dispneia progressiva, tosse seca, LDH elevado. RX: infiltrado intersticial bilateral difuso. Tratamento: SMX-TMP 15-20mg/kg/dia de TMP por 21 dias. Adicionar corticoide se PaO2 &lt;70 mmHg.<br><br><strong>C (Incorreta):</strong> TB tem evolução mais crônica com tosse produtiva, suores noturnos e RX com cavidades apicais ou padrão miliar.<br><br><strong>D (Incorreta):</strong> Mycoplasma ocorre em imunocompetentes. CD4 &lt;50 com infiltrado bilateral = pensar PCP primeiro.<br><br><strong>E (Incorreta):</strong> Legionella é rara em AIDS; apresentação diferente (hiponatremia, diarreia, confusão mental).`
+},
+{
+  id:'q39', bloco:3, num:5, dificuldade:'Médio', imagem:'',
+  enunciado:`Paciente após apendicectomia, em uso de Clindamicina + Gentamicina por 14 dias. No 10º dia desenvolve diarreia aquosa fétida com leucócitos fecais. Diagnóstico mais provável e conduta?`,
+  alternativas:[
+    {letra:'A', texto:'Diarreia osmótica por dieta hospitalar — manter ATB e observar.'},
+    {letra:'B', texto:'Enterocolite por Salmonella — iniciar Ciprofloxacino.'},
+    {letra:'C', texto:'CDI por Clostridioides difficile induzida pela Clindamicina — suspender ATB e iniciar Vancomicina oral.'},
+    {letra:'D', texto:'Colite isquêmica — colonoscopia de urgência.'},
+    {letra:'E', texto:'Infecção por Candida intestinal — iniciar Fluconazol.'}
+  ],
+  correta:'C',
+  explanation:`<strong>A (Incorreta):</strong> Diarreia aquosa fétida com leucócitos fecais e ATB prolongado aponta para CDI, não diarreia osmótica.<br><br><strong>B (Incorreta):</strong> Salmonella causa gastroenterite aguda febril, não tipicamente associada a ATB prolongado.<br><br><strong>C (CORRETA):</strong> CDI é a complicação clássica da Clindamicina — ATB mais associado historicamente. Mecanismo: disbiose → C. difficile prolifera → toxinas A e B → colite. Conduta: 1) Suspender ATB; 2) Vancomicina oral ou Fidaxomicina; 3) Isolamento de CONTATO (esporos resistem ao álcool gel); 4) Sem loperamida.<br><br><strong>D (Incorreta):</strong> Colite isquêmica ocorre em vasculopatas com apresentação diferente (dor intensa, hematoquezia).<br><br><strong>E (Incorreta):</strong> Candida intestinal raramente causa colite significativa em pacientes não imunossuprimidos graves.`
+},
+{
+  id:'q40', bloco:3, num:6, dificuldade:'Médio', imagem:'',
+  enunciado:`Sobre a Azitromicina na prática clínica, qual afirmação está INCORRETA?`,
+  alternativas:[
+    {letra:'A', texto:'É eficaz contra Mycoplasma pneumoniae por inibir a subunidade 50S.'},
+    {letra:'B', texto:'Tem meia-vida longa (~68h) permitindo esquemas curtos de 3-5 dias.'},
+    {letra:'C', texto:'Cobre Legionella pneumophila.'},
+    {letra:'D', texto:'É o antibiótico de escolha para infecções por MRSA.'},
+    {letra:'E', texto:'Pode prolongar o intervalo QT em pacientes com risco cardíaco.'}
+  ],
+  correta:'D',
+  explanation:`<strong>A (Correta):</strong> Azitromicina é macrolídeo que inibe subunidade 50S, com excelente atividade contra Mycoplasma.<br><br><strong>B (Correta):</strong> Meia-vida longa e alta concentração tecidual permitem esquemas curtos — vantagem farmacocinética importante.<br><br><strong>C (Correta):</strong> Legionella pneumophila responde a macrolídeos (Azitromicina 1ª linha) ou quinolonas respiratórias.<br><br><strong>D (INCORRETA — resposta):</strong> Azitromicina não tem atividade confiável contra MRSA. Para MRSA: Vancomicina, Teicoplanina, Linezolida ou Daptomicina.<br><br><strong>E (Correta):</strong> Azitromicina prolonga o QT — risco real especialmente com QTc longo basal, hipocalemia ou associação com outros agentes prolongadores.`
+},
+{
+  id:'q41', bloco:3, num:7, dificuldade:'Difícil', imagem:'',
+  enunciado:`Linezolida versus Vancomicina na pneumonia hospitalar por MRSA. Qual vantagem REAL da Linezolida nesta situação?`,
+  alternativas:[
+    {letra:'A', texto:'Linezolida é mais barata e amplamente disponível no SUS.'},
+    {letra:'B', texto:'Linezolida tem melhor penetração pulmonar e biodisponibilidade oral de quase 100%.'},
+    {letra:'C', texto:'Vancomicina tem melhor penetração pulmonar que Linezolida.'},
+    {letra:'D', texto:'Linezolida não requer nenhuma monitorização de toxicidade.'},
+    {letra:'E', texto:'Vancomicina é superior para pneumonia hospitalar por MRSA em todos os estudos.'}
+  ],
+  correta:'B',
+  explanation:`<strong>A (Incorreta):</strong> Linezolida é significativamente mais cara que Vancomicina — custo é uma desvantagem.<br><br><strong>B (CORRETA):</strong> Linezolida tem MELHOR penetração pulmonar que Vancomicina (maior relação fluido epitelial/soro). Biodisponibilidade oral de quase 100% permite step-down IV → VO sem perda de eficácia. Metanálises sugerem possível superioridade na pneumonia hospitalar por MRSA.<br><br><strong>C (Incorreta):</strong> Invertido — Vancomicina tem penetração pulmonar inferior a Linezolida, exatamente o argumento para preferir Linezolida em pneumonia.<br><br><strong>D (Incorreta):</strong> Linezolida requer monitorização: trombocitopenia, anemia, neuropatia periférica (&gt;2 semanas de uso) e síndrome serotoninérgica com antidepressivos.<br><br><strong>E (Incorreta):</strong> Incorreto — Linezolida tem potencial superioridade ou não-inferioridade na pneumonia MRSA, não Vancomicina.`
+},
+{
+  id:'q42', bloco:3, num:8, dificuldade:'Médio', imagem:'',
+  enunciado:`Paciente de 70 anos recebe Gentamicina para sepse. Creatinina = 1,8 mg/dL. Qual a conduta correta?`,
+  alternativas:[
+    {letra:'A', texto:'Manter dose usual — aminoglicosídeos não são nefrotóxicos.'},
+    {letra:'B', texto:'Ajustar dose ou intervalo conforme clearance de creatinina e monitorar níveis séricos.'},
+    {letra:'C', texto:'Dobrar a dose para garantir níveis terapêuticos.'},
+    {letra:'D', texto:'Trocar para Vancomicina sem ajuste de dose.'},
+    {letra:'E', texto:'Aminoglicosídeos são seguros em idosos sem necessidade de ajuste.'}
+  ],
+  correta:'B',
+  explanation:`<strong>A e E (Incorretas):</strong> Aminoglicosídeos são nefrotóxicos e ototóxicos. Creatinina elevada indica função renal comprometida — dose sem ajuste acumula o fármaco em nível tóxico.<br><br><strong>B (CORRETA):</strong> Aminoglicosídeos são excretados exclusivamente por via renal. Com ClCr reduzido: aumentar o intervalo entre doses (ex: de 24/24h para 36/48h) e monitorar nível sérico (pico correlaciona com eficácia; vale correlaciona com toxicidade renal/auditiva). Em idosos, preferir dose única diária para reduzir acúmulo.<br><br><strong>C (Incorreta):</strong> Dobrar dose com função renal comprometida garante nefrotoxicidade e ototoxicidade irreversível.<br><br><strong>D (Incorreta):</strong> Trocar para Vancomicina também requer ajuste renal rigoroso (monitorar AUC/CIM). Não resolve o problema de ajuste.<br><br><strong>E (Incorreta):</strong> O ajuste é OBRIGATÓRIO em idosos com função renal comprometida.`
+},
+{
+  id:'q43', bloco:3, num:9, dificuldade:'Difícil', imagem:'',
+  enunciado:`Stenotrophomonas maltophilia é isolada em secreção traqueal de paciente em VM. Por que os carbapenêmicos falham e qual o tratamento?`,
+  alternativas:[
+    {letra:'A', texto:'Stenotrophomonas é sensível a carbapenêmicos — apenas otimizar dose.'},
+    {letra:'B', texto:'Resistência por KPC — usar Ceftazidima-Avibactam.'},
+    {letra:'C', texto:'Possui metalo-betalactamase intrínseca (L1) — resistente a carbapenêmicos. Tratamento: SMX-TMP ou Levofloxacino.'},
+    {letra:'D', texto:'Polimixinas são o tratamento de 1ª linha para Stenotrophomonas.'},
+    {letra:'E', texto:'Resistência por bomba de efluxo MexAB — usar Cefepime.'}
+  ],
+  correta:'C',
+  explanation:`<strong>A (Incorreta):</strong> Stenotrophomonas é INTRINSECAMENTE resistente a carbapenêmicos — não adianta otimizar dose.<br><br><strong>B (Incorreta):</strong> KPC é mecanismo de Klebsiella pneumoniae. Stenotrophomonas tem sua própria metalo-betalactamase (L1) intrínseca — Ceftazidima-Avibactam não é ativo (Avibactam não inibe metalo-BL).<br><br><strong>C (CORRETA):</strong> Stenotrophomonas maltophilia produz metalo-betalactamase L1 intrínseca que hidrolisa todos os carbapenêmicos. Tratamento de escolha: SMX-TMP (1ª linha), Levofloxacino, Ticarcilina-Clavulanato. É um dos germes mais temidos justamente pela resistência intrínseca a carbapenêmicos.<br><br><strong>D (Incorreta):</strong> Polimixinas têm atividade variável contra Stenotrophomonas — não é primeira linha.<br><br><strong>E (Incorreta):</strong> MexAB-OprM é a bomba de efluxo da Pseudomonas. Cefepime não é tratamento de escolha para Stenotrophomonas.`
+},
+{
+  id:'q44', bloco:3, num:10, dificuldade:'Médio', imagem:'',
+  enunciado:`Ciprofloxacino 500mg VO é prescrito para prostatite bacteriana por E. coli sensível. Qual a duração mínima adequada e por quê?`,
+  alternativas:[
+    {letra:'A', texto:'3 dias — suficiente pois a concentração urinária é muito alta.'},
+    {letra:'B', texto:'7 dias — tempo padrão para qualquer infecção do trato urinário.'},
+    {letra:'C', texto:'14 dias — equivalente ao tratamento da pielonefrite.'},
+    {letra:'D', texto:'4-6 semanas — necessária para erradicar o foco prostático pela barreira hematoeprostática.'},
+    {letra:'E', texto:'Dose única — quinolonas têm meia-vida longa suficiente.'}
+  ],
+  correta:'D',
+  explanation:`<strong>A (Incorreta):</strong> Alta concentração urinária não equivale a penetração prostática adequada. A barreira hematoeprostática limita a maioria dos antibióticos exceto quinolonas e SMX-TMP.<br><br><strong>B (Incorreta):</strong> 7 dias é insuficiente para erradicar foco prostático. Alta taxa de recaída com tratamentos curtos.<br><br><strong>C (Incorreta):</strong> 14 dias ainda é insuficiente para prostatite — risco elevado de cronificação e abscessos prostáticos.<br><br><strong>D (CORRETA):</strong> Prostatite bacteriana aguda exige 4-6 semanas de quinolona. Motivo: a barreira hematoeprostática impede a penetração da maioria dos ATBs. Quinolonas e SMX-TMP penetram bem o parênquima prostático. Tratamento curto = cronificação e prostatite bacteriana crônica.<br><br><strong>E (Incorreta):</strong> Meia-vida longa não substitui a necessidade de tratamento prolongado para erradicação de foco tecidual.`
+},
+
+// ━━ BLOCO 4 — Hidroeletrolítico & NPT (Q45-Q54) ━━━━━━━━
+{
+  id:'q45', bloco:4, num:1, dificuldade:'Fácil', imagem:'',
+  enunciado:`Paciente de 70kg internado para cirurgia eletiva. Aplicando a Regra dos 30, quais são a necessidade hídrica e calórica diárias basais?`,
+  alternativas:[
+    {letra:'A', texto:'1.500ml/dia e 1.500 kcal/dia.'},
+    {letra:'B', texto:'2.100ml/dia e 2.100 kcal/dia.'},
+    {letra:'C', texto:'2.500ml/dia e 2.500 kcal/dia.'},
+    {letra:'D', texto:'3.000ml/dia e 3.000 kcal/dia.'},
+    {letra:'E', texto:'1.000ml/dia e 1.000 kcal/dia.'}
+  ],
+  correta:'B',
+  explanation:`<strong>B (CORRETA):</strong> Regra dos 30: Necessidade Hídrica Basal = 30 ml/kg/dia → 30 × 70 = <strong>2.100 ml/dia</strong>. Necessidade Calórica Basal = 30 kcal/kg/dia → 30 × 70 = <strong>2.100 kcal/dia</strong>. Ponto de partida para cálculo de NPT e reposição perioperatória. Ajustes: +10-15% por grau de febre acima de 37°C, + perdas adicionais por drenos/sondas.<br><br><strong>A, C, D, E (Incorretas):</strong> Não correspondem ao cálculo de 30ml × 70kg e 30kcal × 70kg.`
+},
+{
+  id:'q46', bloco:4, num:2, dificuldade:'Difícil', imagem:'',
+  enunciado:`Paciente de 55 anos é trazido ao PS com convulsão tônico-clônica generalizada. Histórico de uso crônico de diuréticos. Sódio sérico = 112 mEq/L. Qual a conduta IMEDIATA correta?`,
+  alternativas:[
+    {letra:'A', texto:'Repor sódio lentamente com SF 0,9% até Na+ 140 mEq/L em 24h.'},
+    {letra:'B', texto:'NaCl 3% para elevar Na+ em 4-5 mEq/L rapidamente, depois corrigir lento (máx. 8 mEq/24h no total).'},
+    {letra:'C', texto:'Apenas Diazepam IV e aguardar resolução espontânea.'},
+    {letra:'D', texto:'Repor NaCl 3% até Na+ normal de 135 mEq/L em 6 horas.'},
+    {letra:'E', texto:'Restrição hídrica absoluta sem reposição de sódio.'}
+  ],
+  correta:'B',
+  explanation:`<strong>A (Incorreta):</strong> Correção acima de 8 mEq em 24h causa Síndrome de Desmielinização Osmótica (mielinólise pontina) — desmielinização irreversível do tronco cerebral. Regra geral: máximo 8-10 mEq/24h.<br><br><strong>B (CORRETA):</strong> EXCEÇÃO à regra lenta: convulsão ativa por hiponatremia é emergência! Usar NaCl 3% (hipertônico) para elevar Na+ rapidamente 4-5 mEq/L — suficiente para cessar a convulsão — depois retornar à correção lenta (máx. 8 mEq/24h no total). NaCl 3% = 514 mEq/L.<br><br><strong>C (Incorreta):</strong> Apenas anticonvulsivante sem corrigir a causa (hiponatremia grave) não resolve — as convulsões vão recorrer.<br><br><strong>D (Incorreta):</strong> Corrigir 23 mEq em 6h = catastrófico → mielinólise pontina irreversível.<br><br><strong>E (Incorreta):</strong> Restrição hídrica é para hiponatremia hipervolêmica/SIADH — não é conduta em emergência com convulsão.`
+},
+{
+  id:'q47', bloco:4, num:3, dificuldade:'Médio', imagem:'',
+  enunciado:`Paciente com Na+ = 118 mEq/L assintomático, sem edema cerebral. Qual a velocidade MÁXIMA segura de correção da hiponatremia crônica?`,
+  alternativas:[
+    {letra:'A', texto:'Qualquer velocidade é segura em pacientes assintomáticos.'},
+    {letra:'B', texto:'Máximo 8-10 mEq/L em 24h e máximo 18 mEq/L em 48h.'},
+    {letra:'C', texto:'Repor até 135 mEq/L em 12 horas para normalização rápida.'},
+    {letra:'D', texto:'Apenas 2 mEq/L por semana em pacientes crônicos.'},
+    {letra:'E', texto:'20 mEq/L por hora é seguro com monitorização contínua.'}
+  ],
+  correta:'B',
+  explanation:`<strong>A (Incorreta):</strong> Mesmo em assintomáticos, correção rápida causa mielinólise osmótica — a regra é absoluta.<br><br><strong>B (CORRETA):</strong> Limite seguro de correção da hiponatremia crônica: máximo 8-10 mEq/L nas primeiras 24h e máximo 18 mEq/L nas primeiras 48h. Grupos de alto risco (cirróticos, alcoolistas, desnutridos): teto mais conservador de 6-8 mEq/24h. Monitorar sodemia a cada 4-6h durante a correção.<br><br><strong>C (Incorreta):</strong> Corrigir 17 mEq em 12h ultrapassa o limite seguro → mielinólise pontina.<br><br><strong>D (Incorreta):</strong> 2 mEq/semana é insuficiente clinicamente e não é recomendado.<br><br><strong>E (Incorreta):</strong> 20 mEq/hora seria fatal por mielinólise pontina aguda.`
+},
+{
+  id:'q48', bloco:4, num:4, dificuldade:'Médio', imagem:'',
+  enunciado:`Paciente com hipernatremia (Na+ = 158 mEq/L) por perda hídrica pura (febre prolongada, baixa ingestão). Qual o tipo de solução adequada para reposição inicial?`,
+  alternativas:[
+    {letra:'A', texto:'Solução fisiológica 0,9% em bolus rápido.'},
+    {letra:'B', texto:'Solução glicosada 5% ou SF 0,45% para reduzir osmolaridade.'},
+    {letra:'C', texto:'NaCl 3% hipertônico para igualar a tonicidade.'},
+    {letra:'D', texto:'Albumina 20% para repor perdas proteicas.'},
+    {letra:'E', texto:'Ringer lactato em alta velocidade.'}
+  ],
+  correta:'B',
+  explanation:`<strong>A (Incorreta):</strong> SF 0,9% é isotônico — não corrige hipernatremia por déficit de água livre, apenas expande volume.<br><br><strong>B (CORRETA):</strong> Hipernatremia por déficit de água livre requer solução hipotônica: SG5% (equivale a água livre após metabolismo da glicose) ou SF 0,45%. Corrigir lentamente: máximo 10-12 mEq/L de redução de Na+ por 24h para evitar edema cerebral. O cérebro adaptado à hiperosmolaridade criou osmoles idiogênicos que puxam água se o Na cair rápido.<br><br><strong>C (Incorreta):</strong> NaCl 3% é hipertônico — PIORARIA a hipernatremia gravemente.<br><br><strong>D (Incorreta):</strong> Albumina não corrige distúrbio de sódio.<br><br><strong>E (Incorreta):</strong> Ringer lactato tem composição próxima ao isotônico e não corrige hipernatremia adequadamente.`
+},
+{
+  id:'q49', bloco:4, num:5, dificuldade:'Difícil', imagem:'',
+  enunciado:`Paciente diabético tipo 2 em coma hiperosmolar. Glicemia = 890 mg/dL, K+ = 2,8 mEq/L, pH = 7,35. A equipe decide iniciar insulina imediatamente. Qual o ERRO grave nesta decisão?`,
+  alternativas:[
+    {letra:'A', texto:'Coma hiperosmolar requer insulina imediata — K+ baixo não é contraindicação.'},
+    {letra:'B', texto:'Insulina com K+ baixo agrava hipocalemia (empurra K+ para célula), risco de parada cardíaca — corrigir K+ ANTES de iniciar insulina.'},
+    {letra:'C', texto:'Não há erro — K+ de 2,8 é aceitável para iniciar insulina.'},
+    {letra:'D', texto:'O erro é usar insulina rápida — deveria ser glargina na fase aguda.'},
+    {letra:'E', texto:'Insulina está contraindicada no coma hiperosmolar não cetótico.'}
+  ],
+  correta:'B',
+  explanation:`<strong>A (Incorreta):</strong> Esta é a armadilha. A urgência da hiperglicemia pressiona a usar insulina, mas eletrólitos DEVEM ser avaliados antes.<br><br><strong>B (CORRETA — PEGADINHA CRÍTICA):</strong> Insulina ativa Na-K-ATPase → transfere K+ do extracelular para intracelular. Com K+ já em 2,8, iniciar insulina pode causar hipocalemia grave (&lt;2,5) com risco de fibrilação ventricular e PARADA CARDÍACA. Regra fundamental: EDHI ou CAD com K+ &lt;3,5 mEq/L → corrigir potássio com KCl IV até K+ ≥3,5 ANTES de iniciar insulina.<br><br><strong>C (Incorreta):</strong> K+ 2,8 é hipocalemia significativa — incorreto afirmar que é aceitável para iniciar insulina.<br><br><strong>D (Incorreta):</strong> No EDHI usa-se insulina regular em bomba contínua — glargina não tem papel na fase aguda.<br><br><strong>E (Incorreta):</strong> Insulina é fundamental no EDHI — mas após correção do K+.`
+},
+{
+  id:'q50', bloco:4, num:6, dificuldade:'Médio', imagem:'',
+  enunciado:`Paciente com DRC estágio 4, ECG com ondas T apiculadas e QRS alargado. K+ = 7,2 mEq/L. Qual o PRIMEIRO passo imediato no manejo da hipercalemia grave?`,
+  alternativas:[
+    {letra:'A', texto:'Furosemida IV para eliminar o potássio renalmente.'},
+    {letra:'B', texto:'Hemodiálise de emergência imediata.'},
+    {letra:'C', texto:'Gluconato de Cálcio 10% IV para estabilizar a membrana cardíaca.'},
+    {letra:'D', texto:'Insulina Regular 10U + SG50% IV para transferir K+ para a célula.'},
+    {letra:'E', texto:'Kayexalate oral e aguardar efeito.'}
+  ],
+  correta:'C',
+  explanation:`<strong>A (Incorreta):</strong> Furosemida elimina K+ mas demora horas para agir. O coração está em risco IMEDIATO com QRS alargado.<br><br><strong>B (Incorreta):</strong> Hemodiálise é o passo 3 (eliminação definitiva). Demora para ser preparada e instalada — o coração não espera.<br><br><strong>C (CORRETA):</strong> PASSO 1: Gluconato de Cálcio 10% IV (1-2 ampolas em 2-3 min) = PROTEÇÃO DA MEMBRANA CARDÍACA. NÃO reduz o K+. Antagoniza a toxicidade cardíaca do hiperpotássio restaurando o gradiente eletroquímico. Efeito em 1-3 min, dura 30-60 min. Este é o passo mais cobrado em provas de residência.<br><br><strong>D (Incorreta):</strong> Insulina + Glicose é o PASSO 2 (transferência celular de K+) — correto como próximo passo, mas depois do Cálcio. Age em 15-30 min.<br><br><strong>E (Incorreta):</strong> Kayexalate é passo 3 (eliminação via TGI) — age em 2-6h. Completamente inadequado como primeira medida.`
+},
+{
+  id:'q51', bloco:4, num:7, dificuldade:'Médio', imagem:'',
+  enunciado:`Paciente em ICC em uso de Losartana, Furosemida e Espironolactona chega com K+ = 7,8 mEq/L e QRS alargado. Após estabilização, quais medicamentos devem ser SUSPENSOS?`,
+  alternativas:[
+    {letra:'A', texto:'Furosemida — é o principal causador de hipercalemia.'},
+    {letra:'B', texto:'Losartana e Espironolactona — ambas elevam K+ ao bloquear aldosterona/angiotensina.'},
+    {letra:'C', texto:'Apenas Espironolactona.'},
+    {letra:'D', texto:'Nenhum — os medicamentos são essenciais para a ICC.'},
+    {letra:'E', texto:'Apenas Furosemida pois é diurético de alça.'}
+  ],
+  correta:'B',
+  explanation:`<strong>A (Incorreta):</strong> Furosemida (diurético de alça) ELIMINA K+ — causa hipocalemia, não hipercalemia. É o único que pode ser mantido ou até aumentado neste cenário.<br><br><strong>B (CORRETA):</strong> Losartana (BRA) bloqueia receptor AT1 de angiotensina II → reduz secreção de aldosterona → retém K+. Espironolactona antagoniza diretamente a aldosterona → também retém K+. AMBAS elevam o K+ sérico e devem ser suspensas na hipercalemia grave. Furosemida pode ser mantida pois ajuda na eliminação de K+.<br><br><strong>C (Incorreta):</strong> Apenas Espironolactona seria insuficiente — Losartana também contribui significativamente para a hipercalemia.<br><br><strong>D (Incorreta):</strong> K+ 7,8 com ECG de risco é emergência — medicamentos hipercalemizantes DEVEM ser suspensos independentemente da necessidade crônica.<br><br><strong>E (Incorreta):</strong> Furosemida é o diurético que AJUDA na eliminação de K+ — deve ser mantida.`
+},
+{
+  id:'q52', bloco:4, num:8, dificuldade:'Médio', imagem:'',
+  enunciado:`Sobre a Nutrição Parenteral Total (NPT), qual afirmação está INCORRETA?`,
+  alternativas:[
+    {letra:'A', texto:'NPT de alta osmolaridade deve ser administrada exclusivamente em acesso venoso central.'},
+    {letra:'B', texto:'Hiperglicemia é complicação frequente — monitorar glicemia e usar insulina conforme necessário.'},
+    {letra:'C', texto:'NPT é indicada prioritariamente quando o TGI está funcionante e o paciente recusa sonda.'},
+    {letra:'D', texto:'Síndrome de realimentação pode ocorrer ao iniciar NPT em pacientes desnutridos graves.'},
+    {letra:'E', texto:'Indicada em ressecções intestinais extensas com repouso do TGI por 5-7 dias ou mais.'}
+  ],
+  correta:'C',
+  explanation:`<strong>A (Correta):</strong> NPT de alta osmolaridade (~1500-2000 mOsm/L) EXCLUSIVAMENTE em acesso central (PICC, subclávia, jugular) — causa tromboflebite química em veia periférica.<br><br><strong>B (Correta):</strong> Hiperglicemia é a complicação mais frequente da NPT. Protocolo de insulina é mandatório (meta 140-180 mg/dL em UTI).<br><br><strong>C (INCORRETA — resposta):</strong> A indicação de NPT pressupõe TGI NÃO FUNCIONANTE ou inacessível. Se o TGI funciona, a via enteral é SEMPRE preferível — menor custo, menor risco de infecção, mantém barreira intestinal, previne atrofia de vilosidades. NPT em TGI funcionante não é indicação padrão.<br><br><strong>D (Correta):</strong> Síndrome de realimentação em desnutridos graves: hipofosfatemia, hipocalemia, hipomagnesemia agudas ao reiniciar nutrição. Iniciar devagar.<br><br><strong>E (Correta):</strong> Ressecções intestinais extensas, fístulas de alto débito, pancreatite grave — indicações clássicas de NPT.`
+},
+{
+  id:'q53', bloco:4, num:9, dificuldade:'Médio', imagem:'',
+  enunciado:`Sobre reposição de KCl intravenoso, qual afirmação é CORRETA?`,
+  alternativas:[
+    {letra:'A', texto:'KCl IV pode ser administrado em bolus (push) rápido em emergências.'},
+    {letra:'B', texto:'KCl IV deve ser diluído e infundido lentamente: máx. 10-20 mEq/h em veia periférica e até 40 mEq/h em central com ECG contínuo.'},
+    {letra:'C', texto:'KCl concentrado pode ser administrado em veia periférica sem diluição em urgências.'},
+    {letra:'D', texto:'Não há limite de velocidade para infusão de KCl em emergência cardíaca.'},
+    {letra:'E', texto:'KCl IV é contraindicado em hipocalemia grave — usar sempre via oral.'}
+  ],
+  correta:'B',
+  explanation:`<strong>A (Incorreta — PERIGO EXTREMO):</strong> KCl em bolus (push) IV é LETAL — causa parada cardíaca por hipercalemia aguda localizada no sistema de condução. Um dos erros de medicação mais graves em hospital. KCl é medicação de ALTA VIGILÂNCIA (não deve ficar no posto sem prescrição farmacêutica).<br><br><strong>B (CORRETA):</strong> KCl IV SEMPRE diluído, infusão lenta: veia periférica máx. 10-20 mEq/h (concentração máx. 40 mEq/500ml para evitar flebite); veia central com ECG contínuo: até 40 mEq/h em emergência. Monitorar K+ sérico a cada 2-4h durante reposição intensa.<br><br><strong>C (Incorreta):</strong> KCl concentrado em veia periférica causa tromboflebite química imediata e intensa.<br><br><strong>D (Incorreta):</strong> Limite absoluto existe — ultrapassar 40 mEq/h mesmo em central é potencialmente fatal.<br><br><strong>E (Incorreta):</strong> KCl IV é indicado em hipocalemia grave ou quando via oral não está disponível.`
+},
+{
+  id:'q54', bloco:4, num:10, dificuldade:'Difícil', imagem:'',
+  enunciado:`Paciente em UTI com SIADH confirmado (Na+ = 124 mEq/L, euvolêmico, osmolaridade urinária elevada). Qual conduta está INCORRETA?`,
+  alternativas:[
+    {letra:'A', texto:'Restrição hídrica 800-1000ml/dia.'},
+    {letra:'B', texto:'Investigar causa base (tumores, medicamentos, SNC, pulmão).'},
+    {letra:'C', texto:'NaCl 3% IV em casos de sintomas neurológicos graves.'},
+    {letra:'D', texto:'Administrar SF 0,9% em grande volume para diluir o ADH.'},
+    {letra:'E', texto:'Considerar Tolvaptan ou Demeclociclina em casos refratários.'}
+  ],
+  correta:'D',
+  explanation:`<strong>A (Correta):</strong> Restrição hídrica é o pilar do tratamento do SIADH.<br><br><strong>B (Correta):</strong> SIADH exige pesquisa de causa (oat cell pulmonar, AVC, meningite, medicamentos: ISRS, carbamazepina, ciclofosfamida, vincristina, desmopressina).<br><br><strong>C (Correta):</strong> NaCl 3% está indicado no SIADH com sintomas neurológicos graves (convulsão, obnubilação) — correção rápida limitada de 4-5 mEq/L.<br><br><strong>D (INCORRETA — resposta):</strong> SF 0,9% em grande volume é INEFICAZ e PIORA o SIADH. No SIADH, o rim excreta o sódio do SF mas retém a água — fenômeno de desalinização — paradoxalmente piorando a hiponatremia. SF não é tratamento do SIADH euvolêmico.<br><br><strong>E (Correta):</strong> Tolvaptan (antagonista V2 de ADH) ou Demeclociclina (inibe efeito renal do ADH) são opções válidas no SIADH crônico refratário.`
+},
+
+// ━━ BLOCO 5 — TARV & Antifúngicos (Q55-Q64) ━━━━━━━━━━━
+{
+  id:'q55', bloco:5, num:1, dificuldade:'Fácil', imagem:'',
+  enunciado:`Qual é o esquema antirretroviral de primeira linha recomendado pelo Ministério da Saúde do Brasil para o início do tratamento do HIV em adultos?`,
+  alternativas:[
+    {letra:'A', texto:'Zidovudina + Lamivudina + Efavirenz.'},
+    {letra:'B', texto:'Tenofovir + Emtricitabina + Raltegravir.'},
+    {letra:'C', texto:'Tenofovir + Lamivudina + Dolutegravir.'},
+    {letra:'D', texto:'Abacavir + Lamivudina + Lopinavir/ritonavir.'},
+    {letra:'E', texto:'Darunavir + Ritonavir + Tenofovir.'}
+  ],
+  correta:'C',
+  explanation:`<strong>A (Incorreta):</strong> Zidovudina + Lamivudina + Efavirenz foi o esquema clássico, mas foi substituído pelo esquema com Dolutegravir por maior eficácia, tolerabilidade e barreira genética à resistência.<br><br><strong>B (Incorreta):</strong> Emtricitabina é equivalente à Lamivudina e ambas são usadas, mas Raltegravir não é o integrase preferido no Brasil — Dolutegravir é superior em barreira à resistência.<br><br><strong>C (CORRETA):</strong> O esquema padrão atual do PCDT do Ministério da Saúde (2023-2024): <strong>Tenofovir (TDF) + Lamivudina (3TC) + Dolutegravir (DTG)</strong>. Dolutegravir é inibidor de integrase com alta barreira genética à resistência, excelente tolerabilidade e posologia simplificada (1 comprimido/dia).<br><br><strong>D (Incorreta):</strong> Lopinavir/ritonavir é inibidor de protease — esquema mais antigo com mais efeitos adversos (dislipidemia, GI) e usado como resgate ou situações específicas.<br><br><strong>E (Incorreta):</strong> Darunavir/ritonavir é IP de segunda linha ou resgate — não é início de tratamento de rotina.`
+},
+{
+  id:'q56', bloco:5, num:2, dificuldade:'Médio', imagem:'',
+  enunciado:`Sobre a PrEP (Profilaxia Pré-Exposição ao HIV), assinale a afirmativa CORRETA:`,
+  alternativas:[
+    {letra:'A', texto:'O esquema é Tenofovir + Dolutegravir por 28 dias contínuos.'},
+    {letra:'B', texto:'A proteção é imediata a partir da primeira dose.'},
+    {letra:'C', texto:'O esquema é Tenofovir + Emtricitabina diário. A proteção para relações anais ocorre após 7 dias e para relações vaginais após 20 dias.'},
+    {letra:'D', texto:'A PrEP é indicada apenas para profissionais de saúde após acidente ocupacional.'},
+    {letra:'E', texto:'A PrEP substitui o uso de preservativos — não é necessário manter as duas estratégias.'}
+  ],
+  correta:'C',
+  explanation:`<strong>A (Incorreta):</strong> Este é o esquema da PEP (pós-exposição), não da PrEP. A PrEP usa Tenofovir + Emtricitabina (Truvada) de forma contínua.<br><br><strong>B (Incorreta):</strong> A proteção NÃO é imediata. O fármaco precisa de tempo para atingir concentração protetora nos tecidos-alvo.<br><br><strong>C (CORRETA):</strong> PrEP = Tenofovir (TDF) + Emtricitabina (FTC) — 1 comprimido ao dia, contínuo. Tempo para proteção: relações anais receptivas: <strong>7 dias</strong>; relações vaginais e uso de drogas injetáveis: <strong>20 dias</strong>. Disponível gratuitamente no SUS em UBS de referência.<br><br><strong>D (Incorreta):</strong> PrEP é para pessoas HIV-negativas com alto risco de exposição contínua (parceiros sorodiscordantes, múltiplos parceiros, profissionais do sexo). Para acidente ocupacional: PEP.<br><br><strong>E (Incorreta):</strong> PrEP não substitui preservativos — não protege contra outras ISTs (sífilis, gonorreia, HPV, herpes). Estratégias devem ser combinadas.`
+},
+{
+  id:'q57', bloco:5, num:3, dificuldade:'Médio', imagem:'',
+  enunciado:`Sobre a PEP (Profilaxia Pós-Exposição ao HIV), assinale a afirmativa CORRETA:`,
+  alternativas:[
+    {letra:'A', texto:'Deve ser iniciada em até 7 dias após a exposição.'},
+    {letra:'B', texto:'O esquema é Tenofovir + Emtricitabina por 14 dias.'},
+    {letra:'C', texto:'Deve ser iniciada em até 72 horas após a exposição. Esquema: TDF + 3TC + Dolutegravir por 28 dias.'},
+    {letra:'D', texto:'Indicada apenas para acidentes com material biológico em profissionais de saúde.'},
+    {letra:'E', texto:'A PEP oferece proteção mesmo iniciada após 7 dias da exposição.'}
+  ],
+  correta:'C',
+  explanation:`<strong>A (Incorreta):</strong> O prazo é 72 horas (3 dias), não 7 dias. Após 72h a PEP perde eficácia e não deve ser iniciada.<br><br><strong>B (Incorreta):</strong> A duração correta é 28 dias, não 14 dias. 14 dias é insuficiente para erradicar o risco de soroconversão.<br><br><strong>C (CORRETA):</strong> PEP deve ser iniciada em até <strong>72 horas</strong> após a exposição. Esquema atual: <strong>Tenofovir (TDF) + Lamivudina (3TC) + Dolutegravir (DTG) por 28 dias</strong>. Indicações: violência sexual, relação sexual de risco sem preservativo, acidente ocupacional com material biológico. Disponível gratuitamente em UPAs e prontos-socorros.<br><br><strong>D (Incorreta):</strong> PEP não é exclusiva para profissionais de saúde — é indicada para qualquer situação de exposição de risco ao HIV.<br><br><strong>E (Incorreta):</strong> Após 72h a PEP não deve ser iniciada — não há evidência de eficácia após este prazo.`
+},
+{
+  id:'q58', bloco:5, num:4, dificuldade:'Difícil', imagem:'',
+  enunciado:`Paciente HIV+ com CD4 = 80 células/mm³ desenvolve pneumonia por Pneumocystis jirovecii (PCP) confirmada. PaO2 = 62 mmHg. Qual a conduta COMPLETA?`,
+  alternativas:[
+    {letra:'A', texto:'SMX-TMP em altas doses por 21 dias. Não há indicação de corticoide.'},
+    {letra:'B', texto:'Apenas corticoide sistêmico (prednisona) por 21 dias.'},
+    {letra:'C', texto:'SMX-TMP em altas doses por 21 dias + Prednisona (corticoide) pois PaO2 < 70 mmHg.'},
+    {letra:'D', texto:'Anfotericina B lipídica por ser infecção fúngica grave.'},
+    {letra:'E', texto:'Voriconazol + Prednisona para cobertura de Aspergillus e anti-inflamatório.'}
+  ],
+  correta:'C',
+  explanation:`<strong>A (Incorreta):</strong> SMX-TMP está correto, mas omite o corticoide — que é INDICADO quando PaO2 &lt; 70 mmHg. Sem corticoide, a resposta inflamatória ao tratamento pode piorar a hipoxemia e aumentar mortalidade.<br><br><strong>B (Incorreta):</strong> Corticoide sozinho sem tratar o agente infeccioso não elimina o P. jirovecii — conduta incorreta e perigosa.<br><br><strong>C (CORRETA):</strong> Tratamento completo da PCP grave: 1) <strong>SMX-TMP em altas doses (15-20mg/kg/dia de TMP) por 21 dias</strong>; 2) <strong>Prednisona 40mg 12/12h por 5 dias → 40mg/dia por 5 dias → 20mg/dia até completar 21 dias</strong> — indicada quando PaO2 &lt; 70 mmHg ou gradiente A-a &gt; 35 mmHg. O corticoide reduz a resposta inflamatória exacerbada e a mortalidade comprovadamente.<br><br><strong>D (Incorreta):</strong> Anfotericina B trata fungos (Candida, Cryptococcus, Histoplasma, Aspergillus). P. jirovecii é tratado com SMX-TMP ou Pentamidina.<br><br><strong>E (Incorreta):</strong> Voriconazol cobre Aspergillus — sem ação contra Pneumocystis.`
+},
+{
+  id:'q59', bloco:5, num:5, dificuldade:'Difícil', imagem:'',
+  enunciado:`Paciente com HIV/AIDS e lesões violáceas infiltradas em pele e mucosas. Biópsia confirma Sarcoma de Kaposi. A equipe cogita usar corticoide para reduzir a inflamação. Qual a conduta correta?`,
+  alternativas:[
+    {letra:'A', texto:'Prednisona 1mg/kg/dia é o tratamento de escolha para Sarcoma de Kaposi.'},
+    {letra:'B', texto:'Corticoide em dose baixa pode ser usado com segurança no Sarcoma de Kaposi.'},
+    {letra:'C', texto:'Corticoide é FORMALMENTE PROIBIDO no Sarcoma de Kaposi — pode causar progressão explosiva e disseminação.'},
+    {letra:'D', texto:'Metilprednisolona IV é indicada para formas viscerais do Sarcoma de Kaposi.'},
+    {letra:'E', texto:'Corticoide inalatório pode ser usado sem riscos no Sarcoma de Kaposi.'}
+  ],
+  correta:'C',
+  explanation:`<strong>A (Incorreta):</strong> Prednisona em qualquer dose é contraindicada — não é tratamento e pode causar progressão explosiva do Sarcoma de Kaposi.<br><br><strong>B (Incorreta):</strong> Não existe dose segura de corticoide no Sarcoma de Kaposi — mesmo doses baixas podem precipitar progressão da doença associada ao HHV-8.<br><br><strong>C (CORRETA):</strong> Corticoide é FORMALMENTE CONTRAINDICADO no Sarcoma de Kaposi (SK). O SK é associado ao HHV-8 e o corticoide causa imunossupressão adicional → reativação/multiplicação viral → progressão explosiva e disseminação visceral. O tratamento do SK é: TARV (controle do HIV) + quimioterapia (bleomicina, vincristina, lipossomal doxorrubicina para formas avançadas).<br><br><strong>D (Incorreta):</strong> Metilprednisolona IV é corticoide — igualmente contraindicado em qualquer forma do SK.<br><br><strong>E (Incorreta):</strong> Mesmo corticoide inalatório tem potencial de absorção sistêmica e deve ser usado com extrema cautela. A contraindicação formal é para corticosteroides sistêmicos.`
+},
+{
+  id:'q60', bloco:5, num:6, dificuldade:'Médio', imagem:'',
+  enunciado:`Paciente em UTI, em NPT por 15 dias, uso de antibióticos de amplo espectro por 20 dias, com cateter venoso central. Desenvolve febre persistente sem foco identificado. Hemocultura com leveduras em crescimento. Qual a conduta empírica inicial para candidemia hospitalar?`,
+  alternativas:[
+    {letra:'A', texto:'Fluconazol 400mg/dia IV — cobre todas as espécies de Candida.'},
+    {letra:'B', texto:'Voriconazol IV — melhor espectro para candidemia hospitalar.'},
+    {letra:'C', texto:'Equinocandina (Caspofungina, Micafungina ou Anidulafungina) como terapia empírica inicial.'},
+    {letra:'D', texto:'Anfotericina B deoxicolato IV em dose plena imediatamente.'},
+    {letra:'E', texto:'Itraconazol oral — aguardar fungigrama antes de tratar.'}
+  ],
+  correta:'C',
+  explanation:`<strong>A (Incorreta):</strong> Fluconazol não é adequado para terapia empírica inicial de candidemia hospitalar pois não cobre espécies com resistência intrínseca (C. krusei) ou reduzida (C. glabrata) — muito comuns em ambiente de UTI com pressão seletiva de antibióticos e azólicos.<br><br><strong>B (Incorreta):</strong> Voriconazol tem excelente espectro para Aspergillus e outras espécies, mas não é o fármaco de eleição para candidemia — as equinocandinas são superiores pela atividade fungicida e perfil de segurança.<br><br><strong>C (CORRETA):</strong> Equinocandinas (Caspofungina, Micafungina, Anidulafungina) são o tratamento empírico de ESCOLHA para candidemia hospitalar. Motivos: amplo espectro incluindo C. glabrata e C. krusei (resistentes ao Fluconazol), atividade fungicida (não apenas fungistática), excelente tolerabilidade. Descalonar para Fluconazol apenas após fungigrama com espécie sensível e resposta clínica.<br><br><strong>D (Incorreta):</strong> Anfotericina B deoxicolato tem toxicidade renal elevada — substituída pela formulação lipídica quando necessário. Não é primeira escolha em candidemia sem acometimento de SNC.<br><br><strong>E (Incorreta):</strong> Itraconazol oral tem biodisponibilidade variável e não é indicado para candidemia; aguardar fungigrama sem tratar atrasa o início do tratamento de uma infecção potencialmente fatal.`
+},
+{
+  id:'q61', bloco:5, num:7, dificuldade:'Difícil', imagem:'',
+  enunciado:`Paciente imunossuprimido após transplante de fígado desenvolve pneumonia grave com nódulos pulmonares e halo ao RX e TC de tórax. Galactomanana sérica positiva. Diagnóstico mais provável e tratamento?`,
+  alternativas:[
+    {letra:'A', texto:'Pneumocistose (PCP) — SMX-TMP em altas doses.'},
+    {letra:'B', texto:'Candidemia pulmonar — Caspofungina IV.'},
+    {letra:'C', texto:'Aspergilose invasiva — Voriconazol como 1ª linha.'},
+    {letra:'D', texto:'Histoplasmose pulmonar aguda — Itraconazol VO.'},
+    {letra:'E', texto:'Mucormicose pulmonar — Fluconazol em altas doses.'}
+  ],
+  correta:'C',
+  explanation:`<strong>A (Incorreta):</strong> PCP apresenta infiltrado intersticial difuso bilateral, não nódulos com halo. Galactomanana é marcador de Aspergillus, não de Pneumocystis.<br><br><strong>B (Incorreta):</strong> Candidemia pulmonar é rara como foco primário. Nódulos com halo + galactomanana positiva = Aspergillus.<br><br><strong>C (CORRETA):</strong> Aspergilose Invasiva (AI) em imunossuprimido: nódulos pulmonares com sinal do halo (halo de hemorragia ao redor do nódulo) + galactomanana sérica positiva (biomarcador específico de Aspergillus). Tratamento de 1ª linha: <strong>Voriconazol IV/VO</strong> — superior à Anfotericina B em ensaios randomizados (maior sobrevida, menor toxicidade). Alternativas: Isavuconazol, Anfotericina B lipídica.<br><br><strong>D (Incorreta):</strong> Histoplasmose tem RX com infiltrado miliar ou consolidação — não nódulo com halo. Galactomanana negativa em Histoplasma (marcador específico de Aspergillus).<br><br><strong>E (Incorreta):</strong> Mucormicose tem RX com sinal do halo reverso. Fluconazol é INATIVO contra Mucor e também contra Aspergillus. Mucormicose é tratada com Anfotericina B lipídica.`
+},
+{
+  id:'q62', bloco:5, num:8, dificuldade:'Médio', imagem:'',
+  enunciado:`Paciente com AIDS avançada (CD4 = 40) apresenta cefaleia crônica progressiva há 3 semanas, febre baixa e confusão mental. LCR: pressão elevada, tinta da China positiva, antígeno criptocócico positivo. Qual o tratamento de indução correto?`,
+  alternativas:[
+    {letra:'A', texto:'Fluconazol 400mg/dia VO por 8 semanas como monoterapia.'},
+    {letra:'B', texto:'Voriconazol IV por 6 semanas.'},
+    {letra:'C', texto:'Anfotericina B lipídica + Flucitosina por 2 semanas (indução), seguida de Fluconazol (consolidação/manutenção).'},
+    {letra:'D', texto:'Itraconazol VO por 6 meses.'},
+    {letra:'E', texto:'Equinocandina IV por 4 semanas.'}
+  ],
+  correta:'C',
+  explanation:`<strong>A (Incorreta):</strong> Fluconazol em monoterapia é inadequado para indução da neurocriptococose grave — taxa de mortalidade muito mais elevada que a terapia combinada. Reservado para consolidação e manutenção após indução com Anfotericina B.<br><br><strong>B (Incorreta):</strong> Voriconazol tem atividade contra Cryptococcus in vitro, mas não é o esquema de escolha estabelecido pelas diretrizes (IDSA/MS Brasil).<br><br><strong>C (CORRETA):</strong> Protocolo padrão para neurocriptococose em HIV: Fase de Indução (2 semanas): <strong>Anfotericina B lipídica 3-4 mg/kg/dia + Flucitosina 100 mg/kg/dia</strong>. Fase de Consolidação (8 semanas): Fluconazol 400mg/dia. Fase de Manutenção: Fluconazol 200mg/dia até CD4 &gt; 200 por 6 meses. Ponções lombares repetidas para controle da hipertensão intracraniana são mandatórias.<br><br><strong>D (Incorreta):</strong> Itraconazol tem atividade variável contra Cryptococcus e não é o agente de escolha nas diretrizes atuais.<br><br><strong>E (Incorreta):</strong> Equinocandinas (Caspofungina, Micafungina) têm atividade mínima contra Cryptococcus neoformans — são praticamente inativas para esta infecção.`
+},
+{
+  id:'q63', bloco:5, num:9, dificuldade:'Médio', imagem:'',
+  enunciado:`Qual antifúngico é a primeira escolha para o tratamento da Esporotricose cutânea linfangítica (forma de escadinha)?`,
+  alternativas:[
+    {letra:'A', texto:'Fluconazol 400mg/dia por 6 meses.'},
+    {letra:'B', texto:'Anfotericina B lipídica IV.'},
+    {letra:'C', texto:'Itraconazol 100-200mg/dia por 3-6 meses.'},
+    {letra:'D', texto:'Voriconazol oral por 3 meses.'},
+    {letra:'E', texto:'Caspofungina IV por 4 semanas.'}
+  ],
+  correta:'C',
+  explanation:`<strong>A (Incorreta):</strong> Fluconazol tem atividade menor contra Sporothrix schenckii comparado ao Itraconazol. É alternativa de 2ª linha quando Itraconazol não pode ser usado.<br><br><strong>B (Incorreta):</strong> Anfotericina B lipídica IV é reservada para esporotricose disseminada grave (osteoarticular, pulmonar, meníngea) ou pacientes imunossuprimidos que não respondem ao Itraconazol oral.<br><br><strong>C (CORRETA):</strong> Itraconazol 100-200mg/dia é o tratamento de ESCOLHA para esporotricose cutânea/linfangítica (forma de escadinha — lesões nodulares seguindo linfáticos). Duração: 3-6 meses (pelo menos 4 semanas após cicatrização completa). Atenção: Itraconazol é cardiodepressor — cuidado em pacientes com ICC ou FEVE reduzida.<br><br><strong>D (Incorreta):</strong> Voriconazol não tem indicação estabelecida para esporotricose e não é fármaco de escolha.<br><br><strong>E (Incorreta):</strong> Equinocandinas não têm atividade significativa contra Sporothrix schenckii.`
+},
+{
+  id:'q64', bloco:5, num:10, dificuldade:'Difícil', imagem:'',
+  enunciado:`Paciente imunocompetente, trabalhador rural do Vale do São Francisco, com tosse, febre e adenopatia hiliar bilateral há 3 semanas. BAAR negativo. TC de tórax: infiltrado intersticial com padrão miliar e hepatoesplenomegalia. Sorologia para Histoplasma positiva. Qual o tratamento correto?`,
+  alternativas:[
+    {letra:'A', texto:'Itraconazol 200mg 12/12h por 12 semanas para forma moderada.'},
+    {letra:'B', texto:'Fluconazol 800mg/dia por 6 meses.'},
+    {letra:'C', texto:'Anfotericina B lipídica IV para indução, seguida de Itraconazol para manutenção nas formas graves.'},
+    {letra:'D', texto:'Voriconazol como 1ª linha para histoplasmose pulmonar.'},
+    {letra:'E', texto:'SMX-TMP em altas doses, similar ao esquema de PCP.'}
+  ],
+  correta:'C',
+  explanation:`<strong>A (Parcialmente correta para formas leves-moderadas):</strong> Itraconazol 200mg 12/12h é indicado para histoplasmose pulmonar crônica leve-moderada. Mas para a forma grave com padrão miliar + hepatoesplenomegalia, a indução deve ser com Anfotericina B.<br><br><strong>B (Incorreta):</strong> Fluconazol tem atividade inferior ao Itraconazol contra Histoplasma capsulatum. Não é fármaco de primeira escolha.<br><br><strong>C (CORRETA):</strong> Histoplasmose disseminada grave (padrão miliar + acometimento sistêmico): Indução: <strong>Anfotericina B lipídica 3 mg/kg/dia por 1-2 semanas</strong> (ou convencional se lipídica não disponível). Manutenção: <strong>Itraconazol 200mg 12/12h por 12 semanas, depois 200mg/dia por 12-18 meses</strong>. Monitorar nefrotoxicidade da Anfotericina B (creatinina, K+, Mg2+ diariamente).<br><br><strong>D (Incorreta):</strong> Voriconazol não é fármaco de escolha para histoplasmose — atividade inferior ao Itraconazol para Histoplasma capsulatum.<br><br><strong>E (Incorreta):</strong> SMX-TMP é específico para Pneumocystis jirovecii. Sem atividade contra Histoplasma capsulatum.`
+},
+
+]; // fim questionsDatabase — 64 questões totais
+
+// ════════════════════════════════════════════════════════
+// BLOCOS CONFIG
+// ════════════════════════════════════════════════════════
+const BLOCOS = [
+  {id:1, nome:'Clínica Médica & Terapêutica',      cor:'var(--amber)',  corD:'var(--amber-d)'},
+  {id:2, nome:'Antibioticoterapia & ITU',            cor:'var(--peach)',  corD:'var(--peach-d)'},
+  {id:3, nome:'Quinolonas & Resistência Bacteriana', cor:'var(--sage)',   corD:'var(--sage-d)'},
+  {id:4, nome:'Hidroeletrolítico & NPT',             cor:'var(--sky)',    corD:'var(--sky-d)'},
+  {id:5, nome:'TARV & Antifúngicos',                 cor:'var(--orange)', corD:'var(--orange-d)'}
+];
+
+// ════════════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════════════
+let userProgress = {}, activeBloco = null, activeQIdx = 0;
+let selAlt = null, answeredNow = false;
+let timerSec = 0, timerInt = null, timerPaused = false;
+let imgGallery = [];
+
+// ════════════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════════════
+function initApp(){
+  document.getElementById('mTotal').textContent = questionsDatabase.length;
+  renderBlocos();
+  renderResumo(0);
+  updateMetrics();
+  startTimer();
+}
+
+// ════════════════════════════════════════════════════════
+// TABS
+// ════════════════════════════════════════════════════════
+function switchTab(tab, el){
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tabSimulado').style.display = tab === 'simulado' ? 'block' : 'none';
+  document.getElementById('tabResumos').style.display  = tab === 'resumos'  ? 'block' : 'none';
+}
+
+// ════════════════════════════════════════════════════════
+// BLOCOS
+// ════════════════════════════════════════════════════════
+function renderBlocos(){
+  const grid = document.getElementById('blocosGrid');
+  grid.innerHTML = '';
+  BLOCOS.forEach(b => {
+    const qs     = questionsDatabase.filter(q => q.bloco === b.id);
+    const total  = qs.length;
+    const resp   = qs.filter(q => userProgress[q.id]?.status).length;
+    const ac     = qs.filter(q => userProgress[q.id]?.status === 'correct').length;
+    const pct    = resp > 0 ? Math.round((ac / resp) * 100) : 0;
+    const fill   = pct >= 80 ? '#10B981' : pct >= 60 ? '#F59E0B' : pct > 0 ? '#F43F5E' : '#D1C4B8';
+    const fw     = total > 0 ? Math.round((ac / total) * 100) : 0;
+    grid.innerHTML += `
+    <div class="bloco-card${activeBloco === b.id ? ' active' : ''}"
+         style="border-top:3px solid ${b.cor}"
+         onclick="selectBloco(${b.id})">
+      <p class="bloco-num">Bloco ${b.id}</p>
+      <p class="bloco-title">${b.nome}</p>
+      <p class="bloco-count">${resp}/${total} respondidas · ${ac} acertos</p>
+      <div class="prog-w"><div class="prog-f" style="width:${fw}%;background:${fill}"></div></div>
+    </div>`;
+  });
+}
+
+function selectBloco(bId){
+  activeBloco = bId; activeQIdx = 0;
+  renderBlocos();
+  document.getElementById('qViewer').style.display = 'block';
+  renderQuestion();
+  document.getElementById('qViewer').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+// ════════════════════════════════════════════════════════
+// QUESTION RENDER  (loadQuestion)
+// ════════════════════════════════════════════════════════
+function getBQ(){ return questionsDatabase.filter(q => q.bloco === activeBloco); }
+
+function renderQuestion(){
+  const qs = getBQ(), q = qs[activeQIdx];
+  if(!q) return;
+  answeredNow = false; selAlt = null;
+
+  // carousel
+  const car = document.getElementById('qCarousel');
+  car.innerHTML = '';
+  qs.forEach((qq, i) => {
+    const p = userProgress[qq.id];
+    let cls = '';
+    if(i === activeQIdx)           cls = 'current';
+    else if(p?.status === 'correct') cls = 'correct';
+    else if(p?.status === 'wrong')   cls = 'wrong';
+    car.innerHTML += `<div class="qdot ${cls}" onclick="jumpToQ(${i})">${qq.num}</div>`;
+  });
+
+  // meta
+  document.getElementById('qMeta').textContent = `Bloco ${q.bloco} · Questão ${q.num} de ${qs.length}`;
+
+  // difficulty badge (loadQuestion captures 'dificuldade')
+  const dMap = {
+    'Fácil':   ['df', '● Fácil'],
+    'Médio':   ['dm', '◆ Médio'],
+    'Difícil': ['dd', '▲ Difícil']
+  };
+  const [dcls, dlbl] = dMap[q.dificuldade] || dMap['Médio'];
+  document.getElementById('diffBadge').innerHTML =
+    `<span class="dbadge ${dcls}">${dlbl}</span>`;
+
+  // text + image
+  document.getElementById('qText').textContent = q.enunciado;
+  const iw = document.getElementById('qImgW');
+  const im = document.getElementById('qImg');
+  if(q.imagem){ im.src = q.imagem; iw.style.display = 'block'; }
+  else          { iw.style.display = 'none'; }
+
+  // alternativas
+  const aw   = document.getElementById('altsW');
+  aw.innerHTML = '';
+  const prog = userProgress[q.id];
+  const elim = prog?.eliminated || [];
+  q.alternativas.forEach(alt => {
+    let exCls = '';
+    if(prog){
+      if(alt.letra === q.correta)      exCls = 'correct';
+      else if(alt.letra === prog.chosen) exCls = 'wrong';
+    }
+    if(elim.includes(alt.letra)) exCls = 'elim';
+    aw.innerHTML += `
+    <div class="alt-row">
+      <button class="alt-btn ${exCls}" id="alt-${alt.letra}"
+        ${prog ? 'disabled' : ''}
+        onclick="selectOption('${alt.letra}')">
+        <span class="alt-letter">${alt.letra}</span>
+        <span>${alt.texto}</span>
+      </button>
+      ${!prog
+        ? `<button class="sci-btn" title="Eliminar alternativa"
+             onclick="toggleScissor('${alt.letra}')">✂️</button>`
+        : ''}
+    </div>`;
+  });
+
+  // gabarito
+  const gp = document.getElementById('gabPanel');
+  const gb = document.getElementById('gabBody');
+  if(prog){ gp.style.display = 'block'; gb.innerHTML = q.explanation; }
+  else     { gp.style.display = 'none';  gb.innerHTML = ''; }
+
+  // botões
+  const bR = document.getElementById('btnResp');
+  const bN = document.getElementById('btnNext');
+  if(prog){
+    bR.style.display = 'none'; bN.style.display = 'block';
+    bN.textContent = activeQIdx >= qs.length - 1 ? '✅ Concluir Bloco' : 'Próxima →';
+  } else {
+    bR.style.display = 'block'; bR.disabled = true; bN.style.display = 'none';
+  }
+}
+
+function jumpToQ(i){ activeQIdx = i; renderQuestion(); }
+
+// selectOption — seleção passiva (apenas destaca borda)
+function selectOption(l){
+  if(answeredNow) return;
+  selAlt = l;
+  document.querySelectorAll('.alt-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById(`alt-${l}`)?.classList.add('selected');
+  document.getElementById('btnResp').disabled = false;
+}
+
+// toggleScissor — ferramenta da tesourinha
+function toggleScissor(l){
+  const q = getBQ()[activeQIdx];
+  if(!userProgress[q.id]) userProgress[q.id] = {};
+  if(!userProgress[q.id].eliminated) userProgress[q.id].eliminated = [];
+  const elim = userProgress[q.id].eliminated;
+  if(elim.includes(l)){
+    // reativar
+    userProgress[q.id].eliminated = elim.filter(x => x !== l);
+    document.getElementById(`alt-${l}`)?.classList.remove('elim');
+  } else {
+    elim.push(l);
+    document.getElementById(`alt-${l}`)?.classList.add('elim');
+    syncToAPI(q.id, `elim:${l}`);
+  }
+}
+
+// submitAnswer
+function submitAnswer(){
+  if(!selAlt) return;
+  const qs = getBQ(), q = qs[activeQIdx];
+  const ok = selAlt === q.correta;
+  userProgress[q.id] = {
+    ...(userProgress[q.id] || {}),
+    status: ok ? 'correct' : 'wrong',
+    chosen: selAlt
+  };
+  answeredNow = true;
+  if(q.imagem){ imgGallery.push({src: q.imagem, ok}); updateGallery(); }
+  syncToAPI(q.id, ok ? 'correct' : 'wrong');
+  updateMetrics();
+  renderBlocos();
+  renderQuestion();
+}
+
+// alias para manter compatibilidade com onclick no HTML
+function responder(){ submitAnswer(); }
+
+// nextQuestion
+function nextQuestion(){
+  const qs = getBQ();
+  if(activeQIdx < qs.length - 1){ activeQIdx++; renderQuestion(); }
+  else {
+    document.getElementById('qViewer').style.display = 'none';
+    activeBloco = null;
+    renderBlocos();
+  }
+}
+
+// alias para manter compatibilidade
+function proximaQ(){ nextQuestion(); }
+
+// ════════════════════════════════════════════════════════
+// METRICS
+// ════════════════════════════════════════════════════════
+function updateMetrics(){
+  const keys = Object.keys(userProgress).filter(k => userProgress[k].status);
+  const resp = keys.length;
+  const ac   = keys.filter(k => userProgress[k].status === 'correct').length;
+  const pct  = resp > 0 ? Math.round((ac / resp) * 100) : 0;
+  document.getElementById('mResp').textContent    = resp;
+  document.getElementById('mAcertos').textContent = ac;
+  document.getElementById('mAprov').textContent   = resp ? pct + '%' : '—';
+}
+
+// ════════════════════════════════════════════════════════
+// TIMER
+// ════════════════════════════════════════════════════════
+function startTimer(){
+  timerInt = setInterval(() => {
+    if(!timerPaused){ timerSec++; updTimerDisp(); }
+  }, 1000);
+}
+function stopTimer(){ clearInterval(timerInt); }
+function updTimerDisp(){
+  const h = String(Math.floor(timerSec / 3600)).padStart(2, '0');
+  const m = String(Math.floor((timerSec % 3600) / 60)).padStart(2, '0');
+  const s = String(timerSec % 60).padStart(2, '0');
+  document.getElementById('timerDisp').textContent = `${h}:${m}:${s}`;
+}
+
+// toggleTimer / togglePause
+function togglePause(){
+  timerPaused = !timerPaused;
+  document.getElementById('pauseOv').classList.toggle('show', timerPaused);
+  document.getElementById('btnPause').textContent = timerPaused ? '▶ Continuar' : '⏸ Pausar';
+}
+function toggleTimer(){ togglePause(); }
+
+// startModule — seleciona bloco pelo ID
+function startModule(bId){ selectBloco(bId); }
+
+// finalizarProva
+function finalizarProva(){
+  if(!confirm('Finalizar o simulado e ver relatório?')) return;
+  stopTimer();
+  const keys = Object.keys(userProgress).filter(k => userProgress[k].status);
+  const resp = keys.length;
+  const ac   = keys.filter(k => userProgress[k].status === 'correct').length;
+  const pct  = resp > 0 ? Math.round((ac / resp) * 100) : 0;
+  const h = String(Math.floor(timerSec / 3600)).padStart(2, '0');
+  const m = String(Math.floor((timerSec % 3600) / 60)).padStart(2, '0');
+  const s = String(timerSec % 60).padStart(2, '0');
+  document.getElementById('repDesc').textContent = `Tempo total: ${h}:${m}:${s}`;
+  document.getElementById('repStats').innerHTML = `
+    <div class="rs-box">
+      <div class="rs-n" style="color:var(--orange-d)">${resp}</div>
+      <div class="rs-l">Respondidas</div>
+    </div>
+    <div class="rs-box">
+      <div class="rs-n" style="color:#059669">${ac}</div>
+      <div class="rs-l">Acertos</div>
+    </div>
+    <div class="rs-box">
+      <div class="rs-n" style="color:var(--amber-d)">${pct}%</div>
+      <div class="rs-l">Aproveitamento</div>
+    </div>`;
+  document.getElementById('reportModal').classList.add('show');
+}
+
+// ════════════════════════════════════════════════════════
+// GALLERY + MODAL
+// ════════════════════════════════════════════════════════
+function updateGallery(){
+  const sec  = document.getElementById('galSec');
+  const grid = document.getElementById('galGrid');
+  if(!imgGallery.length){ sec.style.display = 'none'; return; }
+  sec.style.display = 'block';
+  grid.innerHTML = '';
+  imgGallery.forEach(it => {
+    grid.innerHTML += `
+    <div class="gal-thumb${it.ok ? '' : ' tw'}" onclick="openModal('${it.src}')">
+      <img src="${it.src}" alt="Questão respondida">
+    </div>`;
+  });
+}
+function openModal(src){
+  document.getElementById('modalImg').src = src;
+  document.getElementById('imgModal').classList.add('show');
+}
+function closeModal(){ document.getElementById('imgModal').classList.remove('show'); }
+
+// ════════════════════════════════════════════════════════
+// RESUMOS — switchSummaryTopic
+// ════════════════════════════════════════════════════════
+function switchResumo(idx, el){
+  document.querySelectorAll('.rtab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderResumo(idx);
+}
+function switchSummaryTopic(idx, el){ switchResumo(idx, el); }
+
+function renderResumo(idx){
+  const mods = [mod1, mod2, mod3, mod4, mod5];
+  document.getElementById('resumoContent').innerHTML = mods[idx]();
+}
+
+
+
+function mod1(){return `
+<p class="sec-h">🦠 Tópico 1 — Antibioticoterapia, Resistência e ITUs Complicadas</p>
+<p class="sec-sub">Mecanismos de ação, alvos bacterianos, germes de UTI, diagnóstico e conduta nas infecções urinárias — com todas as pegadinhas de prova.</p>
+
+<div class="bento b2">
+  <div class="bc ba">
+    <h3>🎯 Mecanismos e Alvos Celulares — Tabela Completa</h3>
+    <table class="mt">
+      <tr><th>Alvo</th><th>Classe</th><th>Exemplos</th><th>Mecanismo detalhado</th></tr>
+      <tr><td><strong>Parede celular</strong></td><td>Betalactâmicos</td><td>Penicilinas, Cefalosporinas, Carbapenêmicos, Aztreonam</td><td>Inibem transpeptidases (PBPs) → bloqueiam síntese de peptidioglicano</td></tr>
+      <tr><td></td><td>Glicopeptídeos</td><td>Vancomicina, Teicoplanina</td><td>Ligam-se ao D-Ala-D-Ala → bloqueiam polimerização do peptidioglicano</td></tr>
+      <tr><td></td><td>Fosfomicina</td><td>Fosfomicina trometamol</td><td>Inibe MurA (1ª etapa da síntese de peptidioglicano)</td></tr>
+      <tr><td><strong>Membrana</strong></td><td>Polimixinas</td><td>Polimixina B, Colistina (E)</td><td>Desestabilizam lipopolissacáride (LPS) da membrana externa de Gram-negativos</td></tr>
+      <tr><td><strong>30S (pequena)</strong></td><td>Aminoglicosídeos</td><td>Gentamicina, Amicacina, Tobramicina</td><td>Misreading do mRNA; proteínas aberrantes → bactericidas concentração-dependentes</td></tr>
+      <tr><td></td><td>Tetraciclinas</td><td>Doxiciclina, Minociclina, Tigeciclina</td><td>Bloqueiam ligação tRNA-aminoacil ao sítio A → bacteriostáticas</td></tr>
+      <tr><td><strong>50S (grande)</strong></td><td>Macrolídeos</td><td>Azitromicina, Claritromicina, Eritromicina</td><td>Inibem translocação do peptídeo no túnel de saída do ribossomo</td></tr>
+      <tr><td></td><td>Lincosamidas</td><td>Clindamicina</td><td>Mesmo sítio dos macrolídeos (sítio P) → anaeróbios e G+</td></tr>
+      <tr><td></td><td>Oxazolidinonas</td><td>Linezolida</td><td>Inibem formação do complexo de iniciação 70S — mecanismo único, sem resistência cruzada</td></tr>
+      <tr><td></td><td>Cloranfenicol</td><td>Cloranfenicol</td><td>Inibe peptidil-transferase; amplo espectro, toxicidade medular (anemia aplástica)</td></tr>
+      <tr><td><strong>DNA-girase</strong></td><td>Quinolonas</td><td>Ciprofloxacino, Levofloxacino, Moxifloxacino</td><td>Inibem topoisomerase II (DNA-girase) + topoisomerase IV → bactericidas</td></tr>
+      <tr><td><strong>RNA polimerase</strong></td><td>Rifamicinas</td><td>Rifampicina</td><td>Inibe RNA polimerase DNA-dependente — nunca em monoterapia (resistência rápida)</td></tr>
+    </table>
+  </div>
+  <div class="bc bo">
+    <h3>📊 Cefalosporinas por Geração</h3>
+    <table class="mt">
+      <tr><th>Gen.</th><th>Espectro principal</th><th>Exemplos</th><th>Pérola clínica</th></tr>
+      <tr><td>1ª</td><td>G+ (pele, SAMS)</td><td>Cefalexina, Cefazolina</td><td>Profilaxia cirúrgica padrão</td></tr>
+      <tr><td>2ª</td><td>G+ e G- comunitários</td><td>Cefuroxima, Cefoxitina</td><td>Cefoxitina cobre anaeróbios (cirurgia abdominal)</td></tr>
+      <tr><td>3ª</td><td>G- (meningite, ITU grave)</td><td><strong>Ceftriaxone</strong>, Cefotaxima, Ceftazidima*</td><td>Ceftriaxone = padrão pielonefrite e meningite</td></tr>
+      <tr><td>4ª</td><td>G+/G- + Pseudomonas</td><td>Cefepime</td><td>Neutropenia febril; ESBL parcial</td></tr>
+      <tr><td>5ª</td><td>MRSA</td><td>Ceftarolina, Ceftobiprole</td><td>Liga-se à PBP2a do MRSA</td></tr>
+    </table>
+    <p style="font-size:12px;color:var(--muted);margin-top:8px">* Ceftazidima cobre Pseudomonas (3ª geração atípica)</p>
+    <div class="as aw">⚠️ Nenhuma cefa (exceto 5ª gen.) cobre MRSA nem Enterococcus.</div>
+  </div>
+</div>
+
+<div class="bento b1">
+  <div class="bc bw" style="border:2px solid var(--terra-d)">
+    <h3 style="color:var(--terra-d)">🚨 Resistência Bacteriana — Mecanismos Críticos de Prova</h3>
+    <div class="twocol">
+      <div>
+        <h4>MRSA — Mutação de PBP (gene mecA)</h4>
+        <p style="font-size:13px">O gene <strong>mecA</strong> codifica a <strong>PBP2a</strong> (Penicillin-Binding Protein 2a) com baixíssima afinidade por todos os betalactâmicos — inclusive os combinados com inibidores. A resistência é <em>estrutural</em>, não enzimática.</p>
+        <div class="as ad" style="margin-top:8px">🚨 PEGADINHA CLÁSSICA: Clavulanato inibe enzimas (beta-lactamases). No MRSA a resistência está na PBP2a — Clavulanato é completamente ineficaz! Tratamento obrigatório: <strong>Vancomicina / Teicoplanina / Linezolida / Ceftarolina</strong>.</div>
+        <h4 style="margin-top:12px">ESBL — Beta-lactamase de Espectro Estendido</h4>
+        <p style="font-size:13px">Hidrolisa penicilinas E cefalosporinas de 3ª e 4ª geração. Clavulanato inibe ESBLs in vitro, mas in vivo há inóculo alto → efeito é insuficiente (não confiar no antibiograma com inibidor para ESBL).</p>
+        <div class="as ai">→ Tratamento definitivo: <strong>Meropenem/Imipenem</strong>. Ertapenem apenas se espécie sem Pseudomonas/Acinetobacter no histórico.</div>
+      </div>
+      <div>
+        <h4>Germes Gram-Negativos Não-Fermentadores (UTI/UTQ)</h4>
+        <p style="margin-bottom:6px;font-size:13px"><span class="tp to">Pseudomonas aeruginosa</span> — bombas de efluxo (MexAB-OprM), perda de porina OprD (imipenem), biofilme em cateter. Tratamento: Piperacilina-tazobactam, Cefepime, Meropenem, Ciprofloxacino.</p>
+        <p style="margin-bottom:6px;font-size:13px"><span class="tp ta">Acinetobacter baumannii</span> — resistência intrínseca crescente; XDR tratado com Polimixinas ± Ampicilina-Sulbactam (Sulbactam tem atividade intrínseca contra Acinetobacter).</p>
+        <p style="margin-bottom:8px;font-size:13px"><span class="tp ts">Stenotrophomonas maltophilia</span> — produz metalo-beta-lactamase intrínseca (L1) e cefalosporinase (L2) → resistente a TODOS os carbapenêmicos por definição. Tratamento de escolha: <strong>SMX-TMP</strong> (alto nível); alternativas: Levofloxacino, Ceftazidima-Avibactam + Aztreonam.</p>
+        <div class="as aw">⚡ ATENÇÃO: Ertapenem = único carbapenêmico SEM atividade contra Pseudomonas e Acinetobacter. Meropenem e Imipenem cobrem ambos.</div>
+        <h4 style="margin-top:10px">KPC — Carbapenemase Classe A (serina)</h4>
+        <p style="font-size:13px">Klebsiella KPC-produtora: resistente a TODOS os betalactâmicos. Opções: <strong>Polimixina B</strong> (nefrotóxica) ou <strong>Ceftazidima-Avibactam</strong> (Avibactam inibe KPC). Atenção: Ceftazidima-Avibactam NÃO cobre metalo-beta-lactamases (NDM, VIM, IMP).</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="bento b3">
+  <div class="bc bs">
+    <h3>🔬 ITU — Penetração Tecidual e Conduta Escalonada</h3>
+    <div class="flow">
+      <div class="fs" style="background:rgba(255,255,255,.65)">
+        <div class="fd" style="background:var(--sage-d);color:white;font-weight:700">C</div>
+        <div class="ft"><strong>Cistite não complicada</strong> — bexiga, afebril, disúria + polaciúria + urgência.<br>Tto 1ª linha: <strong>Nitrofurantoína 100mg 6/6h × 5-7d</strong> ou <strong>Fosfomicina 3g VO dose única</strong>.<br>Alternativas: SMX-TMP 160/800 12/12h × 3d; Cefuroxima; Cefalexina.</div>
+      </div>
+      <div class="fs" style="background:rgba(255,255,255,.65)">
+        <div class="fd" style="background:var(--sky-d);color:white;font-weight:700">P</div>
+        <div class="ft"><strong>Pielonefrite aguda</strong> — parênquima renal, febre alta, calafrios, CVAT positivo.<br>Tto: <strong>Ceftriaxone 2g IV 24/24h</strong> (internação) ou Ciprofloxacino 500mg VO 12/12h (ambulatorial leve sem resistência local &gt;20%).<br>Duração: 10-14 dias. Hemoculturas antes de iniciar ATB.</div>
+      </div>
+      <div class="fs" style="background:rgba(255,255,255,.65)">
+        <div class="fd" style="background:var(--terra-d);color:white;font-weight:700">Pr</div>
+        <div class="ft"><strong>Prostatite aguda bacteriana</strong> — febre, dor perineal/perianal, disúria, próstata hiperemiada ao toque.<br>Tto: <strong>Quinolonas 4-6 semanas</strong> (Ciprofloxacino ou Levofloxacino — melhor penetração no parênquima prostático). Em casos graves: Ceftriaxone IV na fase inicial.</div>
+      </div>
+    </div>
+    <div class="as ad" style="margin-top:12px">🚨 PEGADINHA MÁXIMA DE PROVA: Nitrofurantoína e Fosfomicina são altamente concentradas na urina, mas NÃO atingem níveis terapêuticos no parênquima renal nem no tecido prostático. Usá-las em pielonefrite ou prostatite equivale a nenhum tratamento — FALHA TERAPÊUTICA GARANTIDA.</div>
+  </div>
+  <div class="bc bt">
+    <h3>☣️ Colite Pseudomembranosa (C. difficile) — Manejo Completo</h3>
+    <h4>Fisiopatologia e Gatilho</h4>
+    <p style="font-size:13px">Qualquer ATB de amplo espectro → disbiose intestinal → proliferação de <em>C. difficile</em> → toxinas A (enterotoxina, diarreia) + B (citotoxina, necrose mucosa). <strong>Clindamicina</strong> é o gatilho histórico mais associado em provas. Cefalosporinas de 3ª geração e fluoroquinolonas também são causas frequentes.</p>
+    <h4>Clínica</h4>
+    <p style="font-size:13px">Diarreia aquosa fétida, febre alta, dor abdominal, leucocitose importante (às vezes &gt;30.000). Colonoscopia: pseudomembranas amareladas aderidas à mucosa. Formas graves: megacólon tóxico, peritonite, choque.</p>
+    <h4>Manejo por Gravidade</h4>
+    <div class="flow" style="margin-top:6px">
+      <div class="fs" style="background:rgba(255,255,255,.5)"><div class="fd" style="background:var(--terra-d);color:white;font-size:10px">1</div><div class="ft"><strong>Suspender imediatamente</strong> o ATB causador sempre que possível</div></div>
+      <div class="fs" style="background:rgba(255,255,255,.5)"><div class="fd" style="background:var(--amber-d);color:white;font-size:10px">2</div><div class="ft">Leve/Moderado: <strong>Vancomicina oral 125mg 6/6h × 10 dias</strong> (não absorvida → concentração luminal alta) ou Fidaxomicina (menor recorrência)</div></div>
+      <div class="fs" style="background:rgba(255,255,255,.5)"><div class="fd" style="background:var(--orange-d);color:white;font-size:10px">3</div><div class="ft">Grave (leucócitos &gt;15.000, creatinina ≥1,5x basal): Vancomicina 500mg 6/6h + Metronidazol IV em paralelo</div></div>
+      <div class="fs" style="background:rgba(255,255,255,.5)"><div class="fd" style="background:var(--sage-d);color:white;font-size:10px">4</div><div class="ft"><strong>Isolamento de CONTATO rigoroso</strong> — quarto privativo, precauções de contato</div></div>
+    </div>
+    <div class="as ad" style="margin-top:8px">🧼 PEGADINHA: Álcool gel NÃO elimina os esporos do C. difficile. A desinfecção das mãos deve ser OBRIGATORIAMENTE feita com água e sabão. Nunca usar Loperamida (retém toxinas no lúmen).</div>
+  </div>
+</div>`;}
+
+/* ── TÓPICO 2: Quinolonas, Bactérias Atípicas & Salvação ─────── */
+function mod2(){return `
+<p class="sec-h">💊 Tópico 2 — Quinolonas, Bactérias Atípicas e Esquemas de Salvação</p>
+<p class="sec-sub">Diferenças críticas entre fluoroquinolonas, por que betalactâmicos falham em atípicos, e o arsenal terapêutico contra MDR/XDR.</p>
+
+<div class="bento b2">
+  <div class="bc bk">
+    <h3>⚔️ Fluoroquinolonas — Ciprofloxacino vs. Levofloxacino</h3>
+    <table class="mt">
+      <tr><th></th><th>Ciprofloxacino</th><th>Levofloxacino</th><th>Moxifloxacino</th></tr>
+      <tr><td>Classificação</td><td>Quinolona sistêmica G-</td><td><strong>Quinolona Respiratória</strong></td><td>Quinolona Respiratória</td></tr>
+      <tr><td>Gram-negativos</td><td>✅ Excelente (E. coli, Pseudo)</td><td>⚠️ Bom (Pseudo: não 1ª linha)</td><td>⚠️ Fraco em Pseudomonas</td></tr>
+      <tr><td>Pneumococo</td><td>❌ Baixo</td><td>✅ Excelente</td><td>✅ Excelente</td></tr>
+      <tr><td>Atípicos</td><td>⚠️ Parcial</td><td>✅ Mycoplasma, Legionella, Chlamydia</td><td>✅ Cobertura excelente</td></tr>
+      <tr><td>Pseudomonas aeruginosa</td><td>✅ 1ª linha</td><td>❌ Não recomendado como 1ª</td><td>❌ Sem cobertura confiável</td></tr>
+      <tr><td>Cobertura urinária ativa</td><td>✅ Excretado ativo na urina</td><td>✅ Excretado ativo na urina</td><td>❌ NÃO excretado ativo — sem uso em ITU</td></tr>
+      <tr><td>Indicação típica</td><td>ITU complicada, antraz, G-</td><td>PAC grave, DPOC exacerbado, sinusite</td><td>PAC não-grave, atípicos</td></tr>
+    </table>
+    <div class="as ai" style="margin-top:10px">💡 PEGADINHA: Moxifloxacino é quinolona respiratória excelente, mas NÃO tem cobertura urinária — nunca usar em ITU ou prostatite.</div>
+  </div>
+  <div class="bc br">
+    <h3>⚠️ Alertas e Black Box das Quinolonas</h3>
+    <div class="flow">
+      <div class="fs" style="background:rgba(255,255,255,.6)">
+        <div class="fd" style="background:var(--rose-d);color:white;font-size:10px">1</div>
+        <div class="ft"><strong>Ruptura do Tendão de Aquiles — Black Box FDA</strong><br>Pode ocorrer durante ou até meses após o uso. Risco aumentado em: idosos, uso concomitante de corticosteroides, insuficiência renal, transplantados. Conduta: suspender IMEDIATAMENTE e imobilizar.</div>
+      </div>
+      <div class="fs" style="background:rgba(255,255,255,.6)">
+        <div class="fd" style="background:var(--rose-d);color:white;font-size:10px">2</div>
+        <div class="ft"><strong>Prolongamento do Intervalo QTc</strong><br>Risco de Torsades de Pointes e fibrilação ventricular. Não associar com outros agentes que prolongam QT (antiarrítmicos classe IA/III, antipsicóticos, antifúngicos azólicos). Realizar ECG basal em cardiopatas.</div>
+      </div>
+      <div class="fs" style="background:rgba(255,255,255,.6)">
+        <div class="fd" style="background:var(--rose-d);color:white;font-size:10px">3</div>
+        <div class="ft"><strong>Delirium e Toxicidade Neurológica em Idosos</strong><br>Mecanismo: <strong>antagonismo GABA-A + ativação de receptores NMDA</strong>. Manifestações: confusão, alucinações, convulsões, psicose aguda. Mais frequente com Levofloxacino em pacientes &gt;65 anos.</div>
+      </div>
+      <div class="fs" style="background:rgba(255,255,255,.6)">
+        <div class="fd" style="background:var(--rose-d);color:white;font-size:10px">4</div>
+        <div class="ft"><strong>Contraindicações absolutas:</strong> Gravidez (artropatia fetal em cartilagens em desenvolvimento — comprovado em modelos animais) e crianças em geral. Exceção aceita: fibrose cística com Pseudomonas aeruginosa.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="bento b1">
+  <div class="bc ba">
+    <h3>🦠 Bactérias Atípicas — Por que Betalactâmicos Sempre Falham?</h3>
+    <p style="font-size:13.5px;margin-bottom:12px">Mycoplasma, Chlamydia e Legionella <strong>não possuem parede celular de peptidioglicano</strong> → betalactâmicos (que inibem a síntese da parede) simplesmente não têm alvo nessas bactérias. São parasitas intracelulares obrigatórios ou sem parede, exigindo antibióticos que penetrem intracelularmente.</p>
+    <table class="mt">
+      <tr><th>Germe</th><th>Doença típica</th><th>Clínica diferenciadora</th><th>Tratamento 1ª linha</th><th>Alternativa</th></tr>
+      <tr><td>Mycoplasma pneumoniae</td><td>Pneumonia atípica (jovem adulto)</td><td>Tosse seca persistente, febre baixa gradual, RX com infiltrado intersticial. "Walking pneumonia".</td><td><strong>Azitromicina</strong> 500mg × 5d</td><td>Doxiciclina / Levofloxacino</td></tr>
+      <tr><td>Chlamydophila pneumoniae</td><td>PAC atípica comunitária</td><td>Similar ao Mycoplasma, curso insidioso, rinite prévia</td><td>Macrolídeos / Doxiciclina</td><td>Levofloxacino</td></tr>
+      <tr><td>Legionella pneumophila</td><td>Doença do Legionário (grave)</td><td>Febre alta, pneumonia + hiponatremia + diarreia + confusão. Antígeno urinário positivo.</td><td><strong>Levofloxacino IV</strong> ou Azitromicina IV</td><td>Doxiciclina IV</td></tr>
+      <tr><td>Chlamydia trachomatis</td><td>IST, uretrite, conjuntivite neonatal</td><td>Uretrite mucopurulenta sem diplococos; conjuntivite neonatal 5-12 dias após parto</td><td><strong>Azitromicina 1g dose única</strong></td><td>Doxiciclina 7 dias</td></tr>
+    </table>
+    <div class="as ao" style="margin-top:10px">✅ Regra rápida: paciente jovem, pneumonia sem resposta a betalactâmico → pensar em Mycoplasma e usar Azitromicina. Paciente grave com hiponatremia + confusão → pensar em Legionella e usar Levofloxacino IV.</div>
+  </div>
+</div>
+
+<div class="bento b2">
+  <div class="bc bt">
+    <h3>🚨 Esquemas de Salvação — MDR e XDR</h3>
+    <div class="flow">
+      <div class="fs" style="background:rgba(255,255,255,.55)">
+        <div class="fd" style="background:var(--sky-d);color:white;font-size:9px">ESBL</div>
+        <div class="ft"><strong>ESBL (beta-lactamase espectro estendido):</strong> Clavulanato ineficaz in vivo (efeito inóculo). Tratamento: <strong>Meropenem ou Imipenem</strong>. Ertapenem apenas se sem histórico de Pseudomonas/Acinetobacter — lembrar que Ertapenem não cobre esses germes.</div>
+      </div>
+      <div class="fs" style="background:rgba(255,255,255,.55)">
+        <div class="fd" style="background:var(--orange-d);color:white;font-size:9px">KPC</div>
+        <div class="ft"><strong>KPC — Klebsiella Pneumoniae Carbapenemase (Classe A, serina-BL):</strong> Resistente a todos carbapenêmicos. Opção 1: <strong>Ceftazidima-Avibactam</strong> (Avibactam inibe carbapenemases Classe A e C, mas NÃO metalo-BL). Opção 2: Polimixina B ou Colistina + Meropenem em altas doses (sinergismo).</div>
+      </div>
+      <div class="fs" style="background:rgba(255,255,255,.55)">
+        <div class="fd" style="background:var(--terra-d);color:white;font-size:9px">MBL</div>
+        <div class="ft"><strong>Metalo-beta-lactamases — NDM, VIM, IMP (Classe B, zinco-dependentes):</strong> Ceftazidima-Avibactam NÃO funciona (Avibactam não inibe MBL). Tratamento: <strong>Polimixinas + Tigeciclina</strong>, ou estratégia inovadora <strong>Ceftazidima-Avibactam + Aztreonam</strong> (Aztreonam é estável frente a MBLs; Avibactam protege o Aztreonam de co-BLs classe A/C).</div>
+      </div>
+    </div>
+    <div class="as ad" style="margin-top:8px">💀 Polimixinas: nefrotoxicidade em até 50-60% dos pacientes (necrose tubular aguda) e neurotoxicidade. Monitorar creatinina e ureia diariamente. Polimixina B: dose NÃO ajustada na DRC (não excretada renalmente). Colistina: ajuste necessário na DRC.</div>
+  </div>
+  <div class="bc bs">
+    <h3>📋 Novos Betalactâmicos — Combinações Especiais</h3>
+    <table class="mt">
+      <tr><th>Fármaco</th><th>Cobertura especial</th><th>O que NÃO cobre</th></tr>
+      <tr><td><strong>Ceftazidima-Avibactam</strong></td><td>KPC, OXA-48, AmpC, ESBL; Pseudomonas</td><td>MBL (NDM, VIM, IMP)</td></tr>
+      <tr><td><strong>Ceftolozana-Tazobactam</strong></td><td>Pseudomonas XDR (sem KPC)</td><td>KPC, MBL, Acinetobacter</td></tr>
+      <tr><td><strong>Meropenem-Vaborbactam</strong></td><td>KPC, ESBL, AmpC</td><td>MBL, Pseudomonas variável</td></tr>
+      <tr><td><strong>Imipenem-Cilastatin-Relebactam</strong></td><td>KPC, AmpC, ESBL; Pseudomonas</td><td>MBL</td></tr>
+      <tr><td><strong>Ceftazidima-Avibactam + Aztreonam</strong></td><td>MBL (NDM) — estratégia combinada</td><td>Gram-positivos</td></tr>
+    </table>
+    <div class="as aw" style="margin-top:8px">⚡ Resumo mnemônico: "Avibactam bate em KPC, Aztreonam bate em MBL — juntos batem em tudo exceto Gram-positivos."</div>
+  </div>
+</div>`;}
+
+/* ── TÓPICO 3: Hidroeletrolítico & NPT ───────────────── */
+function mod3(){return `
+<p class="sec-h">💧 Tópico 3 — Equilíbrio Hidroeletrolítico e Nutrição Parenteral Total (NPT)</p>
+<p class="sec-sub">Balanço hídrico basal, distúrbios do sódio com velocidades seguras de correção e suporte nutricional parenteral — com as pegadinhas que mais aparecem em prova.</p>
+
+<div class="bento b2">
+  <div class="bc ba">
+    <h3>📐 Regra dos 30 — Balanço Basal do Adulto</h3>
+    <div style="text-align:center;margin:14px 0;display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+      <div style="background:var(--orange);border:2px solid var(--orange-d);border-radius:12px;padding:16px 22px">
+        <p style="font-size:24px;font-weight:700;color:var(--orange-d);font-family:'Lora',serif">30 ml/kg/dia</p>
+        <p style="font-size:12px;color:var(--muted);margin-top:4px">Necessidade Hídrica Basal</p>
+      </div>
+      <div style="background:var(--sage);border:2px solid var(--sage-d);border-radius:12px;padding:16px 22px">
+        <p style="font-size:24px;font-weight:700;color:var(--sage-d);font-family:'Lora',serif">30 kcal/kg/dia</p>
+        <p style="font-size:12px;color:var(--muted);margin-top:4px">Necessidade Calórica Basal</p>
+      </div>
+    </div>
+    <table class="mt">
+      <tr><th>Situação</th><th>Ajuste calórico</th><th>Ajuste proteico</th></tr>
+      <tr><td>Adulto normal</td><td>25-30 kcal/kg/dia</td><td>0,8-1,2 g/kg/dia</td></tr>
+      <tr><td>Febre (por °C acima de 37°C)</td><td>+10-15%</td><td>Manter</td></tr>
+      <tr><td>Sepse/Trauma moderado</td><td>30-35 kcal/kg/dia</td><td>1,5-2,0 g/kg/dia</td></tr>
+      <tr><td>Queimadura grave / hipercatabolismo</td><td>35-40 kcal/kg/dia</td><td>2,0-2,5 g/kg/dia</td></tr>
+    </table>
+    <h4 style="margin-top:12px">⚠️ Dieta Enteral Pós-Jejum Prolongado</h4>
+    <p style="font-size:13px">Iniciar com <strong>metade do volume-alvo</strong> e progredir gradualmente a cada 24-48h. A progressão abrupta causa distensão abdominal, intolerância e, mais grave, a <strong>Síndrome de Realimentação</strong> — tríade de hipofosfatemia + hipocalemia + hipomagnesemia, com risco de arritmias cardíacas fatais.</p>
+    <div class="as aw" style="margin-top:8px">Enteral é sempre preferível à parenteral quando o TGI está funcionando (mesmo parcialmente). "Se o intestino funciona, use-o."</div>
+  </div>
+  <div class="bc bk">
+    <h3>🧪 Soluções Intravenosas — Quando Usar Cada Uma</h3>
+    <table class="mt">
+      <tr><th>Solução</th><th>Osmol.</th><th>Indicação principal</th><th>Cuidado</th></tr>
+      <tr><td><strong>NaCl 3% (hipertônica)</strong></td><td>~1026</td><td>Hiponatremia sintomática grave com convulsão ativa</td><td>Elevar Na+ no máximo 4-5 mEq/L até cessar convulsão, depois parar</td></tr>
+      <tr><td><strong>SF 0,9% (isotônica)</strong></td><td>308</td><td>Expansão de volume; hiponatremia hipovolêmica</td><td>Grandes volumes causam acidose hiperclorêmica</td></tr>
+      <tr><td><strong>Ringer Lactato</strong></td><td>~275</td><td>Ressuscitação balanceada (trauma, cirurgia)</td><td>Evitar em hipercalemia (contém K+)</td></tr>
+      <tr><td><strong>SF 0,45% (hipotônica)</strong></td><td>154</td><td>Hipernatremia (déficit de água livre)</td><td>Reduzir Na+ no máximo 10-12 mEq/24h</td></tr>
+      <tr><td><strong>SG 5%</strong></td><td>252→0</td><td>Equivale a água livre após metabolismo da glicose</td><td>Piora hiponatremia; não usar em edema cerebral</td></tr>
+    </table>
+    <div class="as aw" style="margin-top:10px">⚠️ SF 0,9% PIORA a hiponatremia por SIADH (sódio da solução é menor que o do plasma nesse contexto). Tratamento do SIADH euvolêmico: restrição hídrica 800-1000ml/dia + Tolvaptan (antagonista do receptor V2-ADH).</div>
+  </div>
+</div>
+
+<div class="bento b1">
+  <div class="bc bw" style="border:2px solid var(--terra-d)">
+    <h3 style="color:var(--terra-d)">🧠 O Sódio e o Cérebro — As Duas Regras de Ouro da Velocidade</h3>
+    <div class="twocol">
+      <div>
+        <h4>Hiponatremia → Corrigir DEVAGAR</h4>
+        <p style="font-size:13px">O cérebro crônico com pouco sódio se adapta extrudindo osmoles orgânicos para o espaço extracelular. Se o sódio sobe muito rápido, o cérebro "encolhe" → desmielinização osmótica.</p>
+        <div class="as ad" style="margin-top:8px">Se subir Na+ rápido demais → <strong>Síndrome de Desmielinização Osmótica (Mielinólise Pontina Central)</strong>: lesão irreversível do tronco cerebral → disartria, disfagia, tetraplegia espástica, locked-in syndrome, coma.</div>
+        <p style="font-size:13px;margin-top:8px"><strong>Velocidade máxima segura: ≤ 8 mEq/L em 24h</strong> (algumas diretrizes: 10 mEq/24h). Grupos de risco máximo (cirróticos, alcoolistas, K+ baixo, desnutrição grave): limitar a 6-8 mEq/24h.</p>
+        <div class="as ao" style="margin-top:8px">🚨 EXCEÇÃO CRÍTICA — Convulsão ativa por hiponatremia grave (Na+ &lt;120):<br>Usar <strong>NaCl 3% IV</strong> para elevar Na+ em <strong>4-5 mEq/L</strong> até cessar a convulsão → PARAR e retornar à velocidade lenta. Nesta emergência, o risco de morte por convulsão supera o risco de mielinólise.</div>
+      </div>
+      <div>
+        <h4>Hipernatremia → Corrigir DEVAGAR</h4>
+        <p style="font-size:13px">O cérebro adaptado à hiperosmolaridade gerou osmoles idiogênicos para proteger o volume celular. Se o Na+ cai rápido, o espaço intracelular absorve água: edema cerebral.</p>
+        <div class="as aw">Se baixar Na+ rápido demais → <strong>Edema Cerebral agudo</strong>: convulsões, hipertensão intracraniana, herniação.</div>
+        <p style="font-size:13px;margin-top:8px">Usar SF 0,45% ou SG 5%. Velocidade: reduzir Na+ no máximo <strong>10-12 mEq/L por 24h</strong>.</p>
+        <h4 style="margin-top:12px">Tipos de Hiponatremia por Volemia</h4>
+        <table class="mt">
+          <tr><th>Tipo</th><th>Causa clássica</th><th>Conduta</th></tr>
+          <tr><td><strong>Hipovolêmica</strong></td><td>Diarreia, vômito, diuréticos, sangramento</td><td><strong>SF 0,9% IV</strong> — repor volume primeiro</td></tr>
+          <tr><td><strong>Euvolêmica (SIADH)</strong></td><td>Tumores, drogas (carbamazepina, SSRIs), pneumonias, SNC</td><td>Restrição hídrica + Tolvaptan / Furosemida + salina</td></tr>
+          <tr><td><strong>Hipervolêmica</strong></td><td>ICC, cirrose hepática, S. nefrótica</td><td>Restrição hídrica + Furosemida</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="bento b2">
+  <div class="bc bs">
+    <h3>🍽️ Nutrição Parenteral Total (NPT) — Indicações e Exigências</h3>
+    <h4>Indicações Formais (repouso intestinal ≥ 5-7 dias)</h4>
+    <ul style="font-size:13px;margin-bottom:10px">
+      <li>Pós-operatório de ressecções intestinais extensas ou anastomoses de alto risco</li>
+      <li>Fístulas enterocutâneas de alto débito (&gt;500ml/dia) — intestino em repouso para cicatrização</li>
+      <li>Pancreatite aguda grave com íleo paralítico prolongado (&gt;5-7 dias sem via enteral)</li>
+      <li>Obstrução intestinal mecânica sem perspectiva de resolução imediata</li>
+      <li>Mucosite grave pós-quimioterapia ou pós-transplante de medula</li>
+    </ul>
+    <div class="as ad" style="margin-top:8px">🚨 EXIGÊNCIA REGULAMENTAR ABSOLUTA: <strong>Acesso venoso central exclusivo</strong> — veia subclávia ou jugular interna. A osmolaridade da NPT é de 1.500-2.000 mOsm/L (contra 308 mOsm/L do plasma). Em veia periférica: flebite química, trombose e extravasamento teciduais imediatos.</div>
+    <h4 style="margin-top:12px">Composição e Cálculo</h4>
+    <table class="mt">
+      <tr><th>Macronutriente</th><th>Proporção</th><th>Dose basal</th></tr>
+      <tr><td>Glicose</td><td>~50-60% das kcal não-proteicas</td><td>3-5 g/kg/dia; máx. 7 g/kg/dia</td></tr>
+      <tr><td>Lipídios</td><td>~30-40% das kcal não-proteicas</td><td>0,7-1,5 g/kg/dia; monitorar triglicérides</td></tr>
+      <tr><td>Aminoácidos</td><td>—</td><td>1,2-2,5 g/kg/dia conforme catabolismo</td></tr>
+    </table>
+  </div>
+  <div class="bc bt">
+    <h3>⚠️ Complicações da NPT e Monitorização</h3>
+    <table class="mt">
+      <tr><th>Complicação</th><th>Mecanismo</th><th>Conduta</th></tr>
+      <tr><td><strong>Hiperglicemia</strong> (mais comum)</td><td>Infusão de glicose contínua + resistência insulínica</td><td>Insulina regular na bolsa ou subcutânea; meta glicêmica 140-180 mg/dL em UTI</td></tr>
+      <tr><td><strong>Síndrome de Realimentação</strong></td><td>Captação celular súbita de P, K, Mg ao reintroduzir carboidratos</td><td>Iniciar com 50% das calorias e progredir devagar; repor eletrólitos preventivamente</td></tr>
+      <tr><td><strong>Infecção de CVC</strong></td><td>Biofilme em cateter; glicose é substrato para fungos e bactérias</td><td>Assepsia máxima; retirar cateter se febre sem foco</td></tr>
+      <tr><td><strong>Colestase</strong></td><td>Falta de estímulo enteral → estase biliar → colestase intra-hepática</td><td>Ciclar NPT (12h off), iniciar enteral mínima (trófica) assim que possível</td></tr>
+      <tr><td><strong>Atrofia das vilosidades</strong></td><td>Ausência de nutrientes no lúmen → apoptose de enterócitos</td><td>Enteral trófica precoce (20ml/h), mesmo que não nutritiva, preserva a barreira intestinal</td></tr>
+    </table>
+    <div class="as aw" style="margin-top:8px">✅ Regra prática de monitorização: glicemia 6/6h nas primeiras 48h, eletrólitos diários (Na, K, P, Mg), função hepática (TGO, TGP, bilirrubinas, fosfatase alcalina) 2x/semana.</div>
+  </div>
+</div>`;}
+
+/* ── TÓPICO 4: Potássio, Dor & Obesidade ─────────────── */
+/* ── TÓPICO 4: Potássio, Dor & Obesidade ─────────────── */
+function mod4(){return `
+<p class="sec-h">🫀 Tópico 4 — Distúrbios do Potássio, Terapêutica da Dor e Obesidade</p>
+<p class="sec-sub">ECG e potássio, passo a passo da hipercalemia grave, escada analgésica da OMS por mecanismo e alvos farmacológicos da obesidade.</p>
+
+<div class="bento b2">
+  <div class="bc br">
+    <h3>⚡ Potássio &amp; ECG — Correlação Completa</h3>
+    <div class="twocol">
+      <div class="inset">
+        <p style="font-weight:700;color:var(--rose-d);font-size:13px;margin-bottom:8px">🔺 Hipercalemia (K⁺ elevado)</p>
+        <table class="mt">
+          <tr><th>K⁺ (mEq/L)</th><th>Alteração ECG</th></tr>
+          <tr><td>5,5 – 6,5</td><td><strong>Onda T apiculada, simétrica, em tenda</strong> — 1º sinal</td></tr>
+          <tr><td>6,5 – 7,5</td><td>Intervalo PR longo, onda P achatada e alargada, QRS progressivamente largo</td></tr>
+          <tr><td>7,5 – 8,5</td><td><strong>Padrão sinusoidal</strong> — P desaparece, QRS se funde com T</td></tr>
+          <tr><td>&gt; 8,0</td><td><strong>FV / Assistolia / Parada cardíaca</strong></td></tr>
+        </table>
+      </div>
+      <div class="inset">
+        <p style="font-weight:700;color:var(--sky-d);font-size:13px;margin-bottom:8px">🔻 Hipocalemia (K⁺ baixo)</p>
+        <ul style="font-size:13px">
+          <li>Onda T <strong>achatada ou invertida</strong></li>
+          <li><strong>Onda U proeminente</strong> após a onda T (patognomônico)</li>
+          <li>Intervalo QU (= QT aparente) prolongado</li>
+          <li>Risco: <strong>Torsades de Pointes → FV</strong></li>
+          <li>Sintomas: fraqueza muscular, câimbras, íleo paralítico</li>
+        </ul>
+        <div class="as ad" style="margin-top:8px">🚨 PEGADINHA CRÍTICA — CAD/Estado Hiperosmolar com K⁺ &lt; 3,5 mEq/L: <strong>CORRIGIR O POTÁSSIO ANTES DE INICIAR INSULINA</strong>. A insulina ativa a Na-K-ATPase → shift intracelular de K⁺ → hipocalemia grave → parada em FV. Repor KCl IV até K⁺ ≥ 3,5 antes de iniciar a insulinoterapia.</div>
+      </div>
+    </div>
+  </div>
+  <div class="bc ba">
+    <h3>🚑 Passo a Passo da Hipercalemia Grave (K⁺ &gt; 6,5 + alterações no ECG)</h3>
+    <div class="flow">
+      <div class="fs" style="background:var(--terra)">
+        <div class="fd" style="background:var(--terra-d);color:white;font-size:11px">1</div>
+        <div class="ft"><strong>Gluconato de Cálcio 10% IV</strong> — 1-2 ampolas (10-20ml) em 2-3 minutos<br>Estabiliza a membrana cardiomiocitária. <em>NÃO reduz o K⁺ sérico.</em> Efeito imediato (1-3 min), dura 30-60 min. Se ECG não melhorar em 5-10 min, repetir a dose.</div>
+      </div>
+      <div class="fs" style="background:var(--orange)">
+        <div class="fd" style="background:var(--orange-d);color:white;font-size:11px">2</div>
+        <div class="ft"><strong>Shift intracelular de K⁺ (ação em 15-30 min):</strong><br>
+        <span class="tp ts">Insulina Regular 10U IV + SG50% 50ml</span> — ativa Na-K-ATPase; monitorar glicemia<br>
+        <span class="tp tk">Salbutamol/Albuterol inalatório ou IV</span> — Beta-2 agonista, também ativa Na-K-ATPase<br>
+        <span class="tp ta">Bicarbonato de sódio</span> — só em acidose metabólica concomitante; efeito limitado</div>
+      </div>
+      <div class="fs" style="background:var(--sage)">
+        <div class="fd" style="background:var(--sage-d);color:white;font-size:11px">3</div>
+        <div class="ft"><strong>Eliminação definitiva de K⁺ do organismo:</strong><br>
+        <span class="tp ts">Furosemida 40-80mg IV</span> — se diurese preservada (excreção renal)<br>
+        <span class="tp ta">Patiromer / Poliestireno sulfonato (Kayexalate)</span> — resinas de troca intestinal<br>
+        <span class="tp tt">Hemodiálise de urgência</span> — se K⁺ &gt;7,0, ECG grave, anúria ou falha das medidas acima</div>
+      </div>
+      <div class="fs" style="background:var(--rose)">
+        <div class="fd" style="background:var(--rose-d);color:white;font-size:11px">❌</div>
+        <div class="ft"><strong>SUSPENDER IMEDIATAMENTE:</strong> BRA (Losartana, Valsartana), IECA (Enalapril, Ramipril), Espironolactona, AINEs (inibem prostaglandinas renais → retêm K⁺), Trimetoprim (bloqueia canal de sódio tubular → retém K⁺).</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="bento b1">
+  <div class="bc bw" style="border:1.5px solid var(--amber-d)">
+    <h3>🩺 Escada Analgésica da OMS — Terapêutica da Dor Estruturada</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-top:12px">
+      <div class="inset" style="border-top:3px solid var(--sage-d)">
+        <p style="font-weight:700;color:var(--sage-d);margin-bottom:8px;font-size:13.5px">Degrau 1 — Dor Leve (EVA 1-3)</p>
+        <p style="font-size:13px;font-weight:600;margin-bottom:4px">Analgésicos não-opioides:</p>
+        <ul style="font-size:13px">
+          <li><strong>Dipirona</strong> 500-1000mg 6/6h — analgésico, antipirético, antiespasmódico leve</li>
+          <li><strong>Paracetamol</strong> 500-1000mg 6/6h — seguro em gestantes; hepatotóxico em superdosagem</li>
+          <li><strong>AINEs</strong> (Ibuprofeno, Naproxeno, Cetoprofeno) — anti-inflamatório + analgésico; cuidado em DRC, HAS, ICC, úlcera</li>
+          <li><strong>Celecoxibe</strong> — inibidor seletivo COX-2; menor risco GI; risco CV aumentado</li>
+        </ul>
+      </div>
+      <div class="inset" style="border-top:3px solid var(--amber-d)">
+        <p style="font-weight:700;color:var(--amber-d);margin-bottom:8px;font-size:13.5px">Degrau 2 — Dor Moderada (EVA 4-6)</p>
+        <p style="font-size:13px;font-weight:600;margin-bottom:4px">Opioides fracos + Degrau 1:</p>
+        <ul style="font-size:13px">
+          <li><strong>Tramadol</strong> 50-100mg 6/6h — agonista opioide fraco + inibição de recaptação de NE e serotonina; risco de síndrome serotoninérgica com SSRIs</li>
+          <li><strong>Codeína</strong> — pró-droga convertida a morfina pela CYP2D6; metabolizadores rápidos: risco de toxicidade</li>
+        </ul>
+        <div class="as ad" style="margin-top:8px">🚨 PEGADINHA: <strong>Sempre associar antiemético preventivo</strong> ao iniciar opioide do Degrau 2 — Ondansetrona 4-8mg ou Metoclopramida 10mg. Opioides ativam a zona quimiorreceptora e retardam esvaziamento gástrico → náusea e vômito em 40-50% dos pacientes.</div>
+      </div>
+      <div class="inset" style="border-top:3px solid var(--terra-d)">
+        <p style="font-weight:700;color:var(--terra-d);margin-bottom:8px;font-size:13.5px">Degrau 3 — Dor Intensa (EVA 7-10)</p>
+        <p style="font-size:13px;font-weight:600;margin-bottom:4px">Opioides fortes:</p>
+        <ul style="font-size:13px">
+          <li><strong>Morfina</strong> — padrão-ouro; titular dose; reverter com Naloxona em depressão respiratória</li>
+          <li><strong>Oxicodona</strong> — formulação oral; menor histamino-liberação que morfina</li>
+          <li><strong>Fentanil</strong> — transdérmico (72h), IV em UTI; sem metabólitos ativos (bom na DRC)</li>
+          <li><strong>Metadona</strong> — meia-vida longa e imprevisível; excelente para dor neuropática crônica</li>
+        </ul>
+      </div>
+    </div>
+    <h4 style="margin-top:16px">🎯 Adjuvantes Específicos por Mecanismo/Tipo de Dor</h4>
+    <table class="mt">
+      <tr><th>Tipo de dor</th><th>Adjuvante de 1ª escolha</th><th>Mecanismo de ação</th><th>Observação importante</th></tr>
+      <tr><td>Cólicas viscerais (intestinal, ureteral, biliar)</td><td><strong>Escopolamina (Buscopan)</strong> + AINE</td><td>Anticolinérgico antiespasmódico M3</td><td>Não tem ação em espasmo muscular esquelético</td></tr>
+      <tr><td>Espasmo muscular esquelético (lombalgia, torcicolo)</td><td><strong>Carisoprodol</strong> (Mioflex, Soma)</td><td>Relaxante muscular de ação central (SNC)</td><td>Potencial de dependência; não usar &gt;3 semanas</td></tr>
+      <tr><td>Enxaqueca aguda (abortar a crise)</td><td><strong>Sumatriptano</strong> 50-100mg VO ou 6mg SC</td><td>Agonista 5-HT1B/1D → vasoconstrição + inibe neuropeptídeos</td><td>Contraindicado em doença coronariana, AVC, gravidez</td></tr>
+      <tr><td>Enxaqueca crônica (profilaxia)</td><td><strong>Amitriptilina, Propranolol, Topiramato</strong></td><td>Múltiplos mecanismos preventivos</td><td>Amitriptilina 25-75mg à noite: mais usada</td></tr>
+      <tr><td>Dor neuropática (queimação, choque)</td><td><strong>Amitriptilina</strong> ou <strong>Pregabalina/Gabapentina</strong></td><td>ADT inibe recaptação NE/5HT; Pregabalina: ligante alfa-2-delta canal Ca²⁺</td><td>Duloxetina é alternativa eficaz com menos efeitos anticolinérgicos</td></tr>
+      <tr><td>Sedação paliativa/agitação terminal</td><td><strong>Clorpromazina + Midazolam</strong></td><td>Antipsicótico + Benzodiazepínico — sedação profunda palliativa</td><td>Protocolo oncologia paliativa; haloperidol para delirium leve-moderado</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="bento b2">
+  <div class="bc bs">
+    <h3>⚖️ Obesidade — Classificação, Diagnóstico e Risco CV</h3>
+    <table class="mt">
+      <tr><th>IMC (kg/m²)</th><th>Classificação OMS</th><th>Risco cardiovascular associado</th></tr>
+      <tr><td>18,5 – 24,9</td><td>Eutrófico</td><td>Basal / referência</td></tr>
+      <tr><td>25,0 – 29,9</td><td>Sobrepeso</td><td>Levemente elevado</td></tr>
+      <tr><td>30,0 – 34,9</td><td>Obesidade Grau I</td><td>Moderado</td></tr>
+      <tr><td>35,0 – 39,9</td><td>Obesidade Grau II</td><td>Alto</td></tr>
+      <tr><td>≥ 40,0</td><td>Obesidade Grau III (mórbida)</td><td>Muito alto / extremo</td></tr>
+    </table>
+    <div class="as ai" style="margin-top:10px">📏 Circunferência Abdominal com risco cardiovascular muito elevado: <strong>Homens &gt; 102 cm / Mulheres &gt; 88 cm</strong>. Marcador independente de risco metabólico mesmo em IMC normal (síndrome metabólica).</div>
+    <h4 style="margin-top:12px">Metas de Atividade Física (OMS 2020)</h4>
+    <ul style="font-size:13px">
+      <li><strong>150-300 min/semana</strong> de atividade aeróbica moderada (caminhada rápida, natação, ciclismo) — ou</li>
+      <li><strong>75-150 min/semana</strong> de atividade intensa (corrida, natação forte)</li>
+      <li><strong>+ Exercícios de fortalecimento muscular ≥ 2x/semana</strong></li>
+      <li>Redução do comportamento sedentário — qualquer atividade é melhor que nenhuma</li>
+    </ul>
+  </div>
+  <div class="bc bp">
+    <h3>💊 Farmacoterapia da Obesidade — Alvos e Mecanismos</h3>
+    <table class="mt">
+      <tr><th>Fármaco</th><th>Mecanismo de ação</th><th>Resultado / Observação</th></tr>
+      <tr><td><strong>Semaglutida</strong> (Wegovy, Ozempic)</td><td>Agonista GLP-1 — aumenta saciedade, retarda esvaziamento gástrico, reduz gliconeogênese</td><td>1ª linha atual; perda de 12-15% do peso; reduz mortalidade CV em DM2</td></tr>
+      <tr><td><strong>Tirzepatida</strong> (Mounjaro, Zepbound)</td><td>Agonista duplo GLP-1 + GIP (incretinas)</td><td>Maior perda de peso que semaglutida (~20-22%); aprovado FDA para obesidade</td></tr>
+      <tr><td><strong>Orlistat</strong> (Xenical)</td><td>Inibe lipase pancreática e gástrica → bloqueia absorção de 30% das gorduras ingeridas</td><td>Perda modesta (~3 kg extra). Efeitos GI frequentes: esteatorreia, urgência fecal. Reduz absorção vitaminas lipossolúveis (A, D, E, K)</td></tr>
+      <tr><td><strong>Topiramato</strong></td><td>Anticonvulsivante — reduz apetite por mecanismo ainda não totalmente elucidado</td><td>Off-label para obesidade; combinado com Bupropiona (Contrave). Risco teratogênico — contraindicado na gravidez</td></tr>
+      <tr><td><strong>Metformina</strong></td><td>Inibe gliconeogênese hepática + melhora resistência insulínica</td><td>Off-label para controle de peso em pré-diabéticos; perda de 2-3 kg</td></tr>
+    </table>
+    <div class="as aw" style="margin-top:8px">⚡ Efeitos adversos dos análogos de GLP-1 (Semaglutida/Tirzepatida): náuseas, vômitos, constipação (dose-dependentes), risco teórico de pancreatite, contraindicados em carcinoma medular de tireoide (histórico familiar).</div>
+  </div>
+</div>`;}
+
+/* ── TÓPICO 5: TARV & Intercorrências Clínicas do HIV ─── */
+function mod5(){return `
+<p class="sec-h">🔬 Tópico 5 — Terapia Antirretroviral (TARV) e Intercorrências Clínicas do HIV</p>
+<p class="sec-sub">Esquema padrão de 1ª linha, PrEP e PEP com prazos exatos, e as decisões críticas de corticoide nas infecções oportunistas — com a pegadinha do Sarcoma de Kaposi.</p>
+
+<div class="bento b2">
+  <div class="bc ba">
+    <h3>💊 TARV — Esquema Padrão de 1ª Linha (PCDT Brasil)</h3>
+    <table class="mt">
+      <tr><th>Situação</th><th>Esquema de 1ª linha</th><th>Justificativa</th></tr>
+      <tr><td><strong>Tratamento inicial (adultos)</strong></td><td><strong>TDF + 3TC + DTG</strong><br>(Tenofovir + Lamivudina + Dolutegravir)</td><td>Alta barreira genética (DTG raramente seleciona resistência), alta eficácia, bem tolerado, comprimido único/dia</td></tr>
+      <tr><td>Gestantes (1º trimestre)</td><td>TDF + 3TC + Darunavir/ritonavir (ou RAL)</td><td>DTG tem sinal de defeito do tubo neural no 1º trimestre em estudos iniciais — aguardar dados conclusivos. Após 1º trim: DTG permitido.</td></tr>
+      <tr><td>Falha virológica</td><td>Genotipagem → troca guiada por resistência</td><td>Considerar Bictegravir, Cabotegravir, Doravirina conforme padrão de mutações</td></tr>
+      <tr><td>Co-infecção HIV + TB</td><td>TDF + 3TC + EFZ (Efavirenz) — DTG com ajuste de dose</td><td>Rifampicina induz CYP3A4 → reduz DTG → dobrar dose DTG 50mg→50mg 12/12h</td></tr>
+    </table>
+    <h4 style="margin-top:14px">Classes de Antirretrovirais</h4>
+    <table class="mt">
+      <tr><th>Classe</th><th>Sigla</th><th>Mecanismo</th><th>Exemplos principais</th></tr>
+      <tr><td>Inh. transcriptase reversa nucleosídeos</td><td>ITRN</td><td>Análogos de nucleosídeos → terminam prematuramente a cadeia de DNA</td><td>TDF, 3TC, Abacavir (ABC), Zidovudina (AZT), Emtricitabina (FTC)</td></tr>
+      <tr><td>Inh. transcriptase reversa não-nucleosídeos</td><td>ITRNN</td><td>Inibem diretamente a transcriptase reversa (sítio alostérico)</td><td>Efavirenz (EFZ), Rilpivirina, Doravirina, Nevirapina</td></tr>
+      <tr><td>Inibidores de integrase</td><td>INSTI</td><td>Bloqueiam integração do DNA viral ao genoma do hospedeiro</td><td><strong>Dolutegravir (DTG)</strong>, Raltegravir (RAL), Bictegravir, Cabotegravir</td></tr>
+      <tr><td>Inibidores de protease</td><td>IP</td><td>Bloqueiam a maturação das partículas virais (protease HIV)</td><td>Darunavir/r, Lopinavir/r, Atazanavir/r — todos potencializados por Ritonavir</td></tr>
+    </table>
+  </div>
+  <div class="bc bo">
+    <h3>🛡️ PrEP vs. PEP — Prevenção Combinada</h3>
+    <div class="twocol">
+      <div class="inset">
+        <p style="font-weight:700;color:var(--sage-d);font-size:13.5px;margin-bottom:8px">PrEP — Profilaxia Pré-Exposição</p>
+        <p style="font-size:13px">Esquema: <strong>Tenofovir (TDF) + Emtricitabina (FTC)</strong> — 1 comprimido/dia, uso contínuo.</p>
+        <p style="font-size:13px;margin-top:8px"><strong>Início do efeito protetor:</strong></p>
+        <ul style="font-size:13px">
+          <li>Relações anais receptivas: proteção após <strong>7 dias</strong> de uso contínuo</li>
+          <li>Relações vaginais / uso de drogas injetáveis: <strong>20 dias</strong> de uso contínuo</li>
+        </ul>
+        <p style="font-size:13px;margin-top:8px">Indicado em: HIV-negativo com risco substancial (parceiro soropositivo sem carga viral indetectável, múltiplos parceiros sem preservativo, uso de drogas injetáveis).</p>
+        <div class="as ao" style="margin-top:8px">✅ Ofertado gratuitamente pelo SUS. Exige HIV negativo confirmado antes de iniciar e a cada 3 meses durante o uso.</div>
+      </div>
+      <div class="inset">
+        <p style="font-weight:700;color:var(--terra-d);font-size:13.5px;margin-bottom:8px">PEP — Profilaxia Pós-Exposição</p>
+        <p style="font-size:13px">Esquema: <strong>TDF + 3TC + DTG</strong> por exatamente <strong>28 dias</strong>.</p>
+        <p style="font-size:13px;margin-top:8px"><strong>⏱️ Janela terapêutica: iniciar em até 72 horas após a exposição.</strong></p>
+        <p style="font-size:13px;margin-top:6px">Quanto mais cedo iniciar, maior a eficácia. Após 72h, a PEP perde eficácia e não deve ser iniciada.</p>
+        <p style="font-size:13px;margin-top:8px"><strong>Indicações:</strong></p>
+        <ul style="font-size:13px">
+          <li>Acidente ocupacional com material biológico (ACS, enfermeiros, médicos)</li>
+          <li>Violência sexual</li>
+          <li>Relação sexual desprotegida com fonte de status HIV desconhecido ou positivo</li>
+        </ul>
+        <div class="as ad" style="margin-top:8px">🚨 Após 72h → PEP não inicia. Orientar testagem em 30, 90 e 180 dias (janela imunológica).</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="bento b1">
+  <div class="bc bw" style="border:2px solid var(--orange-d)">
+    <h3 style="color:var(--orange-d)">🦠 Intercorrências HIV — Infecções Oportunistas e Decisões Críticas de Corticoide</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:12px">
+      <div>
+        <h4>Pneumocistose (PCP) — CD4 &lt; 200 células/mm³</h4>
+        <p style="font-size:13px">Agente: <em>Pneumocystis jirovecii</em>. Tríade clássica: dispneia progressiva + tosse seca + LDH muito elevado. RX: infiltrado intersticial bilateral difuso ("asa de borboleta"). TC: ground glass bilateral.</p>
+        <p style="font-size:13px;margin-top:6px">Tratamento: <strong>SMX-TMP em altas doses</strong> — 15-20 mg/kg/dia de TMP, por 21 dias IV (grave) ou VO (leve-moderado). Alternativa: Pentamidina IV.</p>
+        <div class="as ao" style="margin-top:8px">✅ CORTICOIDE INDICADO na PCP com:<br>• PaO₂ &lt; 70 mmHg em ar ambiente, ou<br>• Gradiente A-a &gt; 35 mmHg<br>→ Prednisona 40mg 12/12h × 5d, depois 40mg/dia × 5d, depois 20mg/dia × 11d<br>Reduz mortalidade por inflamação exuberante pós-início do ATB.</div>
+        <h4 style="margin-top:12px">Toxoplasmose Cerebral — CD4 &lt; 100</h4>
+        <p style="font-size:13px">Clínica: cefaleia + febre + déficit neurológico focal. TC/RNM: lesões hipodensas com realce em anel e edema perilesional, frequentemente múltiplas, em gânglios da base.</p>
+        <p style="font-size:13px;margin-top:6px">Tratamento: <strong>Sulfadiazina + Pirimetamina + Ácido folínico</strong> por 6 semanas, depois manutenção (profilaxia secundária). Alternativa: SMX-TMP em altas doses.</p>
+        <h4 style="margin-top:12px">Criptococose — CD4 &lt; 100</h4>
+        <p style="font-size:13px">Meningite crônica com cefaleia progressiva, febre, às vezes sem rigidez de nuca. Diagnóstico: antígeno criptocócico no LCR + tinta da China.</p>
+        <p style="font-size:13px;margin-top:6px">Tratamento: Indução → <strong>Anfotericina B lipídica + Flucitosina</strong> por 2 semanas. Consolidação → <strong>Fluconazol 400mg/dia × 8 semanas</strong>. Manutenção → Fluconazol 200mg/dia.</p>
+      </div>
+      <div>
+        <h4>🚨 Sarcoma de Kaposi — Decisão Crítica de Prova</h4>
+        <p style="font-size:13px">Lesões vinhosas/violáceas em pele, mucosas e órgãos internos. Associado ao HHV-8 (Herpesvírus Humano tipo 8). Diagnóstico: biópsia das lesões.</p>
+        <p style="font-size:13px;margin-top:6px">Tratamento: TARV eficaz (reduz carga viral e permite reconstituição imune) → frequentemente leva à regressão do SK. Casos avançados: quimioterapia (Doxorrubicina lipossômica, Paclitaxel).</p>
+        <div class="as ad" style="margin-top:8px">🚫 CORTICOIDE TERMINANTEMENTE CONTRAINDICADO no Sarcoma de Kaposi. O uso de qualquer corticosteroide sistêmico pode levar à progressão explosiva, disseminação visceral (pulmão, TGI, linfonodos) e morte. É uma das contraindicações absolutas mais importantes do HIV em prova.</div>
+        <h4 style="margin-top:12px">Resumo: Corticoide — Quando SIM e Quando NÃO</h4>
+        <table class="mt">
+          <tr><th>Situação HIV</th><th>Corticoide?</th><th>Impacto</th></tr>
+          <tr><td>PCP com PaO₂ &lt;70 ou A-a &gt;35</td><td style="color:var(--sage-d)"><strong>✅ SIM</strong></td><td>Reduz mortalidade inflamatória</td></tr>
+          <tr><td>Meningite TB com HIV</td><td style="color:var(--sage-d)"><strong>✅ SIM</strong></td><td>Reduz complicações neurológicas</td></tr>
+          <tr><td>Sarcoma de Kaposi</td><td style="color:var(--rose-d)"><strong>🚫 NUNCA</strong></td><td>Progressão explosiva e disseminação</td></tr>
+          <tr><td>Síndrome da Reconstituição Imune (IRIS) grave</td><td style="color:var(--sage-d)"><strong>✅ SIM (casos graves)</strong></td><td>Controla a inflamação da IRIS</td></tr>
+          <tr><td>Criptococose / Toxoplasmose</td><td style="color:var(--terra-d)"><strong>⚠️ Evitar / individualizar</strong></td><td>Piora imunossupressão; usar só se edema grave</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>`;}
+
+</script>
+
+</body>
+</html>
